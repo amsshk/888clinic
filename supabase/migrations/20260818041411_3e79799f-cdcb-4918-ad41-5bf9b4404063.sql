@@ -1,0 +1,4 @@
+REVOKE ALL ON FUNCTION public.fulfill_product_order(uuid, text, text, text, text, text, integer, text, jsonb, text, jsonb) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.upsert_product_subscription(uuid, text, text, text, text, text, integer, integer, text, text, timestamptz, boolean) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.fulfill_product_order(uuid, text, text, text, text, text, integer, text, jsonb, text, jsonb) TO service_role;
+GRANT EXECUTE ON FUNCTION public.upsert_product_subscription(uuid, text, text, text, text, text, integer, integer, text, text, timestamptz, boolean) TO service_role;

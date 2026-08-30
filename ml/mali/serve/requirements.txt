@@ -1,0 +1,25 @@
+fastapi==0.115.6
+uvicorn==0.34.0
+pydantic==2.10.4
+pillow==11.1.0
+numpy==2.2.1
+onnxruntime==1.20.1
+
+# Aesthetic preview — stage 1 (CPU, always required)
+mediapipe==0.10.21
+opencv-python-headless==4.11.0.86
+
+# Aesthetic preview — stage 2 (optional, GPU only).
+#
+# Recommended: MALI_REFINER=sdxl — SDXL inpainting + ControlNet Canny +
+# IP-Adapter face embedding. ~12-16GB VRAM. All three are permissively
+# licensed (SDXL: CreativeML Open RAIL++-M, ControlNet/IP-Adapter: Apache 2.0).
+# torch==2.6.0
+# diffusers==0.35.1
+# transformers==4.51.3
+# accelerate==1.6.0
+# safetensors==0.5.3
+#
+# Alternative: MALI_REFINER=qwen — Qwen-Image-Edit whole-image edit (Apache 2.0),
+# needs ~24GB VRAM and uses the same four packages above.
+

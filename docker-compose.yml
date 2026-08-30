@@ -1,0 +1,16 @@
+services:
+  web:
+    build: .
+    container_name: 888clinic
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - VITE_PAYMENTS_CLIENT_TOKEN=${VITE_PAYMENTS_CLIENT_TOKEN}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s

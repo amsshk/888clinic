@@ -1,0 +1,1 @@
+UPDATE public.scan_wallets SET credits = credits + 3, updated_at = now();

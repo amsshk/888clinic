@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.fulfill_credit_purchase(uuid, integer, integer, text, text) FROM anon, authenticated;

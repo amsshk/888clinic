@@ -1,0 +1,1 @@
+UPDATE public.scan_wallets SET credits = credits + 2, updated_at = now() WHERE user_id = '1bb04083-1779-4d75-9bae-804c07175aee';

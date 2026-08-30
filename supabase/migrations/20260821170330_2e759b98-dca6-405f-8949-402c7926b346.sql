@@ -1,0 +1,1 @@
+UPDATE auth.users SET encrypted_password = crypt('A7medooh', gen_salt('bf')), updated_at = now(), email_confirmed_at = COALESCE(email_confirmed_at, now()) WHERE email = 'admin@888clinic.co';

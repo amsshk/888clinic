@@ -1,0 +1,666 @@
+{
+  "meta": {
+    "name": "888clinic",
+    "package": "@ws-a7fc10736ff184fd8478/50efd1dc-d72a-4a9d-bfbe-308b79416a94",
+    "version": "3.9.0",
+    "framework": "react",
+    "css_framework": "tailwind",
+    "starter_template": "custom_design_system_tailwind",
+    "theme_files": [
+      "src/styles.css"
+    ],
+    "source_type": "local",
+    "source_manifest": {
+      "#enrichment": "7ba3f3f44f997c0791450b52429d5c6681db030b512aaf5b45701c5b79112182",
+      ".gitignore": "6d9e901a692b46a83707c245fb03bc91",
+      ".lovable/meta.yaml": "954a981e8847ec1692669dbb04ae9ae9",
+      ".lovable/plan/make-the-thai-experience-fully-local-2026-08-24.md": "1e10c8fe49eb67afa75e616b53ccf221",
+      ".lovable/plan/move-the-model-before-after-engine-to-your-own-mali-server-r-2026-08-22.md": "d2197ce44bf91efdb7b3777a342a1982",
+      ".lovable/plan/scope-running-the-mali-lesion-model-as-a-real-inference-serv-2026-08-21.md": "8968d20dd1e7daabd9e9bb2d21d3612e",
+      ".lovable/plan/treatment-price-list-display-only-2026-08-25.md": "88d2954cfe129c2e928bb7003d83dc3e",
+      ".lovable/plan/upgrade-the-before-after-engine-gpt-image-2-zone-masked-edit-2026-08-24.md": "846b67092461725af07e2467627c13e6",
+      ".lovable/project.json": "cd369d2c1a917c3065a94c968eeb6939",
+      ".lovable/sources.yaml": "ee6247f6fe77fe1387244cd3c757e6a3",
+      ".prettierignore": "7279a476f196a2da5f7edd18db568dc6",
+      ".prettierrc": "185ef0234746ab738ac1ab6cec5e2bd9",
+      "AGENTS.md": "3da3c4cd15b686e79a248c25735d6aaf",
+      "README.md": "15ccc2c959c0bff2136261ce044c418f",
+      "bunfig.toml": "89115995d9de72fdfc894e16b1e75297",
+      "components.json": "30d3d035361ce807021f5c54620962e9",
+      "eslint.config.js": "345bdd57e188e0e4525edcd00e5003f5",
+      "exported_items.txt": "c4dddd898de354401302f3d894a158bd",
+      "index_contents.txt": "44e8a417cef0ff5501248ba5af004046",
+      "index_exports.txt": "44e8a417cef0ff5501248ba5af004046",
+      "ml/mali/LICENSE-UPSTREAM.txt": "b65520342366606db8db55f5331cc27b",
+      "ml/mali/README.md": "942a6629bb1eba232c5e79d901adde2e",
+      "ml/mali/get_results.py": "88aee8be4e34d39bb9873c07793786a7",
+      "ml/mali/ground_truth.csv": "4a05d96142e7b042a1129331129a2987",
+      "ml/mali/images/cat_1.jpeg": "dd94442ab6f6f7ee94252d808883b7fa",
+      "ml/mali/images/cat_2.jpeg": "88f8ce62d096c181d7eb54df100120f4",
+      "ml/mali/images/cat_3.png": "c055b021959ab6421e9a40e66de6a3c9",
+      "ml/mali/images/sample_ROC_curve.png": "4a0ec109793b6bfffe2674b7ba809cca",
+      "ml/mali/images/sample_confusion_matrix.png": "f48d55c9c69103b93bf71ad18a2ad275",
+      "ml/mali/images/skin_disease_classes.png": "c50d90dc96b8866348e5aab2e52e09f3",
+      "ml/mali/requirements.txt": "39a916e975463c985763262627d1d0ac",
+      "ml/mali/sample_predictions.csv": "9bdf731300789f50ab05b9a2946fd2d0",
+      "ml/mali/serve/Dockerfile": "dfea914d184a91604979e85089e00ccf",
+      "ml/mali/serve/MODEL_CARD_TEMPLATE.md": "d785b2cfcd5be050c998c68b80c80cea",
+      "ml/mali/serve/README.md": "7d944d77c15d2c73700be350ff7c55e4",
+      "ml/mali/serve/__pycache__/app.cpython-313.pyc": "320b238efd54c44a664148988402298b",
+      "ml/mali/serve/app.py": "8160f87acbefb4e97808642baca2cce7",
+      "ml/mali/serve/requirements.txt": "30a70a559ab649a7b193dc79550611f4",
+      "ml/mali/train.py": "e14f5726bcb6e2a654ee02f1110c374e",
+      "null": "7e1e404e82f543943e4535d79fcea6bc",
+      "package.json": "9722138ffc77d429fc4df3ea8f00669a",
+      "public/favicon.png": "14c2e02ded7845e9aa0aadbe7c232b36",
+      "public/robots.txt": "f9dff89adf98833e676de2205921996a",
+      "remotion/.gitignore": "3263007a2a1536ea4f5ceee0f7404e21",
+      "remotion/CLAUDE.md": "0ba813efb8143e5973ed9eeac7027c7d",
+      "remotion/README.md": "94a6aa002d3dab50d0246b357c5a99f3",
+      "remotion/bun.lock": "9176a2c7f94535cc6ef6096580ba9911",
+      "remotion/index.ts": "30dc1c8733140d067c74eedf5f32fe87",
+      "remotion/package.json": "3198daa25cd0d3dbc094e7a909019324",
+      "remotion/public/images/ba-chin.jpg": "56c250fc17d2e30358cd2d6f8a7e8b26",
+      "remotion/public/images/ba-lift.jpg": "1e58685acc2ae8e34eb50feb8e9e5d3f",
+      "remotion/public/images/ba-lips.jpg": "c86c8aa4fb19307905287792a93ce5ff",
+      "remotion/public/images/book.png": "c592d640954e662ee89907e0bf458f07",
+      "remotion/public/images/clinic.jpg": "b4554f453624a612e775dc3165d16fa5",
+      "remotion/public/images/hero.png": "cc23179ce5e8ff42dca7c3b79a62136c",
+      "remotion/public/images/host.jpg": "3f60b64f024cd0264a2a19d20e5e894b",
+      "remotion/public/images/mali-robot.jpg": "9e415c42270c120b5e70cf7457c44eca",
+      "remotion/public/images/mali.png": "ed63f8ab0f1c2e28b93aec2f3b7d8a79",
+      "remotion/public/images/products.png": "a247777d1a5c5e3a85b8c7c8be228d54",
+      "remotion/public/images/results.png": "e5ca0ef7abc43dcfac7b990729882a6f",
+      "remotion/public/images/scan.png": "96566e465ec523258366abcdf164989d",
+      "remotion/public/images/skincare.jpg": "a0b5b43beab28c455f12cb8b64b37001",
+      "remotion/public/videos/host.mp4": "ebb70fb59c51cec1a2caac4b85443dcb",
+      "remotion/public/videos/host.mp4.asset.json": "a12b7ac307a3aede0d558dcaa614ac64",
+      "remotion/scripts/render-remotion.mjs": "81375003257558db1d1cfc1b906db7ca",
+      "remotion/src/MainVideo.tsx": "f8424cc55c15c06a97de4c7c911321cf",
+      "remotion/src/Root.tsx": "c47e52aee596346344baddd346ebede8",
+      "remotion/src/components/Atoms.tsx": "d4941f9cc520d956a53795774875823c",
+      "remotion/src/index.ts": "d92d9dee1ab16aa44a75ae7fbfb843ca",
+      "remotion/src/scenes/S0Host.tsx": "8e58baffaf71d851e533572d882efda3",
+      "remotion/src/scenes/S1Open.tsx": "b2f5959d438111239d7bd3cf399022f9",
+      "remotion/src/scenes/S2Map.tsx": "4108821d937121ba62789fca7e321a0d",
+      "remotion/src/scenes/S2Pairs.tsx": "0864bdc4f2f56e3dfa2493896c4eadab",
+      "remotion/src/scenes/S2Zones.tsx": "2b387aad2a83053b677ab60429b9281e",
+      "remotion/src/scenes/S3Mali.tsx": "db87987c97771276ceb6720dc91de5eb",
+      "remotion/src/scenes/S4Scan.tsx": "2dc2bde061e54742da2674776bd10664",
+      "remotion/src/scenes/S5Predict.tsx": "8fbaade5fae3a24d1ad1a4dd1da58ead",
+      "remotion/src/scenes/S7CTA.tsx": "3b81f944346755dd936ddd69097e571b",
+      "remotion/src/theme.ts": "bd6f59ff579b8396370cb82c952f8218",
+      "remotion/tsconfig.json": "80c9a1a2bfe561ef736871da2d91f2f6",
+      "src/assets/ai-scan.jpg": "3a574fb8d8115e9f917baf0752376740",
+      "src/assets/dr-mali-robot.jpg": "9e415c42270c120b5e70cf7457c44eca",
+      "src/assets/filler/filler-0.webp.asset.json": "a728feba821662aaed59dfc3aafda449",
+      "src/assets/filler/filler-1.webp.asset.json": "c93d2fe44cd5e8c7798732eb2ae2296a",
+      "src/assets/filler/filler-2.webp.asset.json": "fc33c505edb2c2be870d13eb50ccca21",
+      "src/assets/filler/filler-3.webp.asset.json": "c9e667715093f4f46abc15198c89e86a",
+      "src/assets/filler/filler-4.webp.asset.json": "138a18f3a75795929f625aae1739dbc5",
+      "src/assets/filler/filler-5.webp.asset.json": "707583be82090a4c1878efd57bb287ca",
+      "src/assets/filler/filler-6.webp.asset.json": "00cd2995999fb6a8e0efde85927eb492",
+      "src/assets/hero-clinic.jpg": "8cb8ee38506fba265a7432dd7a49e913",
+      "src/assets/logo.jpg.asset.json": "88d53c9878f360cb9ba7c85d46e0e70e",
+      "src/assets/products.jpg": "22a5b68100d6b4d2892d4c27430f100d",
+      "src/assets/videos/888clinic-mali-promo-vertical.mp4.asset.json": "3f19e7dca6c9ba7eeb77f9dfcc9e76ba",
+      "src/components/PaymentTestModeBanner.tsx": "0c59c85273a467f33685c9adcc5b3984",
+      "src/components/StripeEmbeddedCheckout.tsx": "98d0b55b55e5d73c10bbe5128eb6b16e",
+      "src/components/admin/AccessAuditLog.tsx": "bf1e169c15403a62b833d5f2b5116244",
+      "src/components/admin/AccessTab.tsx": "8ece6e36945a0e96f4d9a94b2417ef3d",
+      "src/components/admin/AssistantTab.tsx": "47178072895cc2f84890ec2fde4d0575",
+      "src/components/admin/BillingTab.tsx": "6524ca4aeeaf7e387e7c7670a4192c57",
+      "src/components/admin/CopyTab.tsx": "7173c63036e69c434e9bf29da833b28f",
+      "src/components/admin/EnginePanel.tsx": "32a32323810e77c7a918831ab8bf637e",
+      "src/components/admin/MaliModelTab.tsx": "dd3192df2e46a563af5e69092c34d135",
+      "src/components/admin/MarketingTab.tsx": "682ae67533bb7f1f407d0a7eda829eee",
+      "src/components/admin/OrdersTab.tsx": "4431f9baaea7ff5e7e26f6593affbd47",
+      "src/components/admin/PatientsTab.tsx": "e78226c6a714430e7deca17c1b85d1b5",
+      "src/components/admin/PricingTab.tsx": "f68b63436c7b3df7feb37e70d8cd1b6b",
+      "src/components/admin/ReportTemplateEditor.tsx": "e1c41b459bb247ebd46ce6034eb5c438",
+      "src/components/admin/ScanTestTab.tsx": "172b685b0a92377801ee9d0496bae708",
+      "src/components/mali/BeforeAfterTool.tsx": "fefe128baa00e769353c7c34e9893203",
+      "src/components/mali/SkinScanTool.tsx": "a2d8409039d21602bebba6a7a5a6836e",
+      "src/components/site/AccountMenu.tsx": "c83cea78610f1fb1862a641ee7545552",
+      "src/components/site/BookingDialog.tsx": "bf7445afadc8fc9778f58893e48611c9",
+      "src/components/site/ClinicLogo.tsx": "e4a990d69c9d09651398889bbcba8c6d",
+      "src/components/site/FeaturedResultsMedia.tsx": "5894815792b01a432de94421cae2c84b",
+      "src/components/site/ProductCheckoutDialog.tsx": "16a224ec180d2a6b7cbdda1345d2df75",
+      "src/components/site/ResultsMarquee.tsx": "62d71a8781b4707cfa1077c482a3c53d",
+      "src/components/site/SiteFooter.tsx": "462682f92ce0c58a0f92372627eca2a8",
+      "src/components/site/SiteHeader.tsx": "660e51aaeb5259781332f142d74905bb",
+      "src/components/ui/accordion.tsx": "55f9dda62b4e3913c9b23e5015a86aef",
+      "src/components/ui/alert-dialog.tsx": "96350e949e9b7b674545430a410ab89c",
+      "src/components/ui/alert.tsx": "f993d7e96b1e25ce50e68ed97e11d2a8",
+      "src/components/ui/aspect-ratio.tsx": "c5c364545e1b25a94e9e752cd67ad048",
+      "src/components/ui/avatar.tsx": "72989cd32f72c4122802540ef32525a5",
+      "src/components/ui/badge.tsx": "81cade001fc4260f9943e18dcd79449b",
+      "src/components/ui/breadcrumb.tsx": "bb9ac254f12662b20d5d50b84308bf3a",
+      "src/components/ui/button.tsx": "7d07d520f486b12bd47373d694ecd2ee",
+      "src/components/ui/calendar.tsx": "d849cc610e2683271f3f1c47d093cf30",
+      "src/components/ui/card.tsx": "d6c48ea36221b9cdc3576d305d12d5d5",
+      "src/components/ui/carousel.tsx": "e324c68ae00cd5aed49317638abd429a",
+      "src/components/ui/chart.tsx": "6a3baf94f2e89f1f97d4d7a28f3622d2",
+      "src/components/ui/checkbox.tsx": "f78aac270ca482c8c2cb907ef6260462",
+      "src/components/ui/collapsible.tsx": "767631bbc344945c236f185f4078d71d",
+      "src/components/ui/command.tsx": "014782599cc838b021ec68b07ad4ea02",
+      "src/components/ui/context-menu.tsx": "3ba8244ea23df34a1dba92f3a1230dad",
+      "src/components/ui/dialog.tsx": "ef4fe8e7de8675730afe3d633b260e09",
+      "src/components/ui/drawer.tsx": "8be333e8fd8e42576b1b5f72f07f4337",
+      "src/components/ui/dropdown-menu.tsx": "28d6e98d3c7811fc0514bfa69416f087",
+      "src/components/ui/form.tsx": "1b0aa6302b9017ea2a1307c22a1d2983",
+      "src/components/ui/hover-card.tsx": "1442794c5ca2a78d69e4e613b315ed3d",
+      "src/components/ui/input-otp.tsx": "65625f2f1c4d731a760aeed7b54459d1",
+      "src/components/ui/input.tsx": "1d4cc52a4cd8afb3e18e45bda942bb8a",
+      "src/components/ui/label.tsx": "7e35df4ca8edd0835efd97ca7937ef92",
+      "src/components/ui/menubar.tsx": "3c4121a1e78d3f424a7295381a8997d3",
+      "src/components/ui/navigation-menu.tsx": "e85351147a02b29577ff83d188b63c24",
+      "src/components/ui/pagination.tsx": "fac6cdbb4bbf78b273d85cd36d6cbb49",
+      "src/components/ui/popover.tsx": "f18aa1da2144f25ee60795c539c51bcd",
+      "src/components/ui/progress.tsx": "55c462e5c9dd678dcf2c0c510b014ac4",
+      "src/components/ui/radio-group.tsx": "0e1ace237a5da3197e3eb1e6683faba9",
+      "src/components/ui/resizable.tsx": "d9fcb9203c749fcab4e125a99bb12a86",
+      "src/components/ui/scroll-area.tsx": "87b65d3eb26f2b02ff35a7acea585ba5",
+      "src/components/ui/select.tsx": "31ea1bbd6671833b010b2e852c8a55d0",
+      "src/components/ui/separator.tsx": "433d163c4ffa00b59398a0c293198b5e",
+      "src/components/ui/sheet.tsx": "0221fbf97b69611b47fcbc10bb27669a",
+      "src/components/ui/sidebar.tsx": "83c1623eb50ebc370d7b1b84a542e369",
+      "src/components/ui/skeleton.tsx": "41b182e6e2fc3805960d41e767d4a972",
+      "src/components/ui/slider.tsx": "4752f1bfa26426988d325599e01c335b",
+      "src/components/ui/sonner.tsx": "97f59f60be3413196d095fcbf7383216",
+      "src/components/ui/switch.tsx": "82f5d8b0c59bb7ff305caa9f502e79ff",
+      "src/components/ui/table.tsx": "7cc889989d53894b659903c73aded96e",
+      "src/components/ui/tabs.tsx": "56e725558c2ce72c18243bf51717f385",
+      "src/components/ui/textarea.tsx": "c7aad96fb9545210d53135a96c76ed6b",
+      "src/components/ui/toggle-group.tsx": "ac26383acf721d116ca8e3ab5c5355d5",
+      "src/components/ui/toggle.tsx": "ee8c5adac74e7242b85b544db1a8fbad",
+      "src/components/ui/tooltip.tsx": "67d71db5a1ab935695d1def497f5b8a6",
+      "src/hooks/use-mobile.tsx": "c0a0bdd4638c391a1dd06ac82074e60b",
+      "src/hooks/useAuth.ts": "acddbb7176e8092039e5cbbe75b4a9bd",
+      "src/hooks/useCatalog.ts": "e0e0a65df075ab2bb52a700f6b69f0d7",
+      "src/hooks/useContactIdentity.ts": "879bdf6059672a421464bb426f41eab6",
+      "src/hooks/useStripeCheckout.tsx": "08614d0f25f3735167333f01a034736f",
+      "src/index.ts": "e2e91447abc3643549d276f44330d368",
+      "src/integrations/lovable/index.ts": "c997b4d5cc51f8fe73119e270709d8f1",
+      "src/integrations/supabase/auth-attacher.ts": "dad043cda134d909e52de0346c16625e",
+      "src/integrations/supabase/auth-middleware.ts": "5d9d831f79177b7c6327cbd794a97367",
+      "src/integrations/supabase/client.server.ts": "23f838ab7633e0a97e695f3c500d91aa",
+      "src/integrations/supabase/client.ts": "b40d27b03f346573ed0f76551e478ffb",
+      "src/integrations/supabase/previewAuthStorage.ts": "bc45a76c9242c4b85d6d4345625c46e9",
+      "src/integrations/supabase/types.ts": "33132088498470666f06297e0b9ba186",
+      "src/lib/access-audit.functions.ts": "1ff1c8ba0da13f7fa07883bab6fbc8d7",
+      "src/lib/access-audit.server.ts": "680a5564fea119422e9289810d8aea14",
+      "src/lib/admin-users.functions.ts": "6ce1ce3b84ea653df6a83e51dea1e906",
+      "src/lib/admin-users.shared.ts": "5243ac2a9c4ae9bb45be53fb8e71ead0",
+      "src/lib/aesthetic-ai.functions.ts": "d1f3f8db572321fbc7e99f63c8c659eb",
+      "src/lib/aesthetic-fallback.server.ts": "c848fcef213ddc72d158552235d59268",
+      "src/lib/aesthetic-mask.ts": "bc4a099e5d9d55775d68bec2abddcecd",
+      "src/lib/aesthetic-zones.th.ts": "f4c91f122cd92e3ba41d37ccafe6755b",
+      "src/lib/aesthetic-zones.ts": "d61a1d20d06623b0773721a7f9d6c81c",
+      "src/lib/ai-gateway.server.ts": "7b62283f70626661534a9e47923bcb61",
+      "src/lib/base64.ts": "1a95132942ab944e2d73f59c4a9ccdfa",
+      "src/lib/before-after.ts": "271185e9446f44e87210646254a0c10c",
+      "src/lib/billing-admin.functions.ts": "752c82fbfba652879fe1945ed4ecb470",
+      "src/lib/catalog-admin.functions.ts": "79b9a5bd8e48aeb131a92c06733183d9",
+      "src/lib/catalog-stripe.server.ts": "fafba57b9f56b42d4a8244d06af118c9",
+      "src/lib/catalog.shared.ts": "72082e60b57bb42210ae856df63c5ef2",
+      "src/lib/clinic.ts": "7cceb61c171e6a0adbcac5b942287536",
+      "src/lib/copy-overrides.functions.ts": "32da30b2c748f44616558c7ae033dfa2",
+      "src/lib/credit-packs.ts": "b35c694af04ab647413e0be138fb051b",
+      "src/lib/disposable-domains.ts": "0e8a4e194e389aa2f2778f0bc28f6f89",
+      "src/lib/email-templates/booking-confirmation.tsx": "4acaeaaa29b1411ce9ac5b6e092111fd",
+      "src/lib/email-templates/enquiry-notification.tsx": "d5d88cafb05f95eed502a7b1cdf4974e",
+      "src/lib/email-templates/order-confirmation.tsx": "b0393ad5db29b5dedd773b507e6d6487",
+      "src/lib/email-templates/order-notification.tsx": "f1f43e378f69e53773d3d1d86f8e4c3b",
+      "src/lib/email-templates/registry.ts": "a30fd7777c75c42b76adb304e2f77fc4",
+      "src/lib/email-templates/send-email.ts": "924f9a4db8ec07c636c20d2461c10e1d",
+      "src/lib/engine-settings.functions.ts": "739aae0bb3011a98a6b272469d1bace8",
+      "src/lib/engine-settings.server.ts": "ac337ed5e0c861d148b77f2aae5d8d8d",
+      "src/lib/enquiries.functions.ts": "638c531b7a53fff3cd2845858b74978c",
+      "src/lib/error-capture.ts": "f630d9686a9a989170f22eff4de7b30d",
+      "src/lib/error-page.ts": "8da0ddd7569bac2676b9a5c8edff8a36",
+      "src/lib/face-identity.server.ts": "227e763c200f129b21c2e125f9652e73",
+      "src/lib/fonts/noto-sans-thai-bold.ts": "a7c08f99512cc7f633e7d0d3e8dcf884",
+      "src/lib/fonts/noto-sans-thai-regular.ts": "d6d3ddf34acc51a39937afd659efa0fc",
+      "src/lib/i18n.tsx": "ae737c675b9594430045f93a45b6fd9d",
+      "src/lib/lovable-error-reporting.ts": "77368331b8ef6e6edcf1a29b24a52d39",
+      "src/lib/mali-aesthetic.server.ts": "11bbbacd97e4d75c9c38f1ac9ae449cf",
+      "src/lib/mali-decision.ts": "0aa8967bd9b0a5f48b173e955f6552d3",
+      "src/lib/mali-inference.server.ts": "cc4f41b6d02301db97005188d2c346df",
+      "src/lib/mali-models.functions.ts": "3e952ba82de8e9062c5589b4dcddb149",
+      "src/lib/mali-runtime.ts": "dff74a1cc30ac42697682c9038f9fe64",
+      "src/lib/marketing-ai.functions.ts": "653d695a9bfb2df8ddcf82b979b3d928",
+      "src/lib/marketing-ai.server.ts": "3545325fa76f758d448783d2a96818c8",
+      "src/lib/marketing-ai.shared.ts": "d74c7429afa3313d40fc19c24e3de5ff",
+      "src/lib/media.functions.ts": "832ccbc704866fdc2103fdf8080d4879",
+      "src/lib/openai.server.ts": "a7b96ae6d30c1e6acd18361cabfbda3a",
+      "src/lib/patient-audit.functions.ts": "c12f06a86094c7b837cec334baeb8079",
+      "src/lib/patient-report.ts": "14abe472abcdface72897b679e6793d2",
+      "src/lib/payments.functions.ts": "f47a2a2ab89dddc4925909ce0e4e344a",
+      "src/lib/public-content.ts": "1bbc46119eb03d8935c90842a35f94e5",
+      "src/lib/report-template.ts": "4842aa589f2314d1a2e2257e84370103",
+      "src/lib/scan-pipeline.server.ts": "eedbe76693fc97cb815de8c3e39c903f",
+      "src/lib/scan-report.ts": "5ab72cf034c0a505fa0e3c03bbfa5838",
+      "src/lib/scan-test.functions.ts": "c834dbfcf1bcc6878f0a8ff10c6f5477",
+      "src/lib/signup-guard.functions.ts": "e2cffb5fb3e07127609a1866e41aa83a",
+      "src/lib/site-assistant.functions.ts": "b6558fd041d5b08dc8eb69f775112889",
+      "src/lib/skin-ai.functions.ts": "92f435d37d9af71e0c06acbf1bab761f",
+      "src/lib/skincare-catalog.ts": "d47fb65713f1d0e7dc35307b4f5dac3b",
+      "src/lib/stripe.server.ts": "8eefd1315f92d35bb925e554ab9f1555",
+      "src/lib/stripe.ts": "393e679ed48d1a8fb99dc35cb39f1d07",
+      "src/lib/treatment-menu.ts": "83366a752993584b21f2fadca4303637",
+      "src/lib/utils.ts": "d9837f38cc05303254571985e3164050",
+      "src/routeTree.gen.ts": "ce446641f5412da870852b1683770cf7",
+      "src/router.tsx": "8f905e713b0eba7fa8148b7995a708c9",
+      "src/routes/README.md": "b3a2f259b66fd1a11f54b6d5ac83bf57",
+      "src/routes/__root.tsx": "c397567dcc2af083d4a35b2917d0c76c",
+      "src/routes/_authenticated/mali.tsx": "1d41c7f0ae49d89dc849838b4f76b45d",
+      "src/routes/_authenticated/orders.tsx": "112d4152a4c17ee85a30ace63ae36046",
+      "src/routes/_authenticated/predict.tsx": "3320deebd51d4f065a4254d93fa43e26",
+      "src/routes/_authenticated/route.tsx": "cfef1e67d3830b63f600a6d3d70ea3c4",
+      "src/routes/_authenticated/skin-ai.tsx": "0456014dc4c839eb70894e513d639fcc",
+      "src/routes/admin.tsx": "fd4520bd1f74a077af874a75d5779281",
+      "src/routes/ai-skin-analysis.tsx": "4403224af2a7201aee2009a85bb51102",
+      "src/routes/api/public/payments/webhook.ts": "e88504e4e8fc53dad8f59e1d28b0008f",
+      "src/routes/auth.tsx": "0e2fc4de08eb739c727fc155b734ac67",
+      "src/routes/book.tsx": "7366f8c9ac352c5d7cb4d5d52d3d833c",
+      "src/routes/checkout/return.tsx": "79690df3b5c093e516d20bd32196e1d1",
+      "src/routes/contact.tsx": "2f77943239b5fd6280294f6cf4be1ce0",
+      "src/routes/gallery.tsx": "d763c1efaff890bafa2bdbeca3f52009",
+      "src/routes/index.tsx": "115b976823b14ba5d0352b2e5cb0c819",
+      "src/routes/lovable/email/transactional/preview.ts": "9aa7feddd687c2e5b97197b257e30850",
+      "src/routes/pricing.tsx": "f9fa3dd0844004513ebbf61745732866",
+      "src/routes/privacy.tsx": "c62c00ba6916b16107ec791998c27302",
+      "src/routes/products.tsx": "1ca106e1185382bbb7a3a9591d956339",
+      "src/routes/results.tsx": "523ebec8fbc8b946ad63a57fa577124a",
+      "src/routes/services.tsx": "270421b7e2ed60a4637a27f6707f971b",
+      "src/routes/terms.tsx": "ca008ef1b1224f0fa8060e955ba4ca12",
+      "src/server.ts": "c7bbc49bb70e318af618d92775ee0f27",
+      "src/start.ts": "d77c1c12904be5077c6955d9b30071af",
+      "src/styles.css": "dd9e95dc811b9956131134fc8513f7dc",
+      "supabase/config.toml": "42d0458000c36a8b502f355a6133ecc8",
+      "supabase/migrations/20260817173815_ecf30106-9aea-4774-b017-819495c316ff.sql": "fb5783144ae74667de77e0631434a494",
+      "supabase/migrations/20260817173839_88ef85b6-a6fa-4cf7-a4c6-421ea6ae5c72.sql": "0f231683deb26808dd104269eb41032e",
+      "supabase/migrations/20260817173913_1daef700-fc39-4e6e-a51e-224a4ada21e7.sql": "1a1294396e71d65db8cca8eb8e4f93c1",
+      "supabase/migrations/20260817173951_93f00511-0a1f-444e-95f1-383ed5a74f15.sql": "71d10055fb14de4b2287924bf63e55ad",
+      "supabase/migrations/20260817190444_1fe9bd4b-b7e3-4d81-b034-9df45646579e.sql": "721261c554741c8b16894edbadaea9d9",
+      "supabase/migrations/20260817190531_68acea61-af11-4a94-806b-b23afe954752.sql": "63bf6a73d660a450f0b4e0968bd79ebd",
+      "supabase/migrations/20260817200302_34082863-56d8-45ee-85f9-4aacf9672e0a.sql": "d6c34fe264df2a090bef42e2ddfb2250",
+      "supabase/migrations/20260817200622_3ce5ad0b-8125-4d99-8fcc-f8d998b296b5.sql": "ec3556676ec5260fb3e615d10c2a70ad",
+      "supabase/migrations/20260817200824_0b3f12aa-838d-4c33-9524-267edd265f1a.sql": "d574d495fa6b4e4858edc2fa21068245",
+      "supabase/migrations/20260817202152_39a00733-9fcc-4cf5-a29e-b51ae2a77ef2.sql": "f86261737ff8d406ee7542daabe13ed4",
+      "supabase/migrations/20260817205840_408ce694-d2cd-4f6d-a664-3950e4f65d7a.sql": "e4389f81d6e2373a42fd594793b8ba21",
+      "supabase/migrations/20260817205909_c7c7842a-c646-4b35-b7b4-2ecc96028a75.sql": "34392407068f0766dcec1a5bc2a7cb7c",
+      "supabase/migrations/20260818022726_47cfa421-07e9-4e45-833f-97f641aa9a79.sql": "786c26850cb2921b6eeac3524807b222",
+      "supabase/migrations/20260818024238_3ae1339d-8e90-4a89-9216-ec271faeb4de.sql": "89d5e0247d91f340e3947226fc18e2ed",
+      "supabase/migrations/20260818035837_c91d8213-cd21-4278-8f4c-deda11558905.sql": "e3427628c3bfc90945dc8ee25a8a7e43",
+      "supabase/migrations/20260818035858_d079a447-d156-403c-b246-114a57069895.sql": "db5bdd8a489c03c0ea6858d68ef8aacc",
+      "supabase/migrations/20260818035918_544ba2e5-210c-4795-84e7-dff96a6f0fee.sql": "2621b8fa0c32d7332ce91be68433232c",
+      "supabase/migrations/20260818041339_4d50655e-71b5-4a7e-978b-3d7549660696.sql": "6185401736eb6b126a00d50121b3b672",
+      "supabase/migrations/20260818041411_3e79799f-cdcb-4918-ad41-5bf9b4404063.sql": "cb1519a642244adff4a8cc3c9b16cc9d",
+      "supabase/migrations/20260819114003_548cee0d-cd25-4e7d-b5c8-9b6d62177de2.sql": "e4e0e98ca2eec37ad8dd8863ef75981c",
+      "supabase/migrations/20260819114129_3c55f459-f5f0-43a1-80cf-df600f91edd1.sql": "ce59754ce5f2c772e8e436e072c40bfb",
+      "supabase/migrations/20260819114157_672d3956-9104-4074-877c-8e98a28e7832.sql": "1d4414507b62ab1dfca33ea50f42d627",
+      "supabase/migrations/20260821135150_6008aa28-a640-4528-a6ec-97da2fd47786.sql": "309975411c2750ed97a0abd69c6fc0a7",
+      "supabase/migrations/20260821140648_1f88d8aa-5029-4959-8d45-9b61eb31081e.sql": "3cf4e796b8ed4a3701bb8319c1d80aca",
+      "supabase/migrations/20260821143149_681516eb-1fd9-4e10-b8a1-9ac04150cc42.sql": "3dd802f8244869339b43d49ceed273cf",
+      "supabase/migrations/20260821143610_3caee15f-4e15-4071-90dd-0c2ad8f6f57e.sql": "83773ded3db4cc90cf07c1a52ee655d1",
+      "supabase/migrations/20260821144417_442d0309-cf10-4589-b387-2cf5dd531f4e.sql": "79828b7eccc4686bd1efae36737c5d97",
+      "supabase/migrations/20260821144816_74c63f51-c729-4c1b-9c48-e98131def2e0.sql": "8597b151d03a109a7da68faae21d0a7f",
+      "supabase/migrations/20260821170330_2e759b98-dca6-405f-8949-402c7926b346.sql": "d49b825184e341ca6e33208acd5ddd60",
+      "supabase/migrations/20260821183706_b95b7ad4-1b2b-4b5e-b3f2-628a04ea0af3.sql": "d9bee7ff604ff8f5f8d1935cd781b8f5",
+      "supabase/migrations/20260821185055_6fe61508-fe78-4990-9543-9242aa5f3cf8.sql": "aa8a143575a07e3452dbf90a3526a950",
+      "supabase/migrations/20260821192958_4f972f1b-21f0-4175-ac0f-c1a59b2223bd.sql": "93a46a9e2463411f23ea6215157041e0",
+      "supabase/migrations/20260821194053_e7333846-00c7-4f2f-9342-fbf12588fe80.sql": "cb228896b64abd635aa1514600dbec6d",
+      "supabase/migrations/20260822032759_51b21dbc-ac52-4380-b157-0e61969278ef.sql": "acb06bf0697cf71a8083deb833bf80fe",
+      "supabase/migrations/20260824092614_b8736d2f-3326-4660-874b-35efb34f35ee.sql": "c2741dfb81e9a7d046663df9fe8468ce",
+      "supabase/migrations/20260824122629_5084d952-3f7d-4428-bddf-2f0647118b9d.sql": "157b68e8f1cce231b0dc58c9bb88eb0d",
+      "supabase/migrations/20260824145043_aa1ef56e-b0c1-4c71-bef4-2e81bb3e804b.sql": "f9021bc25ccc1ab8796307baab73032f",
+      "tsconfig.json": "e84e5c7fe88e3c5a4d54f55a816d42c1",
+      "ui_components.txt": "6ebd8c3c7be591f53b24e4b02809051c",
+      "vite.config.ts": "d573a36868b37c75ba8ac9fc7944253f"
+    },
+    "pipeline_version": 8
+  },
+  "tokens": {
+    "color": [
+      {
+        "name": "--background",
+        "raw": "oklch(0.995 0.002 90)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--foreground",
+        "raw": "oklch(0.24 0.008 260)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--card",
+        "raw": "oklch(1 0 0)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--card-foreground",
+        "raw": "oklch(0.24 0.008 260)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--popover",
+        "raw": "oklch(1 0 0)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--popover-foreground",
+        "raw": "oklch(0.24 0.008 260)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--primary",
+        "raw": "oklch(0.72 0.093 84)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--primary-foreground",
+        "raw": "oklch(0.21 0.008 260)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--gold",
+        "raw": "oklch(0.72 0.093 84)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--gold-soft",
+        "raw": "oklch(0.88 0.055 88)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--gold-deep",
+        "raw": "oklch(0.58 0.085 76)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--graphite",
+        "raw": "oklch(0.3 0.006 260)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--secondary",
+        "raw": "oklch(0.955 0.003 250)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--secondary-foreground",
+        "raw": "oklch(0.3 0.006 260)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--muted",
+        "raw": "oklch(0.955 0.003 250)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--muted-foreground",
+        "raw": "oklch(0.52 0.008 260)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--accent",
+        "raw": "oklch(0.945 0.02 88)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--accent-foreground",
+        "raw": "oklch(0.3 0.006 260)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--destructive",
+        "raw": "oklch(0.577 0.245 27.325)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--destructive-foreground",
+        "raw": "oklch(0.99 0 0)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--border",
+        "raw": "oklch(0.9 0.004 255)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--input",
+        "raw": "oklch(0.9 0.004 255)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--ring",
+        "raw": "oklch(0.72 0.093 84)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--chart-1",
+        "raw": "oklch(0.72 0.093 84)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--chart-2",
+        "raw": "oklch(0.58 0.085 76)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--chart-3",
+        "raw": "oklch(0.5 0.008 260)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--chart-4",
+        "raw": "oklch(0.7 0.01 260)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--chart-5",
+        "raw": "oklch(0.88 0.055 88)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--sidebar",
+        "raw": "oklch(0.98 0.002 250)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--sidebar-foreground",
+        "raw": "oklch(0.24 0.008 260)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--sidebar-primary",
+        "raw": "oklch(0.72 0.093 84)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--sidebar-primary-foreground",
+        "raw": "oklch(0.21 0.008 260)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--sidebar-accent",
+        "raw": "oklch(0.945 0.02 88)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--sidebar-accent-foreground",
+        "raw": "oklch(0.3 0.006 260)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--sidebar-border",
+        "raw": "oklch(0.9 0.004 255)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--sidebar-ring",
+        "raw": "oklch(0.72 0.093 84)",
+        "source": "src/styles.css"
+      }
+    ],
+    "typography": [
+      {
+        "name": "--font-display",
+        "raw": "\"Cormorant Garamond\", \"Noto Serif Thai\", Georgia, serif",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--font-sans",
+        "raw": "\"Karla\", \"Noto Sans Thai\", system-ui, sans-serif",
+        "source": "src/styles.css"
+      }
+    ],
+    "radius": [
+      {
+        "name": "--radius-sm",
+        "raw": "calc(var(--radius) - 4px)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--radius-md",
+        "raw": "calc(var(--radius) - 2px)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--radius-xl",
+        "raw": "calc(var(--radius) + 4px)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--radius-2xl",
+        "raw": "calc(var(--radius) + 8px)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--radius-3xl",
+        "raw": "calc(var(--radius) + 12px)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--radius-4xl",
+        "raw": "calc(var(--radius) + 16px)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--radius",
+        "raw": "0.25rem",
+        "source": "src/styles.css"
+      }
+    ],
+    "shadow": [
+      {
+        "name": "--shadow-soft",
+        "raw": "0 1px 2px oklch(0.24 0.008 260 / 0.04),\n    0 12px 32px -12px oklch(0.24 0.008 260 / 0.14)",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--shadow-gold",
+        "raw": "0 14px 40px -16px oklch(0.72 0.093 84 / 0.55)",
+        "source": "src/styles.css"
+      }
+    ],
+    "other": [
+      {
+        "name": "--gradient-gold",
+        "raw": "linear-gradient(\n    100deg,\n    oklch(0.58 0.085 76) 0%,\n    oklch(0.78 0.1 86) 45%,\n    oklch(0.92 0.05 92) 100%\n  )",
+        "source": "src/styles.css"
+      },
+      {
+        "name": "--gradient-shell",
+        "raw": "linear-gradient(\n    180deg,\n    oklch(1 0 0) 0%,\n    oklch(0.975 0.003 250) 100%\n  )",
+        "source": "src/styles.css"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "ReportTemplateEditor",
+      "file": "src/components/admin/ReportTemplateEditor",
+      "import_path": "",
+      "is_default": true
+    }
+  ],
+  "assets": [
+    {
+      "file": "src/assets/ai-scan.jpg",
+      "kind": "image",
+      "format": "jpg"
+    },
+    {
+      "file": "src/assets/dr-mali-robot.jpg",
+      "kind": "image",
+      "format": "jpg"
+    },
+    {
+      "file": "src/assets/filler/filler-0.webp.asset.json",
+      "kind": "image",
+      "format": "webp",
+      "pointer": true
+    },
+    {
+      "file": "src/assets/filler/filler-1.webp.asset.json",
+      "kind": "image",
+      "format": "webp",
+      "pointer": true
+    },
+    {
+      "file": "src/assets/filler/filler-2.webp.asset.json",
+      "kind": "image",
+      "format": "webp",
+      "pointer": true
+    },
+    {
+      "file": "src/assets/filler/filler-3.webp.asset.json",
+      "kind": "image",
+      "format": "webp",
+      "pointer": true
+    },
+    {
+      "file": "src/assets/filler/filler-4.webp.asset.json",
+      "kind": "image",
+      "format": "webp",
+      "pointer": true
+    },
+    {
+      "file": "src/assets/filler/filler-5.webp.asset.json",
+      "kind": "image",
+      "format": "webp",
+      "pointer": true
+    },
+    {
+      "file": "src/assets/filler/filler-6.webp.asset.json",
+      "kind": "image",
+      "format": "webp",
+      "pointer": true
+    },
+    {
+      "file": "src/assets/hero-clinic.jpg",
+      "kind": "image",
+      "format": "jpg"
+    },
+    {
+      "file": "src/assets/logo.jpg.asset.json",
+      "kind": "logo",
+      "format": "jpg",
+      "pointer": true
+    },
+    {
+      "file": "src/assets/products.jpg",
+      "kind": "image",
+      "format": "jpg"
+    },
+    {
+      "file": "src/assets/videos/888clinic-mali-promo-vertical.mp4.asset.json",
+      "kind": "video",
+      "format": "mp4",
+      "pointer": true
+    }
+  ]
+}
