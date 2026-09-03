@@ -1,0 +1,18 @@
+name = "888clinic"
+main = ".output/server/index.mjs"
+compatibility_date = "2026-08-30"
+
+[env.production]
+name = "888clinic-prod"
+routes = [
+  { pattern = "888clinic.co", zone_name = "888clinic.co" }
+]
+
+[build]
+command = "bun install && bun run build"
+
+[env.production.vars]
+NODE_ENV = "production"
+
+[env.production.secrets]
+VITE_PAYMENTS_CLIENT_TOKEN = "your_stripe_token"
