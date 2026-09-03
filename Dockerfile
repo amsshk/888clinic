@@ -15,4 +15,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
   CMD node -e "require('http').get('http://localhost:3000', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
 
 # Start the production server
-CMD ["node", "/app/.output/server/index.mjs"]
+CMD ["bun", "/app/.output/server/index.mjs"]
