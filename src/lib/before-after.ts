@@ -9,10 +9,51 @@ export type BeforeAfterItem = {
   alt: string;
 };
 
+// Map of Lovable CDN URLs to local asset filenames
+// These files are built during the Nitro build process from Lovable's source
+const ASSET_MAP: Record<string, string> = {
+  "/__l5e/assets-v1/10078c34-03fe-47bd-b402-f5455cd4d52d/ba-07398f9c-DxADmaDZ.jpg": "/assets/ba-07398f9c-DxADmaDZ.jpg",
+  "/__l5e/assets-v1/10d0dd40-86e2-4f06-9089-8ef8302ce442/ba-07e73527-ThmdJyUC.jpg": "/assets/ba-07e73527-ThmdJyUC.jpg",
+  "/__l5e/assets-v1/cab6806c-58ee-45fb-a975-a4423d168001/ba-080b016c-B4vQM79o.jpg": "/assets/ba-080b016c-B4vQM79o.jpg",
+  "/__l5e/assets-v1/f89590ba-f4be-45b3-a98b-b77393ba9c47/ba-8e89da87-E2Jmz6hH.jpg": "/assets/ba-8e89da87-E2Jmz6hH.jpg",
+  "/__l5e/assets-v1/679f27da-7069-4e96-8d76-47eda5f2529d/ba-99fd5bda-Bp26B8tP.jpg": "/assets/ba-99fd5bda-Bp26B8tP.jpg",
+  "/__l5e/assets-v1/3924c53b-3ec2-4652-8ab1-59d611ec1e85/ba-f0959737-BVOACBfI.jpg": "/assets/ba-f0959737-BVOACBfI.jpg",
+  "/__l5e/assets-v1/150eb537-021d-4f30-b8e2-667894120a6c/ba-f2b7571d-G3fyVY34.jpg": "/assets/ba-f2b7571d-G3fyVY34.jpg",
+  "/__l5e/assets-v1/c3994f08-1439-4277-9407-3936175ebfbe/ba-156d40d8-DZQh3PQt.jpg": "/assets/ba-156d40d8-DZQh3PQt.jpg",
+  "/__l5e/assets-v1/71efb6dc-8851-421d-a7ac-e7e604803631/ba-595b26f7-DwRw3_7i.jpg": "/assets/ba-595b26f7-DwRw3_7i.jpg",
+  "/__l5e/assets-v1/1f5f98a9-d4d5-41c1-a35a-3c235ef7b41d/ba-654e8303-CAF_T_Yj.jpg": "/assets/ba-654e8303-CAF_T_Yj.jpg",
+  "/__l5e/assets-v1/3aa9d0ae-4544-4f5b-a2eb-d29fc339b32f/ba-89d45b9d-B0GBT1Wc.jpg": "/assets/ba-89d45b9d-B0GBT1Wc.jpg",
+  "/__l5e/assets-v1/9d4d8de5-8434-42ac-94b4-344f3b0f88fa/ba-8aa8f9a5-BL26o9cn.jpg": "/assets/ba-8aa8f9a5-BL26o9cn.jpg",
+  "/__l5e/assets-v1/36b9867a-87f9-4433-886f-0405c44b7cc5/ba-9b9be917-COdQl9Oq.jpg": "/assets/ba-9b9be917-COdQl9Oq.jpg",
+  "/__l5e/assets-v1/ff9befd1-5c5e-4ead-a579-66d6fb614f24/ba-acc31a12-BupIunsW.jpg": "/assets/ba-acc31a12-BupIunsW.jpg",
+  "/__l5e/assets-v1/6433e787-737d-4f8f-93c2-e4e47c940098/ba-cec51db3-D6Y3TuHt.jpg": "/assets/ba-cec51db3-D6Y3TuHt.jpg",
+  "/__l5e/assets-v1/bc8232c0-6eb3-46f4-b765-5aecdb052863/ba-cecc847e-D_PnGZcR.jpg": "/assets/ba-cecc847e-D_PnGZcR.jpg",
+  "/__l5e/assets-v1/78f9cb9e-068a-46d3-8986-1fcda3925f41/ba-4bfcd593-DeJvTZzn.jpg": "/assets/ba-4bfcd593-DeJvTZzn.jpg",
+  "/__l5e/assets-v1/c5dba654-c859-4336-b405-b3fe14c0a071/ba-066f5d0b-COgIvpq7.jpg": "/assets/ba-066f5d0b-COgIvpq7.jpg",
+  "/__l5e/assets-v1/f8290577-f98f-448f-8c96-7723e2d1eb00/ba-a2158e30-vPrT7mIO.jpg": "/assets/ba-a2158e30-vPrT7mIO.jpg",
+  "/__l5e/assets-v1/38327453-2f29-449b-a781-5588c04bcb25/ba-e6db236f-CGiUUekw.jpg": "/assets/ba-e6db236f-CGiUUekw.jpg",
+  "/__l5e/assets-v1/d8377500-b71f-4ea6-831c-e810dbe714b2/ba-4c85406d-CLDt6Vv2.jpg": "/assets/ba-4c85406d-CLDt6Vv2.jpg",
+  "/__l5e/assets-v1/c089f8ec-c2bc-42d3-a9b4-2f84c88a9805/ba-d25e720d-DU587fZr.jpg": "/assets/ba-d25e720d-DU587fZr.jpg",
+  "/__l5e/assets-v1/1d7eb636-b875-4f49-9a8a-91d2525e277a/ba-ba8774c6-wsN-ybVz.jpg": "/assets/ba-ba8774c6-wsN-ybVz.jpg",
+  "/__l5e/assets-v1/0f7d9174-dc30-4227-b595-ae7c49c92b9b/ba-c254e8c4-CfzxYWw9.jpg": "/assets/ba-c254e8c4-CfzxYWw9.jpg",
+  "/__l5e/assets-v1/4cc89a16-24fa-45ee-a07f-f9256632cbdc/ba-e7059ba3-CBC4ImlF.jpg": "/assets/ba-e7059ba3-CBC4ImlF.jpg",
+  "/__l5e/assets-v1/06c46da1-6536-465e-9d28-922003ab7f0e/ba-3f0f0b94-B6G_QjFL.jpg": "/assets/ba-3f0f0b94-B6G_QjFL.jpg",
+  "/__l5e/assets-v1/79149e71-4c95-4534-8f10-057a08b04c25/ba-9a2dae7f-CesPSK70.jpg": "/assets/ba-9a2dae7f-CesPSK70.jpg",
+  "/__l5e/assets-v1/0ec7d5de-6c8b-4a35-be85-dc4c9e7832ab/ba-6f4b2b98-DvU3wfN3.jpg": "/assets/ba-6f4b2b98-DvU3wfN3.jpg",
+  "/__l5e/assets-v1/777739c8-6a75-476e-8f74-1e65080aa0de/ba-c919e46c-HcpF50W1.jpg": "/assets/ba-c919e46c-HcpF50W1.jpg",
+  "/__l5e/assets-v1/c7b6620b-dc71-455e-8d0e-d3f357098ad7/ba-5e1e9ca4-Cb16auGZ.jpg": "/assets/ba-5e1e9ca4-Cb16auGZ.jpg",
+  "/__l5e/assets-v1/386093f8-24de-4a9a-bc13-7270377cedb8/ba-d076805a-Bcexhu9w.jpg": "/assets/ba-d076805a-Bcexhu9w.jpg",
+};
+
+// Helper function to convert Lovable CDN URLs to local paths
+export function getLocalAssetUrl(url: string): string {
+  return ASSET_MAP[url] || url;
+}
+
 export const BEFORE_AFTER: BeforeAfterItem[] = [
   {
     id: "07398f9c",
-    url: "/__l5e/assets-v1/10078c34-03fe-47bd-b402-f5455cd4d52d/ba-07398f9c-DxADmaDZ.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/10078c34-03fe-47bd-b402-f5455cd4d52d/ba-07398f9c-DxADmaDZ.jpg"),
     category: "Dermal Filler",
     zone: "Chin",
     description: "A softer, rounder chin was hiding this patient's profile. One syringe of filler gave it a little more shape — enough that the lower face finally looks balanced from the side.",
@@ -20,7 +61,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "07e73527",
-    url: "/__l5e/assets-v1/10d0dd40-86e2-4f06-9089-8ef8302ce442/ba-07e73527-ThmdJyUC.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/10d0dd40-86e2-4f06-9089-8ef8302ce442/ba-07e73527-ThmdJyUC.jpg"),
     category: "Dermal Filler",
     zone: "Chin",
     description: "She wanted a chin that read on camera. A single cc, placed carefully, lengthened it just slightly and the whole jaw looks tidier for it.",
@@ -28,7 +69,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "080b016c",
-    url: "/__l5e/assets-v1/cab6806c-58ee-45fb-a975-a4423d168001/ba-080b016c-B4vQM79o.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/cab6806c-58ee-45fb-a975-a4423d168001/ba-080b016c-B4vQM79o.jpg"),
     category: "Dermal Filler",
     zone: "Chin",
     description: "The goal here was a longer, V-shaped chin rather than anything dramatic. 1 cc of filler, no downtime, and she went straight back to work.",
@@ -36,7 +77,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "8e89da87",
-    url: "/__l5e/assets-v1/f89590ba-f4be-45b3-a98b-b77393ba9c47/ba-8e89da87-E2Jmz6hH.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/f89590ba-f4be-45b3-a98b-b77393ba9c47/ba-8e89da87-E2Jmz6hH.jpg"),
     category: "Dermal Filler",
     zone: "Chin",
     description: "Adding a small amount of projection to the chin pulled the lower third of the face into line. Nothing else was treated.",
@@ -44,7 +85,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "99fd5bda",
-    url: "/__l5e/assets-v1/679f27da-7069-4e96-8d76-47eda5f2529d/ba-99fd5bda-Bp26B8tP.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/679f27da-7069-4e96-8d76-47eda5f2529d/ba-99fd5bda-Bp26B8tP.jpg"),
     category: "Dermal Filler",
     zone: "Chin",
     description: "A gentle 1 cc chin augmentation. It smooths the step between lip and chin and makes the profile look more even.",
@@ -52,7 +93,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "f0959737",
-    url: "/__l5e/assets-v1/3924c53b-3ec2-4652-8ab1-59d611ec1e85/ba-f0959737-BVOACBfI.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/3924c53b-3ec2-4652-8ab1-59d611ec1e85/ba-f0959737-BVOACBfI.jpg"),
     category: "Dermal Filler",
     zone: "Chin",
     description: "Filler was used to give the chin a slimmer, slightly longer finish — the kind of change friends notice without knowing why.",
@@ -60,7 +101,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "f2b7571d",
-    url: "/__l5e/assets-v1/150eb537-021d-4f30-b8e2-667894120a6c/ba-f2b7571d-G3fyVY34.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/150eb537-021d-4f30-b8e2-667894120a6c/ba-f2b7571d-G3fyVY34.jpg"),
     category: "Dermal Filler",
     zone: "Chin",
     description: "A softer, rounder chin was hiding this patient's profile. One syringe of filler gave it a little more shape — enough that the lower face finally looks balanced from the side.",
@@ -68,7 +109,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "156d40d8",
-    url: "/__l5e/assets-v1/c3994f08-1439-4277-9407-3936175ebfbe/ba-156d40d8-DZQh3PQt.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/c3994f08-1439-4277-9407-3936175ebfbe/ba-156d40d8-DZQh3PQt.jpg"),
     category: "Dermal Filler",
     zone: "Lips",
     description: "Her lips had thinned over the years. A conservative amount of filler brought back shape and a softer border, still very much her own mouth.",
@@ -76,7 +117,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "595b26f7",
-    url: "/__l5e/assets-v1/71efb6dc-8851-421d-a7ac-e7e604803631/ba-595b26f7-DwRw3_7i.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/71efb6dc-8851-421d-a7ac-e7e604803631/ba-595b26f7-DwRw3_7i.jpg"),
     category: "Dermal Filler",
     zone: "Lips",
     description: "We rebuilt a little volume and definition here. She asked for natural, so we stopped early — the smile does the rest.",
@@ -84,7 +125,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "654e8303",
-    url: "/__l5e/assets-v1/1f5f98a9-d4d5-41c1-a35a-3c235ef7b41d/ba-654e8303-CAF_T_Yj.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/1f5f98a9-d4d5-41c1-a35a-3c235ef7b41d/ba-654e8303-CAF_T_Yj.jpg"),
     category: "Dermal Filler",
     zone: "Lips",
     description: "Lip filler placed to even out the shape rather than to make it bigger. Hydrated, defined, and comfortable within a couple of days.",
@@ -92,7 +133,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "89d45b9d",
-    url: "/__l5e/assets-v1/3aa9d0ae-4544-4f5b-a2eb-d29fc339b32f/ba-89d45b9d-B0GBT1Wc.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/3aa9d0ae-4544-4f5b-a2eb-d29fc339b32f/ba-89d45b9d-B0GBT1Wc.jpg"),
     category: "Dermal Filler",
     zone: "Lips",
     description: "A small top-up gave the upper lip a gentle lift and a clearer outline.",
@@ -100,7 +141,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "8aa8f9a5",
-    url: "/__l5e/assets-v1/9d4d8de5-8434-42ac-94b4-344f3b0f88fa/ba-8aa8f9a5-BL26o9cn.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/9d4d8de5-8434-42ac-94b4-344f3b0f88fa/ba-8aa8f9a5-BL26o9cn.jpg"),
     category: "Dermal Filler",
     zone: "Lips",
     description: "Her lips had thinned over the years. A conservative amount of filler brought back shape and a softer border, still very much her own mouth.",
@@ -108,7 +149,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "9b9be917",
-    url: "/__l5e/assets-v1/36b9867a-87f9-4433-886f-0405c44b7cc5/ba-9b9be917-COdQl9Oq.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/36b9867a-87f9-4433-886f-0405c44b7cc5/ba-9b9be917-COdQl9Oq.jpg"),
     category: "Dermal Filler",
     zone: "Lips",
     description: "We rebuilt a little volume and definition here. She asked for natural, so we stopped early — the smile does the rest.",
@@ -116,7 +157,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "acc31a12",
-    url: "/__l5e/assets-v1/ff9befd1-5c5e-4ead-a579-66d6fb614f24/ba-acc31a12-BupIunsW.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/ff9befd1-5c5e-4ead-a579-66d6fb614f24/ba-acc31a12-BupIunsW.jpg"),
     category: "Dermal Filler",
     zone: "Lips",
     description: "Lip filler placed to even out the shape rather than to make it bigger. Hydrated, defined, and comfortable within a couple of days.",
@@ -124,7 +165,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "cec51db3",
-    url: "/__l5e/assets-v1/6433e787-737d-4f8f-93c2-e4e47c940098/ba-cec51db3-D6Y3TuHt.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/6433e787-737d-4f8f-93c2-e4e47c940098/ba-cec51db3-D6Y3TuHt.jpg"),
     category: "Dermal Filler",
     zone: "Lips",
     description: "A small top-up gave the upper lip a gentle lift and a clearer outline.",
@@ -132,7 +173,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "cecc847e",
-    url: "/__l5e/assets-v1/bc8232c0-6eb3-46f4-b765-5aecdb052863/ba-cecc847e-D_PnGZcR.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/bc8232c0-6eb3-46f4-b765-5aecdb052863/ba-cecc847e-D_PnGZcR.jpg"),
     category: "Dermal Filler",
     zone: "Lips",
     description: "Her lips had thinned over the years. A conservative amount of filler brought back shape and a softer border, still very much her own mouth.",
@@ -140,7 +181,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "4bfcd593",
-    url: "/__l5e/assets-v1/78f9cb9e-068a-46d3-8986-1fcda3925f41/ba-4bfcd593-DeJvTZzn.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/78f9cb9e-068a-46d3-8986-1fcda3925f41/ba-4bfcd593-DeJvTZzn.jpg"),
     category: "Dermal Filler",
     zone: "Under-eyes",
     description: "Threads were placed to lift the tissue that had drifted down over time — the jawline reads sharper immediately, and it keeps settling over the following weeks.",
@@ -148,7 +189,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "066f5d0b",
-    url: "/__l5e/assets-v1/c5dba654-c859-4336-b405-b3fe14c0a071/ba-066f5d0b-COgIvpq7.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/c5dba654-c859-4336-b405-b3fe14c0a071/ba-066f5d0b-COgIvpq7.jpg"),
     category: "Facelift / Thread Lift",
     zone: "Cheeks & jawline",
     description: "This was about tightening a softening lower face. The lift is visible on the day, with only mild tenderness afterwards.",
@@ -156,7 +197,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "a2158e30",
-    url: "/__l5e/assets-v1/f8290577-f98f-448f-8c96-7723e2d1eb00/ba-a2158e30-vPrT7mIO.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/f8290577-f98f-448f-8c96-7723e2d1eb00/ba-a2158e30-vPrT7mIO.jpg"),
     category: "Facelift / Thread Lift",
     zone: "Full face & chin",
     description: "A quiet, structural change: the cheek and jaw are supported again, so the face looks rested rather than done.",
@@ -164,7 +205,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "e6db236f",
-    url: "/__l5e/assets-v1/38327453-2f29-449b-a781-5588c04bcb25/ba-e6db236f-CGiUUekw.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/38327453-2f29-449b-a781-5588c04bcb25/ba-e6db236f-CGiUUekw.jpg"),
     category: "Facelift / Thread Lift",
     zone: "Full face & jawline",
     description: "Sagging along the jaw was the main concern. After treatment the contour is cleaner and the neckline looks longer.",
@@ -172,7 +213,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "4c85406d",
-    url: "/__l5e/assets-v1/d8377500-b71f-4ea6-831c-e810dbe714b2/ba-4c85406d-CLDt6Vv2.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/d8377500-b71f-4ea6-831c-e810dbe714b2/ba-4c85406d-CLDt6Vv2.jpg"),
     category: "Facelift / Thread Lift",
     zone: "Full face & lips",
     description: "Threads were placed to lift the tissue that had drifted down over time — the jawline reads sharper immediately, and it keeps settling over the following weeks.",
@@ -180,7 +221,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "d25e720d",
-    url: "/__l5e/assets-v1/c089f8ec-c2bc-42d3-a9b4-2f84c88a9805/ba-d25e720d-DU587fZr.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/c089f8ec-c2bc-42d3-a9b4-2f84c88a9805/ba-d25e720d-DU587fZr.jpg"),
     category: "Facelift / Thread Lift",
     zone: "Full face & lips",
     description: "This was about tightening a softening lower face. The lift is visible on the day, with only mild tenderness afterwards.",
@@ -188,7 +229,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "ba8774c6",
-    url: "/__l5e/assets-v1/1d7eb636-b875-4f49-9a8a-91d2525e277a/ba-ba8774c6-wsN-ybVz.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/1d7eb636-b875-4f49-9a8a-91d2525e277a/ba-ba8774c6-wsN-ybVz.jpg"),
     category: "Facelift / Thread Lift",
     zone: "Full face & outer eyes",
     description: "A quiet, structural change: the cheek and jaw are supported again, so the face looks rested rather than done.",
@@ -196,7 +237,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "c254e8c4",
-    url: "/__l5e/assets-v1/0f7d9174-dc30-4227-b595-ae7c49c92b9b/ba-c254e8c4-CfzxYWw9.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/0f7d9174-dc30-4227-b595-ae7c49c92b9b/ba-c254e8c4-CfzxYWw9.jpg"),
     category: "Facelift / Thread Lift",
     zone: "Full face, under-eye & chin",
     description: "Sagging along the jaw was the main concern. After treatment the contour is cleaner and the neckline looks longer.",
@@ -204,7 +245,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "e7059ba3",
-    url: "/__l5e/assets-v1/4cc89a16-24fa-45ee-a07f-f9256632cbdc/ba-e7059ba3-CBC4ImlF.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/4cc89a16-24fa-45ee-a07f-f9256632cbdc/ba-e7059ba3-CBC4ImlF.jpg"),
     category: "Facelift / Thread Lift",
     zone: "Jawline & chin",
     description: "Threads were placed to lift the tissue that had drifted down over time — the jawline reads sharper immediately, and it keeps settling over the following weeks.",
@@ -212,7 +253,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "3f0f0b94",
-    url: "/__l5e/assets-v1/06c46da1-6536-465e-9d28-922003ab7f0e/ba-3f0f0b94-B6G_QjFL.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/06c46da1-6536-465e-9d28-922003ab7f0e/ba-3f0f0b94-B6G_QjFL.jpg"),
     category: "Facelift / Thread Lift",
     zone: "Jawline & under-eye",
     description: "This was about tightening a softening lower face. The lift is visible on the day, with only mild tenderness afterwards.",
@@ -220,7 +261,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "9a2dae7f",
-    url: "/__l5e/assets-v1/79149e71-4c95-4534-8f10-057a08b04c25/ba-9a2dae7f-CesPSK70.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/79149e71-4c95-4534-8f10-057a08b04c25/ba-9a2dae7f-CesPSK70.jpg"),
     category: "Facelift / Thread Lift",
     zone: "Lips & lower face",
     description: "A quiet, structural change: the cheek and jaw are supported again, so the face looks rested rather than done.",
@@ -228,7 +269,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "6f4b2b98",
-    url: "/__l5e/assets-v1/0ec7d5de-6c8b-4a35-be85-dc4c9e7832ab/ba-6f4b2b98-DvU3wfN3.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/0ec7d5de-6c8b-4a35-be85-dc4c9e7832ab/ba-6f4b2b98-DvU3wfN3.jpg"),
     category: "Facelift / Thread Lift",
     zone: "Lower face & chin",
     description: "Sagging along the jaw was the main concern. After treatment the contour is cleaner and the neckline looks longer.",
@@ -236,7 +277,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "c919e46c",
-    url: "/__l5e/assets-v1/777739c8-6a75-476e-8f74-1e65080aa0de/ba-c919e46c-HcpF50W1.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/777739c8-6a75-476e-8f74-1e65080aa0de/ba-c919e46c-HcpF50W1.jpg"),
     category: "Facelift / Thread Lift",
     zone: "Lower face & chin",
     description: "Threads were placed to lift the tissue that had drifted down over time — the jawline reads sharper immediately, and it keeps settling over the following weeks.",
@@ -244,7 +285,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "5e1e9ca4",
-    url: "/__l5e/assets-v1/c7b6620b-dc71-455e-8d0e-d3f357098ad7/ba-5e1e9ca4-Cb16auGZ.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/c7b6620b-dc71-455e-8d0e-d3f357098ad7/ba-5e1e9ca4-Cb16auGZ.jpg"),
     category: "Facelift / Thread Lift",
     zone: "Lower face & jawline",
     description: "This was about tightening a softening lower face. The lift is visible on the day, with only mild tenderness afterwards.",
@@ -252,7 +293,7 @@ export const BEFORE_AFTER: BeforeAfterItem[] = [
   },
   {
     id: "d076805a",
-    url: "/__l5e/assets-v1/386093f8-24de-4a9a-bc13-7270377cedb8/ba-d076805a-Bcexhu9w.jpg",
+    url: getLocalAssetUrl("/__l5e/assets-v1/386093f8-24de-4a9a-bc13-7270377cedb8/ba-d076805a-Bcexhu9w.jpg"),
     category: "Facelift / Thread Lift",
     zone: "Lower face & jawline",
     description: "A quiet, structural change: the cheek and jaw are supported again, so the face looks rested rather than done.",
@@ -264,3 +305,4 @@ export const RESULT_CATEGORIES: ResultCategory[] = [
   "Facelift / Thread Lift",
   "Dermal Filler",
 ];
+
