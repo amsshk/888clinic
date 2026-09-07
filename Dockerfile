@@ -9,6 +9,7 @@ COPY . .
 RUN bun install --frozen-lockfile && bun run build
 
 EXPOSE 3000
+ENV NITRO_PORT=3000
 
 # Health check
 
