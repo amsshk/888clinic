@@ -21,9 +21,9 @@ import { PricingTab } from "@/components/admin/PricingTab";
 import { MarketingTab } from "@/components/admin/MarketingTab";
 import { CopyTab } from "@/components/admin/CopyTab";
 import { AssistantTab } from "@/components/admin/AssistantTab";
+import { VideoUploader } from "@/components/VideoUploader";
 
 import { RESULT_CATEGORIES } from "@/lib/before-after";
-
 
 import { toast } from "sonner";
 
@@ -31,7 +31,10 @@ export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
       { title: "Clinic Admin — 888clinic" },
-      { name: "description", content: "Enquiry inbox and AI-assisted media library for 888clinic staff." },
+      {
+        name: "description",
+        content: "Enquiry inbox and AI-assisted media library for 888clinic staff.",
+      },
       { name: "robots", content: "noindex" },
       { property: "og:title", content: "Clinic Admin — 888clinic" },
       { property: "og:description", content: "Manage enquiries and clinic media." },
@@ -128,6 +131,11 @@ function AdminPage() {
           <TabsTrigger value="media" className="rounded-none">
             Media library
           </TabsTrigger>
+          {isAdmin && (
+            <TabsTrigger value="video-upload" className="rounded-none">
+              Video Upload
+            </TabsTrigger>
+          )}
           <TabsTrigger value="orders" className="rounded-none">
             Skincare orders
           </TabsTrigger>
@@ -173,7 +181,6 @@ function AdminPage() {
           )}
         </TabsList>
 
-
         {isAdmin && (
           <TabsContent value="patients" className="mt-8">
             <PatientsTab />
@@ -185,6 +192,11 @@ function AdminPage() {
         <TabsContent value="media" className="mt-8">
           <MediaLibrary />
         </TabsContent>
+        {isAdmin && (
+          <TabsContent value="video-upload" className="mt-8">
+            <VideoUploader />
+          </TabsContent>
+        )}
         <TabsContent value="orders" className="mt-8">
           <OrdersTab />
         </TabsContent>
@@ -228,10 +240,6 @@ function AdminPage() {
             <AssistantTab />
           </TabsContent>
         )}
-
-
-
-
       </Tabs>
     </div>
   );
@@ -265,8 +273,7 @@ function Inbox() {
   }
 
   if (loading) return <Loader2 className="size-5 animate-spin text-gold" />;
-  if (rows.length === 0)
-    return <p className="text-sm text-muted-foreground">No enquiries yet.</p>;
+  if (rows.length === 0) return <p className="text-sm text-muted-foreground">No enquiries yet.</p>;
 
   return (
     <div className="space-y-px bg-border">
@@ -285,7 +292,11 @@ function Inbox() {
                 {row.status}
               </span>
               {row.status !== "confirmed" && (
-                <Button size="sm" className="rounded-none" onClick={() => setStatus(row.id, "confirmed")}>
+                <Button
+                  size="sm"
+                  className="rounded-none"
+                  onClick={() => setStatus(row.id, "confirmed")}
+                >
                   Mark confirmed
                 </Button>
               )}
@@ -313,6 +324,102 @@ function Inbox() {
   );
 }
 
+async function captureVideoFrame(source: Blob): Promise<string> {
+  return await new Promise<string>((resolve, reject) => {
+    const objectUrl = URL.createObjectURL(source);
+    const video = document.createElement("video");
+    let finished = false;
+
+    const cleanup = () => {
+      window.clearTimeout(timeout);
+      video.removeAttribute("src");
+      video.load();
+      URL.revokeObjectURL(objectUrl);
+    };
+
+    const finish = (value?: string, error?: Error) => {
+      if (finished) return;
+      finished = true;
+      cleanup();
+
+      if (error) reject(error);
+      else if (value) resolve(value);
+      else reject(new Error("Could not create the video preview."));
+    };
+
+    const draw = () => {
+      try {
+        if (!video.videoWidth || !video.videoHeight) {
+          finish(undefined, new Error("The video has no readable frame."));
+          return;
+        }
+
+        const limit = 960;
+        const scale = Math.min(1, limit / video.videoWidth, limit / video.videoHeight);
+
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.max(1, Math.round(video.videoWidth * scale));
+        canvas.height = Math.max(1, Math.round(video.videoHeight * scale));
+
+        const context = canvas.getContext("2d");
+        if (!context) {
+          finish(undefined, new Error("Could not create a preview canvas."));
+          return;
+        }
+
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const frame = canvas.toDataURL("image/jpeg", 0.82);
+
+        if (!frame.startsWith("data:image/jpeg;base64,")) {
+          finish(undefined, new Error("Could not encode the video preview."));
+          return;
+        }
+
+        finish(frame);
+      } catch (error) {
+        finish(
+          undefined,
+          error instanceof Error ? error : new Error("Could not capture the video frame."),
+        );
+      }
+    };
+
+    const timeout = window.setTimeout(
+      () => finish(undefined, new Error("Video preview timed out.")),
+      15_000,
+    );
+
+    video.preload = "auto";
+    video.muted = true;
+    video.playsInline = true;
+
+    video.addEventListener(
+      "error",
+      () => finish(undefined, new Error("This video format could not be previewed.")),
+      { once: true },
+    );
+
+    video.addEventListener(
+      "loadedmetadata",
+      () => {
+        const duration = video.duration;
+        const target = Number.isFinite(duration) && duration > 0.4 ? Math.min(1, duration / 2) : 0;
+
+        if (target > 0) {
+          video.addEventListener("seeked", draw, { once: true });
+          video.currentTime = target;
+        } else {
+          video.addEventListener("loadeddata", draw, { once: true });
+        }
+      },
+      { once: true },
+    );
+
+    video.src = objectUrl;
+    video.load();
+  });
+}
+
 function MediaLibrary() {
   const { user } = useAuth();
   const describe = useServerFn(describeMedia);
@@ -325,7 +432,9 @@ function MediaLibrary() {
   const load = useCallback(async () => {
     const { data } = await supabase
       .from("media_items")
-      .select("id, kind, storage_path, title, description, alt_text, tags, published, show_in_results, results_category, created_at")
+      .select(
+        "id, kind, storage_path, title, description, alt_text, tags, published, show_in_results, results_category, created_at",
+      )
       .order("created_at", { ascending: false });
     const rows = (data as MediaItem[]) ?? [];
     setItems(rows);
@@ -333,7 +442,9 @@ function MediaLibrary() {
     const signed: Record<string, string> = {};
     await Promise.all(
       rows.map(async (row) => {
-        const { data: s } = await supabase.storage.from("media").createSignedUrl(row.storage_path, 60 * 60);
+        const { data: s } = await supabase.storage
+          .from("media")
+          .createSignedUrl(row.storage_path, 60 * 60);
         if (s?.signedUrl) signed[row.id] = s.signedUrl;
       }),
     );
@@ -364,8 +475,21 @@ function MediaLibrary() {
       });
       if (upErr) throw upErr;
 
+      let previewDataUrl: string | undefined;
+
+      if (kind === "video") {
+        try {
+          setStep(`Preparing video preview…${label}`);
+          previewDataUrl = await captureVideoFrame(file);
+        } catch (error) {
+          console.warn("Could not extract video preview", error);
+        }
+      }
+
       setStep(`Writing details with AI…${label}`);
-      const ai = await describe({ data: { storagePath: path, kind, hint } });
+      const ai = await describe({
+        data: { storagePath: path, kind, hint, previewDataUrl },
+      });
 
       const { error: insErr } = await supabase.from("media_items").insert({
         kind,
@@ -405,7 +529,7 @@ function MediaLibrary() {
     setBusy(false);
     setStep("");
     if (done > 0) {
-      toast.success(done === 1 ? "Uploaded and described" : `${done} files uploaded and described`);
+      toast.success(done === 1 ? "Upload complete" : `${done} uploads complete`);
       setHint("");
       await load();
     }
@@ -451,8 +575,29 @@ function MediaLibrary() {
 
   async function regenerate(item: MediaItem) {
     setBusy(true);
+
+    let previewDataUrl: string | undefined;
+
+    if (item.kind === "video" && urls[item.id]) {
+      try {
+        setStep("Preparing video preview…");
+        const response = await fetch(urls[item.id]);
+        if (!response.ok) throw new Error("Could not download the video.");
+        previewDataUrl = await captureVideoFrame(await response.blob());
+      } catch (error) {
+        console.warn("Could not extract video preview", error);
+      }
+    }
+
     setStep("Rewriting with AI…");
-    const ai = await describe({ data: { storagePath: item.storage_path, kind: item.kind === "video" ? "video" : "photo", hint } });
+    const ai = await describe({
+      data: {
+        storagePath: item.storage_path,
+        kind: item.kind === "video" ? "video" : "photo",
+        hint,
+        previewDataUrl,
+      },
+    });
     setBusy(false);
     setStep("");
     if (!ai.ok) {
@@ -485,8 +630,8 @@ function MediaLibrary() {
           <div>
             <h2 className="text-lg">Upload photos or videos</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Select several files at once — the AI writes a title, description, alt text and tags for
-              each one. You can edit anything after.
+              Select several files at once — the AI writes a title, description, alt text and tags
+              for each one. You can edit anything after.
             </p>
           </div>
           <Button
@@ -548,7 +693,11 @@ function MediaLibrary() {
               <div className="space-y-4 p-5">
                 <Input
                   value={item.title ?? ""}
-                  onChange={(e) => setItems((l) => l.map((i) => (i.id === item.id ? { ...i, title: e.target.value } : i)))}
+                  onChange={(e) =>
+                    setItems((l) =>
+                      l.map((i) => (i.id === item.id ? { ...i, title: e.target.value } : i)),
+                    )
+                  }
                   onBlur={(e) => save(item, { title: e.target.value })}
                   className="rounded-none"
                 />
@@ -556,7 +705,9 @@ function MediaLibrary() {
                   rows={3}
                   value={item.description ?? ""}
                   onChange={(e) =>
-                    setItems((l) => l.map((i) => (i.id === item.id ? { ...i, description: e.target.value } : i)))
+                    setItems((l) =>
+                      l.map((i) => (i.id === item.id ? { ...i, description: e.target.value } : i)),
+                    )
                   }
                   onBlur={(e) => save(item, { description: e.target.value })}
                   className="rounded-none"
@@ -565,14 +716,19 @@ function MediaLibrary() {
                   value={item.alt_text ?? ""}
                   placeholder="Alt text"
                   onChange={(e) =>
-                    setItems((l) => l.map((i) => (i.id === item.id ? { ...i, alt_text: e.target.value } : i)))
+                    setItems((l) =>
+                      l.map((i) => (i.id === item.id ? { ...i, alt_text: e.target.value } : i)),
+                    )
                   }
                   onBlur={(e) => save(item, { alt_text: e.target.value })}
                   className="rounded-none"
                 />
                 <div className="flex flex-wrap gap-2">
                   {item.tags.map((tag) => (
-                    <span key={tag} className="border border-border px-2 py-0.5 text-xs text-muted-foreground">
+                    <span
+                      key={tag}
+                      className="border border-border px-2 py-0.5 text-xs text-muted-foreground"
+                    >
                       {tag}
                     </span>
                   ))}
@@ -617,7 +773,13 @@ function MediaLibrary() {
                     Published to gallery
                   </label>
                   <div className="flex gap-2">
-                    <Button size="sm" variant="outline" className="rounded-none" disabled={busy} onClick={() => regenerate(item)}>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="rounded-none"
+                      disabled={busy}
+                      onClick={() => regenerate(item)}
+                    >
                       <Sparkles className="size-4" /> Redo AI
                     </Button>
                     <Button
@@ -628,7 +790,12 @@ function MediaLibrary() {
                     >
                       <Download className="size-4" /> Download
                     </Button>
-                    <Button size="sm" variant="ghost" className="rounded-none" onClick={() => remove(item)}>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="rounded-none"
+                      onClick={() => remove(item)}
+                    >
                       Delete
                     </Button>
                   </div>
@@ -640,9 +807,15 @@ function MediaLibrary() {
       )}
 
       <p className="text-xs text-muted-foreground">
-        Published media appears on the <Link to="/gallery" className="underline">gallery page</Link>. Items marked
-        &ldquo;Show on Before &amp; After results&rdquo; also appear on the{" "}
-        <Link to="/results" className="underline">results page</Link>.
+        Published media appears on the{" "}
+        <Link to="/gallery" className="underline">
+          gallery page
+        </Link>
+        . Items marked &ldquo;Show on Before &amp; After results&rdquo; also appear on the{" "}
+        <Link to="/results" className="underline">
+          results page
+        </Link>
+        .
       </p>
     </div>
   );

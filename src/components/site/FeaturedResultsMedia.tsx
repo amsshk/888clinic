@@ -49,16 +49,15 @@ export function FeaturedResultsMedia({ filter }: { filter: string }) {
     };
   }, []);
 
-  const shown =
-    filter === "all" ? items : items.filter((i) => i.results_category === filter);
+  const shown = filter === "all" ? items : items.filter((i) => i.results_category === filter);
 
   if (shown.length === 0) return null;
 
   return (
-    <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="mt-12 grid gap-x-7 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
       {shown.map((item) => (
-        <figure key={item.id} className="border border-border bg-card">
-          <div className="aspect-[4/5] bg-shell">
+        <figure key={item.id} className="min-w-0 text-center">
+          <div className="aspect-square overflow-hidden rounded-xl border border-border bg-shell">
             {urls[item.id] &&
               (item.kind === "video" ? (
                 <video
@@ -76,16 +75,11 @@ export function FeaturedResultsMedia({ filter }: { filter: string }) {
                 />
               ))}
           </div>
-          <figcaption className="p-5">
-            <p className="text-[0.65rem] uppercase tracking-[0.18em] text-gold">
-              {item.results_category ?? (item.kind === "video" ? "Video" : "Result")}
+          <figcaption className="px-2 pt-5">
+            {item.title && <h2 className="text-base leading-snug">{item.title}</h2>}
+            <p className="mt-2 text-[0.68rem] uppercase tracking-[0.14em] text-gold">
+              {item.results_category ?? (item.kind === "video" ? "Video result" : "Clinic result")}
             </p>
-            {item.title && <h2 className="mt-2 text-lg leading-snug">{item.title}</h2>}
-            {item.description && (
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                {item.description}
-              </p>
-            )}
           </figcaption>
         </figure>
       ))}
