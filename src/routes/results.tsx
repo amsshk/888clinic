@@ -3,7 +3,6 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { BookingDialog } from "@/components/site/BookingDialog";
 import { BEFORE_AFTER, RESULT_CATEGORIES, type ResultCategory } from "@/lib/before-after";
-import { ResultsMarquee } from "@/components/site/ResultsMarquee";
 import { FeaturedResultsMedia } from "@/components/site/FeaturedResultsMedia";
 import { useLang } from "@/lib/i18n";
 import { localizeResult, localizeResultCategory } from "@/lib/public-content";
@@ -53,14 +52,6 @@ function ResultsPage() {
           </p>
         </div>
 
-        <div className="mt-4 pb-14">
-          <div className="mx-auto mb-5 max-w-6xl px-5">
-            <p className="text-[0.65rem] uppercase tracking-[0.22em] text-gold">
-              {t("res.marquee")}
-            </p>
-          </div>
-          <ResultsMarquee />
-        </div>
       </section>
 
       <div className="mx-auto max-w-6xl px-5 py-14">
