@@ -42,30 +42,33 @@ function ResultsPage() {
   return (
     <div>
       <section className="bg-shell">
-        <div className="mx-auto max-w-6xl px-5 py-16">
-          <p className="eyebrow">{t("res.eyebrow")}</p>
-          <h1 className="mt-4 text-5xl leading-tight">
-            {t("res.title1")} <span className="text-gradient-gold">{t("res.title2")}</span>
+        <div className="mx-auto max-w-[90rem] px-5 py-16 text-center md:py-20">
+          <h1 className="text-4xl uppercase tracking-[0.16em] text-gold md:text-5xl">
+            {t("res.title1")} {t("res.title2")}
           </h1>
-          <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground">
+          <div className="mx-auto mt-6 flex max-w-xs items-center gap-4 text-gold">
+            <span className="h-px flex-1 bg-gold/40" />
+            <span className="text-xl">888</span>
+            <span className="h-px flex-1 bg-gold/40" />
+          </div>
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground">
             {t("res.lede")}
           </p>
         </div>
-
       </section>
 
-      <div className="mx-auto max-w-6xl px-5 py-14">
-        <div className="flex flex-wrap gap-2">
+      <div className="mx-auto max-w-[90rem] px-5 py-14">
+        <div className="flex flex-wrap justify-center gap-8 md:gap-14">
           {tabs.map((tab) => (
             <button
               key={tab}
               type="button"
               onClick={() => setFilter(tab)}
               className={
-                "border px-4 py-1.5 text-[0.7rem] uppercase tracking-[0.18em] transition-colors " +
+                "border-b px-1 pb-3 text-[0.72rem] uppercase tracking-[0.16em] transition-colors " +
                 (filter === tab
-                  ? "border-gold bg-accent text-foreground"
-                  : "border-border text-muted-foreground hover:text-foreground")
+                  ? "border-gold text-gold"
+                  : "border-transparent text-foreground hover:text-gold")
               }
             >
               {tab === "all" ? t("res.all") : localizeResultCategory(tab, lang)}
@@ -75,26 +78,25 @@ function ResultsPage() {
 
         <FeaturedResultsMedia filter={filter} />
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-12 grid gap-x-7 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
           {items.map((item) => {
             const display = localizeResult(item, lang);
-            return <figure key={item.id} className="border border-border bg-card">
-              <img
-                src={item.url}
-                alt={display.alt}
-                loading="lazy"
-                className="aspect-[4/5] w-full bg-shell object-cover"
-              />
-              <figcaption className="p-5">
-                <p className="text-[0.65rem] uppercase tracking-[0.18em] text-gold">
-                  {display.category}
-                </p>
-                <h2 className="mt-2 text-lg leading-snug">{display.zone}</h2>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  {display.description}
-                </p>
-              </figcaption>
-            </figure>;
+            return (
+              <figure key={item.id} className="min-w-0 text-center">
+                <img
+                  src={item.url}
+                  alt={display.alt}
+                  loading="lazy"
+                  className="aspect-square w-full rounded-xl border border-border bg-shell object-cover"
+                />
+                <figcaption className="px-2 pt-5">
+                  <h2 className="text-base leading-snug">{display.zone}</h2>
+                  <p className="mt-2 text-[0.68rem] uppercase tracking-[0.14em] text-gold">
+                    {display.category}
+                  </p>
+                </figcaption>
+              </figure>
+            );
           })}
         </div>
 
