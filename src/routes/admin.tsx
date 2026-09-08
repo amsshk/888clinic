@@ -21,6 +21,7 @@ import { PricingTab } from "@/components/admin/PricingTab";
 import { MarketingTab } from "@/components/admin/MarketingTab";
 import { CopyTab } from "@/components/admin/CopyTab";
 import { AssistantTab } from "@/components/admin/AssistantTab";
+import { VideoUploader } from "@/components/VideoUploader";
 
 import { RESULT_CATEGORIES } from "@/lib/before-after";
 
@@ -130,6 +131,11 @@ function AdminPage() {
           <TabsTrigger value="media" className="rounded-none">
             Media library
           </TabsTrigger>
+          {isAdmin && (
+            <TabsTrigger value="video-upload" className="rounded-none">
+              Video Upload
+            </TabsTrigger>
+          )}
           <TabsTrigger value="orders" className="rounded-none">
             Skincare orders
           </TabsTrigger>
@@ -186,6 +192,11 @@ function AdminPage() {
         <TabsContent value="media" className="mt-8">
           <MediaLibrary />
         </TabsContent>
+        {isAdmin && (
+          <TabsContent value="video-upload" className="mt-8">
+            <VideoUploader />
+          </TabsContent>
+        )}
         <TabsContent value="orders" className="mt-8">
           <OrdersTab />
         </TabsContent>
