@@ -26,8 +26,25 @@ export const describeMedia = createServerFn({ method: "POST" })
     const { data: isStaff } = await supabase.rpc("is_staff", { _user_id: userId });
     if (!isStaff) return { ok: false, error: "You don't have access to the media library." };
 
-    const apiKey = process.env["LOVABLE_API_KEY"];
-    if (!apiKey) return { ok: false, error: "AI is not configured for this project." };
+    const lovableApiKey = process.env["LOVABLE_API_KEY"];
+    const { openaiKey } = await import("@/lib/openai.server");
+    const hasOpenAI = Boolean(openaiKey());
+
+    if (!lovableApiKey && !hasOpenAI) {
+      return {
+        ok: false,
+        error: "Media uploaded. Add the title and description manually.",
+      };
+    }
+
+    // The Lovable gateway supports video input. Without it, videos still
+    // upload successfully and staff can enter their details manually.
+    if (data.kind === "video" && !lovableApiKey) {
+      return {
+        ok: false,
+        error: "Video uploaded. Add the title and description manually.",
+      };
+    }
 
     const { data: file, error: dlError } = await supabase.storage.from("media").download(data.storagePath);
     if (dlError || !file) {
@@ -70,7 +87,7 @@ export const describeMedia = createServerFn({ method: "POST" })
     const { callGateway, CHAT_MODEL } = await import("@/lib/ai-gateway.server");
 
     const call = await callGateway(
-      apiKey,
+      lovableApiKey ?? "",
       {
         model: CHAT_MODEL,
         response_format: { type: "json_object" },

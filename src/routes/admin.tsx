@@ -405,7 +405,7 @@ function MediaLibrary() {
     setBusy(false);
     setStep("");
     if (done > 0) {
-      toast.success(done === 1 ? "Uploaded and described" : `${done} files uploaded and described`);
+      toast.success(done === 1 ? "Upload complete" : `${done} uploads complete`);
       setHint("");
       await load();
     }
