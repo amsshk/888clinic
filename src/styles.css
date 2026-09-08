@@ -656,3 +656,242 @@
     animation: none;
   }
 }
+
+/* Shared public-site dark luxury design system */
+.public-luxury-shell {
+  --gradient-shell:
+    radial-gradient(circle at 50% 5%, rgb(255 255 255 / 6%), transparent 32rem),
+    linear-gradient(180deg, #111 0%, #090909 100%);
+  --shadow-soft: 0 1px 0 rgb(225 187 146 / 12%), 0 18px 48px -18px rgb(0 0 0 / 78%);
+  --shadow-gold: 0 18px 54px -22px rgb(213 173 128 / 48%);
+
+  color: #f1e7de;
+  background-color: #090909;
+  color-scheme: dark;
+}
+
+.public-luxury-shell > main {
+  position: relative;
+  isolation: isolate;
+  background-color: #090909;
+  background-image:
+    radial-gradient(circle at 50% 8%, rgb(255 255 255 / 5%), transparent 36rem),
+    radial-gradient(circle at 10% 52%, rgb(191 150 107 / 3.5%), transparent 28rem),
+    repeating-linear-gradient(
+      118deg,
+      rgb(255 255 255 / 1.2%) 0,
+      rgb(255 255 255 / 1.2%) 1px,
+      transparent 1px,
+      transparent 5px
+    );
+}
+
+.public-luxury-shell > header {
+  border-color: rgb(203 166 126 / 20%);
+  color: #ead8c8;
+  background: rgb(7 7 7 / 94%);
+}
+
+.public-luxury-shell > header > div:first-child {
+  max-width: 96rem;
+}
+
+.public-luxury-shell > header .text-muted-foreground {
+  color: rgb(234 216 200 / 76%);
+}
+
+.public-luxury-shell > header .text-foreground,
+.public-luxury-shell > header a:hover {
+  color: #d9b58e;
+}
+
+.public-luxury-shell > header .border-border {
+  border-color: rgb(203 166 126 / 22%);
+}
+
+.public-luxury-shell > header button:focus-visible,
+.public-luxury-shell > main button:focus-visible,
+.public-luxury-shell > main a:focus-visible,
+.public-luxury-shell > footer a:focus-visible {
+  outline: 2px solid #d4aa78;
+  outline-offset: 4px;
+}
+
+.public-luxury-shell .bg-shell {
+  background: var(--gradient-shell);
+}
+
+.public-luxury-shell .bg-card {
+  border-color: rgb(218 183 145 / 20%);
+  background-color: rgb(21 20 19 / 92%);
+}
+
+.public-luxury-shell .bg-secondary\/60,
+.public-luxury-shell .bg-secondary\/40 {
+  background-color: rgb(18 17 16 / 82%);
+}
+
+.public-luxury-shell .bg-accent\/40,
+.public-luxury-shell .bg-accent\/50 {
+  background-color: rgb(207 170 130 / 10%);
+}
+
+.public-luxury-shell .bg-border {
+  background-color: rgb(218 183 145 / 20%);
+}
+
+.public-luxury-shell .border-border,
+.public-luxury-shell .border-border\/60,
+.public-luxury-shell .border-border\/70 {
+  border-color: rgb(218 183 145 / 20%);
+}
+
+.public-luxury-shell .text-muted-foreground {
+  color: rgb(241 231 222 / 62%);
+}
+
+.public-luxury-shell .text-foreground {
+  color: #f1e7de;
+}
+
+.public-luxury-shell .text-gold-deep {
+  color: #d4aa78;
+}
+
+.public-luxury-shell .eyebrow {
+  color: #d4aa78;
+}
+
+.public-luxury-shell h1,
+.public-luxury-shell h2,
+.public-luxury-shell h3,
+.public-luxury-shell h4 {
+  color: #ead3bd;
+}
+
+.public-luxury-shell h1 {
+  text-wrap: balance;
+}
+
+.public-luxury-shell p {
+  text-wrap: pretty;
+}
+
+.public-luxury-shell .hairline {
+  background: linear-gradient(90deg, rgb(218 183 145 / 55%), rgb(218 183 145 / 12%), transparent);
+}
+
+.public-luxury-shell .shadow-soft {
+  box-shadow: var(--shadow-soft);
+}
+
+.public-luxury-shell section.bg-shell,
+.public-luxury-shell section.border-y,
+.public-luxury-shell section.border-b {
+  border-color: rgb(218 183 145 / 20%);
+}
+
+.public-luxury-shell main input,
+.public-luxury-shell main textarea,
+.public-luxury-shell main select,
+.public-luxury-shell main [role="combobox"] {
+  border-color: rgb(218 183 145 / 28%);
+  color: #f1e7de;
+  background-color: rgb(9 9 9 / 78%);
+}
+
+.public-luxury-shell main input::placeholder,
+.public-luxury-shell main textarea::placeholder {
+  color: rgb(241 231 222 / 38%);
+}
+
+.public-luxury-shell main input:focus,
+.public-luxury-shell main textarea:focus,
+.public-luxury-shell main select:focus,
+.public-luxury-shell main [role="combobox"]:focus {
+  border-color: #d4aa78;
+  box-shadow: 0 0 0 1px #d4aa78;
+}
+
+.public-luxury-shell main article,
+.public-luxury-shell main form,
+.public-luxury-shell main aside > div {
+  border-color: rgb(218 183 145 / 22%);
+}
+
+.public-luxury-shell main img {
+  border-color: rgb(218 183 145 / 22%);
+}
+
+.public-luxury-shell main iframe {
+  filter: saturate(0.7) contrast(1.05);
+}
+
+.public-luxury-shell > footer {
+  border-color: rgb(218 183 145 / 20%);
+  color: #ead8c8;
+  background: radial-gradient(circle at 15% 10%, rgb(207 170 130 / 6%), transparent 24rem), #070707;
+}
+
+.public-luxury-shell > footer h4 {
+  color: #dfbd9b;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.public-luxury-shell > footer .text-muted-foreground {
+  color: rgb(234 216 200 / 58%);
+}
+
+.public-luxury-shell > footer .border-border {
+  border-color: rgb(218 183 145 / 20%);
+}
+
+.public-luxury-shell > footer a {
+  transition:
+    color 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.public-luxury-shell > footer a:hover {
+  color: #e2bd91;
+}
+
+.public-luxury-shell main .hover\:bg-accent:hover,
+.public-luxury-shell main .hover\:bg-accent\/40:hover,
+.public-luxury-shell main .hover\:bg-accent\/50:hover {
+  background-color: rgb(207 170 130 / 12%);
+}
+
+.public-luxury-shell main .hover\:text-foreground:hover {
+  color: #e2bd91;
+}
+
+.public-luxury-shell main button,
+.public-luxury-shell main a {
+  transition-duration: 180ms;
+}
+
+.public-luxury-shell main video {
+  background: #050505;
+}
+
+@media (max-width: 639px) {
+  .public-luxury-shell > header > div:first-child {
+    min-height: 4.5rem;
+  }
+
+  .public-luxury-shell h1 {
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .public-luxury-shell *,
+  .public-luxury-shell *::before,
+  .public-luxury-shell *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
