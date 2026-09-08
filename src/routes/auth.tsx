@@ -72,6 +72,41 @@ function AuthPage() {
     }
   }
 
+  async function onForgotPassword() {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!normalizedEmail) {
+      toast.error("Enter your email address first.");
+      return;
+    }
+
+    setBusy(true);
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(
+        normalizedEmail,
+        {
+          redirectTo: `${window.location.origin}/reset-password`,
+        },
+      );
+
+      if (error) throw error;
+
+      toast.success("Check your email", {
+        description:
+          "If an account exists for this address, Supabase will send a password reset link.",
+      });
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Unable to send the password reset email.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function onGoogle() {
     const result = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: window.location.origin,
@@ -148,6 +183,16 @@ function AuthPage() {
         <Button type="submit" disabled={busy} size="lg" className="w-full rounded-none">
           {mode === "signin" ? t("auth.signin") : t("auth.create")}
         </Button>
+        {mode === "signin" && (
+          <button
+            type="button"
+            disabled={busy}
+            onClick={onForgotPassword}
+            className="block w-full text-right text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground disabled:opacity-50"
+          >
+            Forgot password?
+          </button>
+        )}
         <Button type="button" variant="outline" className="w-full rounded-none" onClick={onGoogle}>
           {t("auth.google")}
         </Button>
