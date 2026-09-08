@@ -31,6 +31,7 @@ export const Route = createFileRoute("/results")({
 function ResultsPage() {
   const { t, lang } = useLang();
   const [filter, setFilter] = useState<string>("all");
+  const [hasFeatured, setHasFeatured] = useState<boolean | null>(null);
 
   const items = useMemo(
     () => (filter === "all" ? BEFORE_AFTER : BEFORE_AFTER.filter((i) => i.category === filter)),
@@ -76,29 +77,31 @@ function ResultsPage() {
           ))}
         </div>
 
-        <FeaturedResultsMedia filter={filter} />
+        <FeaturedResultsMedia filter={filter} onAvailabilityChange={setHasFeatured} />
 
-        <div className="mt-12 grid gap-x-7 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
-          {items.map((item) => {
-            const display = localizeResult(item, lang);
-            return (
-              <figure key={item.id} className="min-w-0 text-center">
-                <img
-                  src={item.url}
-                  alt={display.alt}
-                  loading="lazy"
-                  className="aspect-square w-full rounded-xl border border-border bg-shell object-cover"
-                />
-                <figcaption className="px-2 pt-5">
-                  <h2 className="text-base leading-snug">{display.zone}</h2>
-                  <p className="mt-2 text-[0.68rem] uppercase tracking-[0.14em] text-gold">
-                    {display.category}
-                  </p>
-                </figcaption>
-              </figure>
-            );
-          })}
-        </div>
+        {hasFeatured === false && (
+          <div className="mt-12 grid gap-x-7 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+            {items.map((item) => {
+              const display = localizeResult(item, lang);
+              return (
+                <figure key={item.id} className="min-w-0 text-center">
+                  <img
+                    src={item.url}
+                    alt={display.alt}
+                    loading="lazy"
+                    className="aspect-square w-full rounded-xl border border-border bg-shell object-cover"
+                  />
+                  <figcaption className="px-2 pt-5">
+                    <h2 className="text-base leading-snug">{display.zone}</h2>
+                    <p className="mt-2 text-[0.68rem] uppercase tracking-[0.14em] text-gold">
+                      {display.category}
+                    </p>
+                  </figcaption>
+                </figure>
+              );
+            })}
+          </div>
+        )}
 
         <div className="mt-16 border border-border bg-card p-8 text-center">
           <h2 className="text-2xl">{t("res.cta.title")}</h2>

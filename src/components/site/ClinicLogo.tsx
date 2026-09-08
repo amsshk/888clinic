@@ -1,24 +1,18 @@
-import logoAsset from "../../assets/logo.jpg.asset.json";
-
 type Props = { className?: string; compact?: boolean };
 
-/**
- * 888clinic logo mark — clean image wordmark.
- */
 export function ClinicLogo({ className, compact = false }: Props) {
   return (
-    <span className={`inline-flex items-center gap-2 ${className ?? ""}`}>
-      <img
-        src={logoAsset.url}
-        alt="888clinic logo"
-        className="h-10 w-auto rounded-full object-contain"
-      />
+    <span
+      role="img"
+      aria-label="888 Clinic"
+      className={`inline-flex items-center text-gold ${className ?? ""}`}
+    >
+      <span className="font-display text-[2rem] leading-none tracking-[0.08em]">888</span>
       {!compact && (
-        <span className="font-display text-[1.7rem] leading-none tracking-tight text-gradient-gold">
-          888
+        <span className="ml-3 border-l border-gold/35 pl-3 text-[0.58rem] uppercase leading-[1.25] tracking-[0.34em]">
+          Clinic
         </span>
       )}
     </span>
-
   );
 }
