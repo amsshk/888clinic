@@ -253,7 +253,7 @@
 /* Results page: isolated dark luxury presentation */
 .results-site-header {
   border-color: rgb(203 166 126 / 20%);
-  background: rgb(7 7 7 / 94%);
+  background: rgb(22 22 22 / 94%);
   color: #ead8c8;
 }
 
@@ -275,7 +275,7 @@
 }
 
 .results-site-header__mobile {
-  background: #090909;
+  background: #161616;
 }
 
 .results-site-header button:focus-visible,
@@ -288,7 +288,7 @@
   min-height: 100vh;
   overflow: hidden;
   color: #f1e7de;
-  background-color: #090909;
+  background-color: #161616;
   background-image:
     radial-gradient(circle at 50% 18%, rgb(255 255 255 / 7%), transparent 34rem),
     radial-gradient(circle at 18% 64%, rgb(191 150 107 / 4%), transparent 30rem),
@@ -423,7 +423,7 @@
   overflow: hidden;
   border: 1px solid rgb(218 183 145 / 35%);
   border-radius: 0.75rem;
-  background: #050505;
+  background: #101010;
   box-shadow: 0 1.25rem 3rem rgb(0 0 0 / 32%);
 }
 
@@ -431,7 +431,7 @@
   display: block;
   width: 100%;
   height: 100%;
-  background: #050505;
+  background: #101010;
   object-fit: contain;
 }
 
@@ -661,19 +661,19 @@
 .public-luxury-shell {
   --gradient-shell:
     radial-gradient(circle at 50% 5%, rgb(255 255 255 / 6%), transparent 32rem),
-    linear-gradient(180deg, #111 0%, #090909 100%);
+    linear-gradient(180deg, #1c1c1c 0%, #161616 100%);
   --shadow-soft: 0 1px 0 rgb(225 187 146 / 12%), 0 18px 48px -18px rgb(0 0 0 / 78%);
   --shadow-gold: 0 18px 54px -22px rgb(213 173 128 / 48%);
 
   color: #f1e7de;
-  background-color: #090909;
+  background-color: #161616;
   color-scheme: dark;
 }
 
 .public-luxury-shell > main {
   position: relative;
   isolation: isolate;
-  background-color: #090909;
+  background-color: #161616;
   background-image:
     radial-gradient(circle at 50% 8%, rgb(255 255 255 / 5%), transparent 36rem),
     radial-gradient(circle at 10% 52%, rgb(191 150 107 / 3.5%), transparent 28rem),
@@ -689,7 +689,7 @@
 .public-luxury-shell > header {
   border-color: rgb(203 166 126 / 20%);
   color: #ead8c8;
-  background: rgb(7 7 7 / 94%);
+  background: rgb(22 22 22 / 94%);
 }
 
 .public-luxury-shell > header > div:first-child {
@@ -797,7 +797,7 @@
 .public-luxury-shell main [role="combobox"] {
   border-color: rgb(218 183 145 / 28%);
   color: #f1e7de;
-  background-color: rgb(9 9 9 / 78%);
+  background-color: rgb(22 22 22 / 78%);
 }
 
 .public-luxury-shell main input::placeholder,
@@ -830,7 +830,7 @@
 .public-luxury-shell > footer {
   border-color: rgb(218 183 145 / 20%);
   color: #ead8c8;
-  background: radial-gradient(circle at 15% 10%, rgb(207 170 130 / 6%), transparent 24rem), #070707;
+  background: radial-gradient(circle at 15% 10%, rgb(207 170 130 / 6%), transparent 24rem), #161616;
 }
 
 .public-luxury-shell > footer h4 {
@@ -874,7 +874,7 @@
 }
 
 .public-luxury-shell main video {
-  background: #050505;
+  background: #101010;
 }
 
 @media (max-width: 639px) {
