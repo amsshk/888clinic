@@ -367,6 +367,7 @@ async function captureVideoFrame(source: Blob): Promise<string> {
           return;
         }
 
+        const drawingContext: CanvasRenderingContext2D = context;
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
         const frame = canvas.toDataURL("image/jpeg", 0.82);
 
@@ -428,6 +429,9 @@ function MediaLibrary() {
   const [busy, setBusy] = useState(false);
   const [step, setStep] = useState("");
   const [hint, setHint] = useState("");
+  const [beforeFile, setBeforeFile] = useState<File | null>(null);
+  const [afterFile, setAfterFile] = useState<File | null>(null);
+  const [resultCategory, setResultCategory] = useState("");
 
   const load = useCallback(async () => {
     const { data } = await supabase
@@ -455,7 +459,15 @@ function MediaLibrary() {
     load();
   }, [load]);
 
-  async function uploadOne(file: File, index: number, total: number) {
+  async function uploadOne(
+    file: File,
+    index: number,
+    total: number,
+    options: {
+      aiHint?: string;
+      resultCategory?: string;
+    } = {},
+  ) {
     if (!user) return false;
     const label = total > 1 ? ` (${index + 1}/${total})` : "";
 
@@ -488,7 +500,12 @@ function MediaLibrary() {
 
       setStep(`Writing details with AI…${label}`);
       const ai = await describe({
-        data: { storagePath: path, kind, hint, previewDataUrl },
+        data: {
+          storagePath: path,
+          kind,
+          hint: options.aiHint ?? hint,
+          previewDataUrl,
+        },
       });
 
       const { error: insErr } = await supabase.from("media_items").insert({
@@ -500,6 +517,13 @@ function MediaLibrary() {
         description: ai.ok ? ai.result.description : null,
         alt_text: ai.ok ? ai.result.alt_text : null,
         tags: ai.ok ? ai.result.tags : [],
+        ...(options.resultCategory
+          ? {
+              published: true,
+              show_in_results: true,
+              results_category: options.resultCategory,
+            }
+          : {}),
       });
       if (insErr) throw insErr;
 
@@ -532,6 +556,130 @@ function MediaLibrary() {
       toast.success(done === 1 ? "Upload complete" : `${done} uploads complete`);
       setHint("");
       await load();
+    }
+  }
+
+  async function composeBeforeAfter(before: File, after: File): Promise<File> {
+    if (!before.type.startsWith("image/") || !after.type.startsWith("image/")) {
+      throw new Error("Before and After must both be image files.");
+    }
+
+    const [beforeImage, afterImage] = await Promise.all([
+      createImageBitmap(before),
+      createImageBitmap(after),
+    ]);
+
+    try {
+      const canvas = document.createElement("canvas");
+      const size = 1600;
+      const panelWidth = size / 2;
+
+      canvas.width = size;
+      canvas.height = size;
+
+      const context = canvas.getContext("2d");
+      if (!context) {
+        throw new Error("Could not prepare the Before and After image.");
+      }
+
+      // This non-null variable is captured by drawContained below.
+      const drawingContext: CanvasRenderingContext2D = context;
+
+      context.fillStyle = "#080808";
+      context.fillRect(0, 0, size, size);
+      context.imageSmoothingEnabled = true;
+      context.imageSmoothingQuality = "high";
+
+      function drawContained(image: ImageBitmap, panelX: number, panelW: number, panelH: number) {
+        // Downscale large photos but never invent missing detail by enlarging
+        // a low-resolution clinical photograph.
+        const scale = Math.min(panelW / image.width, panelH / image.height, 1);
+
+        const width = Math.max(1, Math.round(image.width * scale));
+        const height = Math.max(1, Math.round(image.height * scale));
+        const x = panelX + Math.round((panelW - width) / 2);
+        const y = Math.round((panelH - height) / 2);
+
+        drawingContext.save();
+        drawingContext.beginPath();
+        drawingContext.rect(panelX, 0, panelW, panelH);
+        drawingContext.clip();
+        drawingContext.drawImage(image, x, y, width, height);
+        drawingContext.restore();
+      }
+
+      drawContained(beforeImage, 0, panelWidth, size);
+      drawContained(afterImage, panelWidth, panelWidth, size);
+
+      const blob = await new Promise<Blob>((resolve, reject) => {
+        canvas.toBlob(
+          (value) => {
+            if (value) resolve(value);
+            else reject(new Error("Could not encode the combined result."));
+          },
+          "image/jpeg",
+          0.94,
+        );
+      });
+
+      return new File([blob], `before-after-${Date.now()}.jpg`, { type: "image/jpeg" });
+    } finally {
+      beforeImage.close();
+      afterImage.close();
+    }
+  }
+
+  async function uploadBeforeAfter() {
+    if (!user) return;
+
+    if (!beforeFile || !afterFile) {
+      toast.error("Choose both a Before photo and an After photo.");
+      return;
+    }
+
+    if (!resultCategory) {
+      toast.error("Choose a treatment category.");
+      return;
+    }
+
+    setBusy(true);
+
+    try {
+      setStep("Creating consistent Before & After image…");
+      const combined = await composeBeforeAfter(beforeFile, afterFile);
+
+      const aiHint = [
+        "This is one combined patient Before and After result.",
+        "The Before photograph is on the left.",
+        "The After photograph is on the right.",
+        `Treatment category: ${resultCategory}.`,
+        "Describe only what is visibly shown.",
+        "Do not diagnose, exaggerate, or promise outcomes.",
+        hint ? `Clinic context: ${hint}` : "",
+      ]
+        .filter(Boolean)
+        .join(" ");
+
+      const ok = await uploadOne(combined, 0, 1, {
+        aiHint,
+        resultCategory,
+      });
+
+      if (!ok) return;
+
+      setBeforeFile(null);
+      setAfterFile(null);
+      setResultCategory("");
+      setHint("");
+      toast.success("Before & After result created and published");
+      await load();
+    } catch (error) {
+      toast.error("Could not create the Before & After result", {
+        description: error instanceof Error ? error.message : "Unexpected error",
+      });
+    } finally {
+      setBusy(false);
+      setStep("");
     }
   }
 
@@ -578,10 +726,11 @@ function MediaLibrary() {
 
     let previewDataUrl: string | undefined;
 
-    if (item.kind === "video" && urls[item.id]) {
+    const itemUrl = urls[item.id];
+    if (item.kind === "video" && itemUrl) {
       try {
         setStep("Preparing video preview…");
-        const response = await fetch(urls[item.id]);
+        const response = await fetch(itemUrl);
         if (!response.ok) throw new Error("Could not download the video.");
         previewDataUrl = await captureVideoFrame(await response.blob());
       } catch (error) {
@@ -669,6 +818,90 @@ function MediaLibrary() {
             />
           </label>
         </div>
+      </div>
+
+      <div className="border border-gold/35 bg-card p-6">
+        <div>
+          <p className="eyebrow">Results media</p>
+          <h2 className="mt-2 text-xl">Create a Before &amp; After result</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+            Choose one clean Before photo and one clean After photo. The clinic software places
+            Before on the left and After on the right, combines them into one file, applies the
+            standard Results frame, and asks AI to write factual metadata.
+          </p>
+        </div>
+
+        <div className="mt-6 grid gap-5 lg:grid-cols-2">
+          <label className="space-y-2">
+            <span className="block text-sm font-medium">Before photo</span>
+            <input
+              key={beforeFile?.name ?? "before-empty"}
+              type="file"
+              accept="image/*"
+              disabled={busy}
+              onChange={(event) => setBeforeFile(event.target.files?.[0] ?? null)}
+              className="block w-full border border-border bg-background px-3 py-2 text-sm file:mr-4 file:border-0 file:bg-primary file:px-4 file:py-2 file:text-primary-foreground"
+            />
+            {beforeFile && (
+              <span className="block truncate text-xs text-muted-foreground">
+                Selected: {beforeFile.name}
+              </span>
+            )}
+          </label>
+
+          <label className="space-y-2">
+            <span className="block text-sm font-medium">After photo</span>
+            <input
+              key={afterFile?.name ?? "after-empty"}
+              type="file"
+              accept="image/*"
+              disabled={busy}
+              onChange={(event) => setAfterFile(event.target.files?.[0] ?? null)}
+              className="block w-full border border-border bg-background px-3 py-2 text-sm file:mr-4 file:border-0 file:bg-primary file:px-4 file:py-2 file:text-primary-foreground"
+            />
+            {afterFile && (
+              <span className="block truncate text-xs text-muted-foreground">
+                Selected: {afterFile.name}
+              </span>
+            )}
+          </label>
+        </div>
+
+        <div className="mt-5 grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
+          <div className="space-y-2">
+            <Label htmlFor="result-category">Treatment category</Label>
+            <select
+              id="result-category"
+              value={resultCategory}
+              disabled={busy}
+              onChange={(event) => setResultCategory(event.target.value)}
+              className="w-full rounded-none border border-border bg-background px-3 py-2.5 text-sm"
+            >
+              <option value="">Choose category</option>
+              {RESULT_CATEGORIES.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <Button
+            type="button"
+            className="rounded-none px-6"
+            disabled={busy || !beforeFile || !afterFile || !resultCategory}
+            onClick={uploadBeforeAfter}
+          >
+            {busy ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}
+            {busy ? step || "Working…" : "Create and publish result"}
+          </Button>
+        </div>
+
+        <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
+          Use clean original patient photographs with verified consent. The composer aligns and
+          resizes the originals but does not retouch skin, remove clinical detail, or generate a
+          different outcome.
+        </p>
       </div>
 
       {items.length === 0 ? (
