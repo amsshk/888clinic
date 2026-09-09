@@ -80,9 +80,6 @@ function Services() {
                       {t(body)}
                     </p>
                   </div>
-                  <p className="mt-6 text-sm font-semibold tracking-wide text-gold-deep">
-                    {t("svc.from")}
-                  </p>
                 </article>
               ))}
             </div>
