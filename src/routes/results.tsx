@@ -2,10 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { BookingDialog } from "@/components/site/BookingDialog";
-import { BEFORE_AFTER, RESULT_CATEGORIES, type ResultCategory } from "@/lib/before-after";
-import { FeaturedResultsMedia } from "@/components/site/FeaturedResultsMedia";
+import { BEFORE_AFTER } from "@/lib/before-after";
+import { FeaturedResultsMedia, type ResultsArea } from "@/components/site/FeaturedResultsMedia";
 import { useLang } from "@/lib/i18n";
-import { localizeResult, localizeResultCategory } from "@/lib/public-content";
+import { localizeResult } from "@/lib/public-content";
 
 export const Route = createFileRoute("/results")({
   head: () => ({
@@ -28,91 +28,114 @@ export const Route = createFileRoute("/results")({
   component: ResultsPage,
 });
 
+const tabs: Array<{ value: ResultsArea; label: string }> = [
+  { value: "all", label: "All" },
+  { value: "face", label: "Face" },
+  { value: "body", label: "Body" },
+];
+
+function ComparisonOverlay() {
+  return (
+    <div className="results-comparison-overlay" aria-hidden="true">
+      <span className="results-comparison-divider" />
+      <span className="results-comparison-arrow">›</span>
+      <span className="results-comparison-label results-comparison-label--before">Before</span>
+      <span className="results-comparison-label results-comparison-label--after">After</span>
+    </div>
+  );
+}
+
 function ResultsPage() {
   const { t, lang } = useLang();
-  const [filter, setFilter] = useState<string>("all");
+  const [filter, setFilter] = useState<ResultsArea>("all");
   const [hasFeatured, setHasFeatured] = useState<boolean | null>(null);
 
-  const items = useMemo(
-    () => (filter === "all" ? BEFORE_AFTER : BEFORE_AFTER.filter((i) => i.category === filter)),
-    [filter],
-  );
-
-  const tabs: Array<"all" | ResultCategory> = ["all", ...RESULT_CATEGORIES];
+  const fallbackItems = useMemo(() => (filter === "body" ? [] : BEFORE_AFTER), [filter]);
 
   return (
-    <div>
-      <section className="bg-shell">
-        <div className="mx-auto max-w-[90rem] px-5 py-16 text-center md:py-20">
-          <h1 className="text-4xl uppercase tracking-[0.16em] text-gold md:text-5xl">
-            {t("res.title1")} {t("res.title2")}
-          </h1>
-          <div className="mx-auto mt-6 flex max-w-xs items-center gap-4 text-gold">
-            <span className="h-px flex-1 bg-gold/40" />
-            <span className="text-xl">888</span>
-            <span className="h-px flex-1 bg-gold/40" />
+    <main className="results-page">
+      <section className="results-hero">
+        <div className="results-container">
+          <h1>Results</h1>
+
+          <div className="results-divider" aria-hidden="true">
+            <span />
+            <strong>888</strong>
+            <span />
           </div>
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground">
-            {t("res.lede")}
-          </p>
+
+          <p className="results-lede">Real results. Real confidence.</p>
+
+          <div className="results-filters" aria-label="Filter patient results">
+            {tabs.map((tab) => (
+              <button
+                key={tab.value}
+                type="button"
+                onClick={() => setFilter(tab.value)}
+                className={filter === tab.value ? "is-active" : undefined}
+                aria-pressed={filter === tab.value}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
-      <div className="mx-auto max-w-[90rem] px-5 py-14">
-        <div className="flex flex-wrap justify-center gap-8 md:gap-14">
-          {tabs.map((tab) => (
-            <button
-              key={tab}
-              type="button"
-              onClick={() => setFilter(tab)}
-              className={
-                "border-b px-1 pb-3 text-[0.72rem] uppercase tracking-[0.16em] transition-colors " +
-                (filter === tab
-                  ? "border-gold text-gold"
-                  : "border-transparent text-foreground hover:text-gold")
-              }
-            >
-              {tab === "all" ? t("res.all") : localizeResultCategory(tab, lang)}
-            </button>
-          ))}
+      <section className="results-content">
+        <div className="results-container results-container--wide">
+          <FeaturedResultsMedia filter={filter} onAvailabilityChange={setHasFeatured} />
+
+          {hasFeatured === false && fallbackItems.length > 0 && (
+            <div className="results-gallery">
+              <div className="results-grid">
+                {fallbackItems.map((item) => {
+                  const display = localizeResult(item, lang);
+
+                  return (
+                    <figure key={item.id} className="results-card">
+                      <div className="results-media-frame">
+                        <img
+                          src={item.url}
+                          alt={display.alt}
+                          loading="lazy"
+                          className="results-media"
+                        />
+                        <ComparisonOverlay />
+                      </div>
+
+                      <figcaption className="results-card-caption">
+                        <h2>{display.zone}</h2>
+                        <p>{display.category}</p>
+                      </figcaption>
+                    </figure>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {hasFeatured === false && fallbackItems.length === 0 && (
+            <p className="results-empty">
+              No body results are currently available. Please check again soon.
+            </p>
+          )}
         </div>
+      </section>
 
-        <FeaturedResultsMedia filter={filter} onAvailabilityChange={setHasFeatured} />
+      <section className="results-cta">
+        <div className="results-container">
+          <div className="results-cta__content">
+            <p className="results-cta__eyebrow">888 Clinic</p>
+            <h2>{t("res.cta.title")}</h2>
+            <p>{t("res.cta.body")}</p>
 
-        {hasFeatured === false && (
-          <div className="mt-12 grid gap-x-7 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
-            {items.map((item) => {
-              const display = localizeResult(item, lang);
-              return (
-                <figure key={item.id} className="min-w-0 text-center">
-                  <img
-                    src={item.url}
-                    alt={display.alt}
-                    loading="lazy"
-                    className="aspect-square w-full rounded-2xl border border-gold/25 bg-white p-2 object-contain shadow-[0_14px_40px_rgba(73,52,31,0.08)]"
-                  />
-                  <figcaption className="px-2 pt-5">
-                    <h2 className="text-base leading-snug">{display.zone}</h2>
-                    <p className="mt-2 text-[0.68rem] uppercase tracking-[0.14em] text-gold">
-                      {display.category}
-                    </p>
-                  </figcaption>
-                </figure>
-              );
-            })}
+            <BookingDialog>
+              <Button className="results-cta__button rounded-none">{t("cta.book")}</Button>
+            </BookingDialog>
           </div>
-        )}
-
-        <div className="mt-16 border border-border bg-card p-8 text-center">
-          <h2 className="text-2xl">{t("res.cta.title")}</h2>
-          <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-muted-foreground">
-            {t("res.cta.body")}
-          </p>
-          <BookingDialog>
-            <Button className="mt-6 rounded-none px-6">{t("cta.book")}</Button>
-          </BookingDialog>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }

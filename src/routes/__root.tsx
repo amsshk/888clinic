@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -15,7 +16,6 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { Toaster } from "@/components/ui/sonner";
 import { LanguageProvider } from "@/lib/i18n";
-
 
 function NotFoundComponent() {
   return (
@@ -85,15 +85,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "888clinic — Dermatology Clinic" },
       {
         name: "description",
-        content:
-          "888clinic: modern dermatology, aesthetic treatments and clinical skincare.",
+        content: "888clinic: modern dermatology, aesthetic treatments and clinical skincare.",
       },
       { name: "author", content: "888clinic" },
       { property: "og:title", content: "888clinic — Dermatology Clinic" },
       {
         property: "og:description",
-        content:
-          "Modern dermatology, aesthetic treatments and clinical skincare.",
+        content: "Modern dermatology, aesthetic treatments and clinical skincare.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -137,13 +135,38 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+const PUBLIC_LUXURY_PATHS = new Set([
+  "/",
+  "/services",
+  "/pricing",
+  "/products",
+  "/ai-skin-analysis",
+  "/results",
+  "/gallery",
+  "/book",
+  "/contact",
+  "/privacy",
+  "/terms",
+  "/mali",
+]);
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  });
+  const useLuxuryTheme = PUBLIC_LUXURY_PATHS.has(pathname);
 
   return (
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
-        <div className="flex min-h-screen flex-col">
+        <div
+          className={
+            useLuxuryTheme
+              ? "dark public-luxury-shell flex min-h-screen flex-col"
+              : "flex min-h-screen flex-col"
+          }
+        >
           <SiteHeader />
           <main className="flex-1">
             {/* Required: nested routes render here. */}
@@ -156,4 +179,3 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
-

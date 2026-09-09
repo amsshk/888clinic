@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
 import { Menu, X, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,7 @@ const nav: { to: string; key: TKey }[] = [
   { to: "/products", key: "nav.skincare" },
   { to: "/ai-skin-analysis", key: "nav.ai" },
   { to: "/results", key: "nav.results" },
-  
+
   { to: "/book", key: "nav.book" },
   { to: "/contact", key: "nav.contact" },
 ];
@@ -47,10 +47,20 @@ function LangSwitch({ className }: { className?: string }) {
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const { t } = useLang();
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  });
+  const isResultsPage = pathname === "/results";
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/70 bg-background/85 backdrop-blur-xl">
-      <div className="mx-auto flex h-20 max-w-6xl items-center justify-between gap-6 px-5">
+    <header
+      className={
+        isResultsPage
+          ? "results-site-header sticky top-0 z-50 border-b backdrop-blur-xl"
+          : "sticky top-0 z-50 border-b border-border/70 bg-background/85 backdrop-blur-xl"
+      }
+    >
+      <div className="results-site-header__inner mx-auto flex h-20 max-w-6xl items-center justify-between gap-6 px-5">
         <Link to="/" aria-label={CLINIC.name} className="shrink-0">
           <ClinicLogo />
         </Link>
@@ -87,18 +97,14 @@ export function SiteHeader() {
 
         <div className="flex items-center gap-3 lg:hidden">
           <LangSwitch />
-          <button
-            type="button"
-            aria-label={t("menu.toggle")}
-            onClick={() => setOpen((v) => !v)}
-          >
+          <button type="button" aria-label={t("menu.toggle")} onClick={() => setOpen((v) => !v)}>
             {open ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>
         </div>
       </div>
 
       {open && (
-        <div className="border-t border-border bg-background px-5 pb-5 lg:hidden">
+        <div className="results-site-header__mobile border-t border-border bg-background px-5 pb-5 lg:hidden">
           <nav className="flex flex-col divide-y divide-border">
             {[{ to: "/", key: "nav.home" as TKey }, ...nav].map((item) => (
               <Link
@@ -117,9 +123,7 @@ export function SiteHeader() {
             <AccountMenu onNavigate={() => setOpen(false)} />
           </div>
           <BookingDialog>
-            <Button className="mt-3 w-full rounded-none">
-              {t("cta.book")}
-            </Button>
+            <Button className="mt-3 w-full rounded-none">{t("cta.book")}</Button>
           </BookingDialog>
         </div>
       )}

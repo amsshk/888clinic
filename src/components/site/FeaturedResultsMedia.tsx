@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 type FeaturedItem = {
@@ -11,10 +11,27 @@ type FeaturedItem = {
   results_category: string | null;
 };
 
+export type ResultsArea = "all" | "face" | "body";
+
 type Props = {
-  filter: string;
+  filter: ResultsArea;
   onAvailabilityChange?: (available: boolean) => void;
 };
+
+function getResultsArea(category: string | null): Exclude<ResultsArea, "all"> {
+  return category?.toLowerCase().includes("body") ? "body" : "face";
+}
+
+function ComparisonOverlay() {
+  return (
+    <div className="results-comparison-overlay" aria-hidden="true">
+      <span className="results-comparison-divider" />
+      <span className="results-comparison-arrow">›</span>
+      <span className="results-comparison-label results-comparison-label--before">Before</span>
+      <span className="results-comparison-label results-comparison-label--after">After</span>
+    </div>
+  );
+}
 
 export function FeaturedResultsMedia({ filter, onAvailabilityChange }: Props) {
   const [items, setItems] = useState<FeaturedItem[]>([]);
@@ -65,49 +82,60 @@ export function FeaturedResultsMedia({ filter, onAvailabilityChange }: Props) {
     setVisibleCount(4);
   }, [filter]);
 
-  const filtered =
-    filter === "all" ? items : items.filter((item) => item.results_category === filter);
+  const filtered = useMemo(
+    () =>
+      filter === "all"
+        ? items
+        : items.filter((item) => getResultsArea(item.results_category) === filter),
+    [filter, items],
+  );
 
-  if (filtered.length === 0) return null;
+  if (items.length === 0) return null;
+
+  if (filtered.length === 0) {
+    return (
+      <p className="results-empty">
+        No {filter} results are currently available. Please check again soon.
+      </p>
+    );
+  }
 
   const visible = filtered.slice(0, visibleCount);
   const hasMore = visibleCount < filtered.length;
 
   return (
-    <section className="mt-12">
-      <div className="grid gap-x-7 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+    <section className="results-gallery" aria-label="Patient results">
+      <div className="results-grid">
         {visible.map((item) => (
-          <figure key={item.id} className="min-w-0 text-center">
-            <div className="overflow-hidden rounded-2xl border border-gold/25 bg-[#f7f3ed] p-2 shadow-[0_14px_40px_rgba(73,52,31,0.08)]">
-              <div className="aspect-square overflow-hidden rounded-xl bg-white">
-                {urls[item.id] ? (
-                  item.kind === "video" ? (
-                    <video
-                      src={urls[item.id]}
-                      controls
-                      playsInline
-                      preload="metadata"
-                      className="size-full object-contain"
-                    />
-                  ) : (
-                    <img
-                      src={urls[item.id]}
-                      alt={item.alt_text ?? item.title ?? "888clinic result"}
-                      loading="lazy"
-                      className="size-full object-contain"
-                    />
-                  )
+          <figure key={item.id} className="results-card">
+            <div className="results-media-frame">
+              {urls[item.id] ? (
+                item.kind === "video" ? (
+                  <video
+                    src={urls[item.id]}
+                    controls
+                    playsInline
+                    preload="metadata"
+                    className="results-media"
+                  />
                 ) : (
-                  <div className="size-full animate-pulse bg-shell" />
-                )}
-              </div>
+                  <img
+                    src={urls[item.id]}
+                    alt={item.alt_text ?? item.title ?? "888clinic result"}
+                    loading="lazy"
+                    className="results-media"
+                  />
+                )
+              ) : (
+                <div className="results-media results-media-loading" />
+              )}
+
+              <ComparisonOverlay />
             </div>
 
-            <figcaption className="flex min-h-24 flex-col items-center px-3 pt-5">
-              <h2 className="line-clamp-2 text-base leading-snug">
-                {item.title ?? "888clinic result"}
-              </h2>
-              <p className="mt-2 text-[0.68rem] uppercase tracking-[0.16em] text-gold">
+            <figcaption className="results-card-caption">
+              <h2>{item.title ?? "888clinic result"}</h2>
+              <p>
                 {item.results_category ??
                   (item.kind === "video" ? "Video result" : "Clinic result")}
               </p>
@@ -117,11 +145,11 @@ export function FeaturedResultsMedia({ filter, onAvailabilityChange }: Props) {
       </div>
 
       {filtered.length > 4 && (
-        <div className="mt-12 flex justify-center">
+        <div className="results-more-wrap">
           <button
             type="button"
             onClick={() => setVisibleCount((count) => (hasMore ? count + 4 : 4))}
-            className="min-w-64 rounded-full border border-gold px-8 py-3 text-xs uppercase tracking-[0.16em] text-gold transition-colors hover:bg-gold hover:text-white"
+            className="results-more-button"
           >
             {hasMore ? "View more results" : "Show fewer results"}
           </button>
