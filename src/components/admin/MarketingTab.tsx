@@ -1,7 +1,19 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Copy, Download, ExternalLink, Film, Loader2, Megaphone, RefreshCw, Sparkles } from "lucide-react";
+import {
+  AlertTriangle,
+  Copy,
+  Download,
+  ExternalLink,
+  Film,
+  ImagePlus,
+  Loader2,
+  Megaphone,
+  RefreshCw,
+  Sparkles,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,6 +48,70 @@ const LANGUAGES = [
   { id: "en", label: "English only" },
 ] as const;
 
+/** Directions that reliably produce on-brand clinic footage, so an admin never starts from a blank box. */
+const VIDEO_PRESETS = [
+  {
+    id: "Skin science macro",
+    prompt:
+      "Extreme close-up macro of healthy Thai skin under soft clinical light, fine natural texture and a subtle gold reflection, the camera drifting slowly across cheek and jawline before easing back to a calm portrait. Premium white and grey clinic surfaces, quiet science-led mood.",
+  },
+  {
+    id: "Clinic reveal",
+    prompt:
+      "A smooth gliding reveal through 888clinic in Bangkok: gold-lined reception, warm daylight on white and grey surfaces, a dermatologist greeting a Thai patient, ending on the MALI scanner screen. Elegant, unhurried camera movement, editorial quiet-luxury lighting.",
+  },
+  {
+    id: "Gentle treatment",
+    prompt:
+      "A Thai patient relaxing in a modern treatment chair while a dermatologist performs a gentle, non-graphic skincare treatment. Soft hands, calm breathing, natural skin texture, warm reassuring eye contact, clean clinical light and shallow depth of field.",
+  },
+] as const;
+
+const REFERENCE_MAX_BYTES = 10 * 1024 * 1024;
+const REFERENCE_TYPES = ["image/png", "image/jpeg", "image/webp"];
+
+const FORMAT_SIZES = {
+  vertical: { width: 720, height: 1280 },
+  square: { width: 1024, height: 1024 },
+  landscape: { width: 1280, height: 720 },
+} as const;
+
+/**
+ * Sora only accepts a first frame that matches the requested video size, so the
+ * upload is centre-cropped and resized in the browser. Doing it client-side
+ * also keeps a 10 MB camera photo from ever crossing the wire.
+ */
+async function prepareReferenceImage(
+  file: File,
+  format: keyof typeof FORMAT_SIZES,
+): Promise<string> {
+  const { width, height } = FORMAT_SIZES[format];
+  const bitmapUrl = URL.createObjectURL(file);
+  try {
+    const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const element = new Image();
+      element.onload = () => resolve(element);
+      element.onerror = () => reject(new Error("That image could not be read."));
+      element.src = bitmapUrl;
+    });
+
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("This browser could not prepare the image.");
+
+    // Centre crop: cover the frame, then trim the overflowing axis.
+    const scale = Math.max(width / image.width, height / image.height);
+    const drawWidth = image.width * scale;
+    const drawHeight = image.height * scale;
+    ctx.drawImage(image, (width - drawWidth) / 2, (height - drawHeight) / 2, drawWidth, drawHeight);
+    return canvas.toDataURL("image/jpeg", 0.92);
+  } finally {
+    URL.revokeObjectURL(bitmapUrl);
+  }
+}
+
 /** Admin-only Meta ads copy studio. Never shown to patients or staff-only accounts. */
 export function MarketingTab() {
   const run = useServerFn(generateAdCopy);
@@ -44,7 +120,9 @@ export function MarketingTab() {
 
   const [objective, setObjective] = useState(OBJECTIVES[0]);
   const [offer, setOffer] = useState("");
-  const [audience, setAudience] = useState("Women 25-45 in Bangkok interested in skincare and aesthetics");
+  const [audience, setAudience] = useState(
+    "Women 25-45 in Bangkok interested in skincare and aesthetics",
+  );
   const [language, setLanguage] = useState<"en" | "th" | "both">("both");
   const [tone, setTone] = useState("warm luxury clinic");
   const [variants, setVariants] = useState(3);
@@ -59,6 +137,53 @@ export function MarketingTab() {
   const [videoProgress, setVideoProgress] = useState(0);
   const [videoLoading, setVideoLoading] = useState(false);
   const [generatedVideoUrl, setGeneratedVideoUrl] = useState("");
+  const [videoError, setVideoError] = useState("");
+  const [referenceFile, setReferenceFile] = useState<File | null>(null);
+  const [referenceImage, setReferenceImage] = useState("");
+  const [referencePreparing, setReferencePreparing] = useState(false);
+  const referenceInputRef = useRef<HTMLInputElement>(null);
+
+  // The crop depends on the chosen ad format, so re-prepare whenever it changes.
+  useEffect(() => {
+    if (!referenceFile) return;
+    let cancelled = false;
+    setReferencePreparing(true);
+    void prepareReferenceImage(referenceFile, videoFormat)
+      .then((dataUrl) => {
+        if (!cancelled) setReferenceImage(dataUrl);
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        setReferenceFile(null);
+        setReferenceImage("");
+        toast.error(error instanceof Error ? error.message : "That image could not be prepared.");
+      })
+      .finally(() => {
+        if (!cancelled) setReferencePreparing(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [referenceFile, videoFormat]);
+
+  function chooseReference(file: File | undefined) {
+    if (!file) return;
+    if (!REFERENCE_TYPES.includes(file.type)) {
+      toast.error("Please choose a PNG, JPEG or WebP image.");
+      return;
+    }
+    if (file.size > REFERENCE_MAX_BYTES) {
+      toast.error("That image is larger than 10 MB. Please choose a smaller file.");
+      return;
+    }
+    setReferenceFile(file);
+  }
+
+  function clearReference() {
+    setReferenceFile(null);
+    setReferenceImage("");
+    if (referenceInputRef.current) referenceInputRef.current.value = "";
+  }
 
   async function copy(value: string) {
     try {
@@ -102,6 +227,7 @@ export function MarketingTab() {
       const result = await checkVideo({ data: { jobId } });
       if (!result.ok) {
         toast.error(result.error);
+        setVideoError(result.error);
         setVideoLoading(false);
         return;
       }
@@ -116,6 +242,7 @@ export function MarketingTab() {
       window.setTimeout(() => void refreshVideo(jobId), 8_000);
     } catch {
       toast.error("Could not check the video status");
+      setVideoError("Could not check the video status.");
       setVideoLoading(false);
     }
   }
@@ -124,6 +251,8 @@ export function MarketingTab() {
     setVideoLoading(true);
     setVideoProgress(0);
     setGeneratedVideoUrl("");
+    // A retry starts clean: the previous failure must not linger next to a running job.
+    setVideoError("");
     try {
       const result = await startVideo({
         data: {
@@ -133,10 +262,12 @@ export function MarketingTab() {
           prompt: videoPrompt,
           duration: videoDuration,
           format: videoFormat,
+          ...(referenceImage ? { referenceImage } : {}),
         },
       });
       if (!result.ok) {
         toast.error(result.error);
+        setVideoError(result.error);
         setVideoLoading(false);
         return;
       }
@@ -144,7 +275,9 @@ export function MarketingTab() {
       toast.success("Video generation started — this can take several minutes");
       window.setTimeout(() => void refreshVideo(result.jobId), 8_000);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not start video generation");
+      const message = error instanceof Error ? error.message : "Could not start video generation";
+      toast.error(message);
+      setVideoError(message);
       setVideoLoading(false);
     }
   }
@@ -157,8 +290,8 @@ export function MarketingTab() {
           <div>
             <h3 className="font-serif text-xl">Meta campaign studio</h3>
             <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-              Write Facebook and Instagram ad copy for the clinic in English and local Thai,
-              then paste it straight into Ads Manager. Admin only — patients never see this.
+              Write Facebook and Instagram ad copy for the clinic in English and local Thai, then
+              paste it straight into Ads Manager. Admin only — patients never see this.
             </p>
           </div>
         </div>
@@ -251,7 +384,10 @@ export function MarketingTab() {
 
         <div className="mt-6 flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">
-            <Label htmlFor="variants" className="text-xs uppercase tracking-wider text-muted-foreground">
+            <Label
+              htmlFor="variants"
+              className="text-xs uppercase tracking-wider text-muted-foreground"
+            >
               Variants
             </Label>
             <Input
@@ -282,7 +418,8 @@ export function MarketingTab() {
             <div>
               <h3 className="font-serif text-xl">AI promotional video studio</h3>
               <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-                Generate a Meta-ready clinic video with your connected OpenAI account. Finished videos are saved securely to the clinic media library.
+                Generate a Meta-ready clinic video with your connected OpenAI account. Finished
+                videos are saved securely to the clinic media library.
               </p>
             </div>
           </div>
@@ -306,11 +443,80 @@ export function MarketingTab() {
                 className="mt-2 rounded-none"
                 placeholder="Describe the people, clinic scene and story you want to show"
               />
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <span className="text-xs uppercase tracking-wider text-muted-foreground">
+                  Presets
+                </span>
+                {VIDEO_PRESETS.map((preset) => (
+                  <button
+                    key={preset.id}
+                    type="button"
+                    onClick={() => setVideoPrompt(preset.prompt)}
+                    className="border border-border/70 px-3 py-1.5 text-xs text-muted-foreground transition hover:border-gold/60"
+                  >
+                    {preset.id}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="video-reference">Starting image (optional)</Label>
+              <p className="mt-1 text-xs text-muted-foreground">
+                PNG, JPEG or WebP up to 10 MB. It is cropped to the selected ad format and used as
+                the first frame.
+              </p>
+              <input
+                ref={referenceInputRef}
+                id="video-reference"
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                className="sr-only"
+                onChange={(event) => chooseReference(event.target.files?.[0])}
+              />
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="rounded-none"
+                  onClick={() => referenceInputRef.current?.click()}
+                >
+                  {referencePreparing ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <ImagePlus className="size-4" />
+                  )}
+                  {referenceImage ? "Replace image" : "Upload image"}
+                </Button>
+                {referenceImage && (
+                  <>
+                    <img
+                      src={referenceImage}
+                      alt="Starting frame preview"
+                      className="h-20 w-20 border border-border/70 object-cover"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="rounded-none"
+                      onClick={clearReference}
+                    >
+                      <X className="size-4" /> Remove
+                    </Button>
+                  </>
+                )}
+              </div>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <Label>Ad format</Label>
-                <Select value={videoFormat} onValueChange={(value: "vertical" | "square" | "landscape") => setVideoFormat(value)}>
+                <Select
+                  value={videoFormat}
+                  onValueChange={(value: "vertical" | "square" | "landscape") =>
+                    setVideoFormat(value)
+                  }
+                >
                   <SelectTrigger className="mt-2 rounded-none">
                     <SelectValue />
                   </SelectTrigger>
@@ -323,7 +529,10 @@ export function MarketingTab() {
               </div>
               <div>
                 <Label>Length</Label>
-                <Select value={videoDuration} onValueChange={(value: "4" | "8" | "12") => setVideoDuration(value)}>
+                <Select
+                  value={videoDuration}
+                  onValueChange={(value: "4" | "8" | "12") => setVideoDuration(value)}
+                >
                   <SelectTrigger className="mt-2 rounded-none">
                     <SelectValue />
                   </SelectTrigger>
@@ -336,12 +545,24 @@ export function MarketingTab() {
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <Button className="rounded-none" disabled={videoLoading || videoPrompt.trim().length < 10} onClick={() => void createVideo()}>
-                {videoLoading ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
+              <Button
+                className="rounded-none"
+                disabled={videoLoading || referencePreparing || videoPrompt.trim().length < 10}
+                onClick={() => void createVideo()}
+              >
+                {videoLoading ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Sparkles className="size-4" />
+                )}
                 {videoLoading ? "Generating video…" : "Generate with OpenAI"}
               </Button>
               {videoJobId && videoLoading && (
-                <Button variant="outline" className="rounded-none" onClick={() => void refreshVideo()}>
+                <Button
+                  variant="outline"
+                  className="rounded-none"
+                  onClick={() => void refreshVideo()}
+                >
                   <RefreshCw className="size-4" /> Check now
                 </Button>
               )}
@@ -351,6 +572,15 @@ export function MarketingTab() {
                 </span>
               )}
             </div>
+            {videoError && (
+              <div
+                role="alert"
+                className="flex items-start gap-2 border border-destructive/50 bg-destructive/5 p-3 text-sm text-destructive"
+              >
+                <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+                <span>{videoError}</span>
+              </div>
+            )}
           </div>
 
           <div className="bg-shell p-3">
@@ -439,7 +669,10 @@ export function MarketingTab() {
           {variant.hashtags.length > 0 && (
             <div className="mt-3 flex flex-wrap items-center gap-2">
               {variant.hashtags.map((tag) => (
-                <span key={tag} className="border border-border/60 px-2 py-0.5 text-xs text-muted-foreground">
+                <span
+                  key={tag}
+                  className="border border-border/60 px-2 py-0.5 text-xs text-muted-foreground"
+                >
                   {tag.startsWith("#") ? tag : `#${tag}`}
                 </span>
               ))}
