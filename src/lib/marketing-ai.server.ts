@@ -27,7 +27,8 @@ export async function createAdCopy(
   },
   context: MarketingContext,
 ): Promise<{ ok: true; variants: AdVariant[] } | { ok: false; error: string }> {
-  if (!(await requireAdmin(context))) return { ok: false, error: "Marketing tools are admin-only." };
+  if (!(await requireAdmin(context)))
+    return { ok: false, error: "Marketing tools are admin-only." };
 
   const instruction = [
     "You are a senior performance marketer writing Meta (Facebook + Instagram) ads for 888clinic, a modern dermatology and aesthetic skin clinic in Bangkok, Thailand.",
@@ -47,7 +48,9 @@ export async function createAdCopy(
     "creativeIdea: one sentence describing the image or video to pair with it.",
     "Meta ad policy: no guaranteed results, diagnosis, body or skin shaming, personal-attribute targeting, percentages, cure claims, or exaggerated superlatives.",
     "hashtags: 3-6 short mixed Thai/English tags without spaces.",
-  ].filter(Boolean).join(" ");
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   const { callGateway, parseJsonContent, CHAT_MODEL } = await import("@/lib/ai-gateway.server");
   const call = await callGateway(
@@ -63,7 +66,8 @@ export async function createAdCopy(
 
   const parsed = parseJsonContent(call.data);
   const rows = Array.isArray(parsed?.["variants"]) ? (parsed["variants"] as unknown[]) : [];
-  if (!rows.length) return { ok: false, error: "The AI returned an unexpected response. Please try again." };
+  if (!rows.length)
+    return { ok: false, error: "The AI returned an unexpected response. Please try again." };
   const text = (value: unknown, max: number) => String(value ?? "").slice(0, max);
   return {
     ok: true,
@@ -87,6 +91,62 @@ export async function createAdCopy(
   };
 }
 
+/**
+ * Turn a `data:image/...;base64,...` URL into the binary blob OpenAI expects as
+ * the video's first frame. Returns null when the payload is not decodable, so
+ * the caller can fail with a message the admin can act on.
+ */
+function decodeReferenceImage(dataUrl: string): { blob: Blob; filename: string } | null {
+  const match = /^data:(image\/(?:jpeg|jpg|png|webp));base64,(.+)$/.exec(dataUrl);
+  if (!match) return null;
+  const mime = match[1] === "image/jpg" ? "image/jpeg" : match[1];
+  try {
+    const binary = Buffer.from(match[2], "base64");
+    if (!binary.length) return null;
+    const extension = mime === "image/png" ? "png" : mime === "image/webp" ? "webp" : "jpg";
+    return {
+      blob: new Blob([new Uint8Array(binary)], { type: mime }),
+      filename: `reference.${extension}`,
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * OpenAI's failure modes here are all operational (billing, model access, a
+ * rejected reference photo), and an admin can only fix them if we say which one
+ * happened — while keeping the raw provider text out of the UI.
+ */
+function videoStartError(status: number, message: string): string {
+  const detail = message.toLowerCase();
+  if (status === 401 || detail.includes("invalid api key") || detail.includes("incorrect api key"))
+    return "The OpenAI API key is invalid or has been revoked. Update OPENAI_API_KEY and try again.";
+  if (
+    status === 402 ||
+    detail.includes("insufficient_quota") ||
+    detail.includes("insufficient quota") ||
+    detail.includes("exceeded your current quota") ||
+    detail.includes("billing")
+  )
+    return "The OpenAI account has no available credit. Add billing or top up the account, then try again.";
+  if (
+    status === 403 ||
+    detail.includes("does not have access to model") ||
+    detail.includes("must be verified") ||
+    detail.includes("model_not_found") ||
+    detail.includes("unknown model")
+  )
+    return "This OpenAI account cannot use the video model yet. Verify the organisation for video access, then try again.";
+  if (status === 429)
+    return "OpenAI is rate limiting this account right now. Wait a moment, then try again.";
+  if (detail.includes("input_reference") || detail.includes("image"))
+    return "OpenAI rejected the starting image. Try a different photo, or generate without one.";
+  if (status === 400 && message.trim())
+    return `OpenAI rejected the video request: ${message.trim().slice(0, 200)}`;
+  return "OpenAI could not start the video. Check video-model access and try again.";
+}
+
 export async function startVideoGeneration(
   data: {
     objective: string;
@@ -95,14 +155,17 @@ export async function startVideoGeneration(
     prompt: string;
     duration: "4" | "8" | "12";
     format: "vertical" | "square" | "landscape";
+    referenceImage?: string;
   },
   context: MarketingContext,
 ): Promise<{ ok: true; jobId: string } | { ok: false; error: string }> {
-  if (!(await requireAdmin(context))) return { ok: false, error: "Marketing tools are admin-only." };
+  if (!(await requireAdmin(context)))
+    return { ok: false, error: "Marketing tools are admin-only." };
   const key = openAiKey();
   if (!key) return { ok: false, error: "OpenAI video generation is not connected yet." };
 
-  const size = data.format === "vertical" ? "720x1280" : data.format === "square" ? "1024x1024" : "1280x720";
+  const size =
+    data.format === "vertical" ? "720x1280" : data.format === "square" ? "1024x1024" : "1280x720";
   const form = new FormData();
   form.append("model", process.env["OPENAI_VIDEO_MODEL"] ?? "sora-2");
   form.append("seconds", data.duration);
@@ -116,19 +179,38 @@ export async function startVideoGeneration(
       data.offer ? `Offer: ${data.offer}.` : "",
       data.audience ? `Audience context: ${data.audience}.` : "",
       data.prompt,
+      data.referenceImage
+        ? "Begin from the supplied reference image, keeping its subject, framing and lighting consistent."
+        : "",
       "No generated text, logos, needles, graphic procedures, guaranteed outcomes, diagnosis, or unrealistic before-and-after transformation. Leave safe negative space for captions.",
-    ].filter(Boolean).join(" "),
+    ]
+      .filter(Boolean)
+      .join(" "),
   );
+
+  if (data.referenceImage) {
+    const reference = decodeReferenceImage(data.referenceImage);
+    if (!reference)
+      return {
+        ok: false,
+        error: "That starting image could not be read. Please upload a JPEG, PNG or WebP photo.",
+      };
+    form.append("input_reference", reference.blob, reference.filename);
+  }
 
   const response = await fetch("https://api.openai.com/v1/videos", {
     method: "POST",
     headers: { Authorization: `Bearer ${key}` },
     body: form,
   });
-  const payload = (await response.json().catch(() => null)) as { id?: string; error?: { message?: string } } | null;
+  const payload = (await response.json().catch(() => null)) as {
+    id?: string;
+    error?: { message?: string };
+  } | null;
   if (!response.ok || !payload?.id) {
-    console.error("[marketing-video] OpenAI start failed", response.status, payload?.error?.message ?? "");
-    return { ok: false, error: "OpenAI could not start the video. Check video-model access and try again." };
+    const message = payload?.error?.message ?? "";
+    console.error("[marketing-video] OpenAI start failed", response.status, message);
+    return { ok: false, error: videoStartError(response.status, message) };
   }
   return { ok: true, jobId: payload.id };
 }
@@ -137,7 +219,8 @@ export async function readVideoGeneration(
   jobId: string,
   context: MarketingContext,
 ): Promise<MarketingVideoStatus> {
-  if (!(await requireAdmin(context))) return { ok: false, error: "Marketing tools are admin-only." };
+  if (!(await requireAdmin(context)))
+    return { ok: false, error: "Marketing tools are admin-only." };
   const key = openAiKey();
   if (!key) return { ok: false, error: "OpenAI video generation is not connected yet." };
 
@@ -150,7 +233,8 @@ export async function readVideoGeneration(
     error?: { message?: string };
   } | null;
   if (!response.ok || !job) return { ok: false, error: "Could not check the video status." };
-  if (job.status === "failed") return { ok: false, error: job.error?.message ?? "Video generation failed." };
+  if (job.status === "failed")
+    return { ok: false, error: job.error?.message ?? "Video generation failed." };
   if (job.status !== "completed") {
     return {
       ok: true,
@@ -159,20 +243,26 @@ export async function readVideoGeneration(
     };
   }
 
-  const videoResponse = await fetch(`https://api.openai.com/v1/videos/${encodeURIComponent(jobId)}/content`, {
-    headers: { Authorization: `Bearer ${key}` },
-  });
-  if (!videoResponse.ok) return { ok: false, error: "The video finished but could not be downloaded." };
+  const videoResponse = await fetch(
+    `https://api.openai.com/v1/videos/${encodeURIComponent(jobId)}/content`,
+    {
+      headers: { Authorization: `Bearer ${key}` },
+    },
+  );
+  if (!videoResponse.ok)
+    return { ok: false, error: "The video finished but could not be downloaded." };
   const bytes = await videoResponse.arrayBuffer();
   const storagePath = `${context.userId}/marketing/${Date.now()}-${jobId.replace(/[^a-zA-Z0-9_-]/g, "")}.mp4`;
   const { error: uploadError } = await context.supabase.storage
     .from("media")
     .upload(storagePath, bytes, { contentType: "video/mp4", upsert: false });
-  if (uploadError) return { ok: false, error: "The video finished but could not be saved to the media library." };
+  if (uploadError)
+    return { ok: false, error: "The video finished but could not be saved to the media library." };
 
   const { data: signed, error: signedError } = await context.supabase.storage
     .from("media")
     .createSignedUrl(storagePath, 60 * 60 * 24);
-  if (signedError || !signed?.signedUrl) return { ok: false, error: "The video was saved but its preview could not be opened." };
+  if (signedError || !signed?.signedUrl)
+    return { ok: false, error: "The video was saved but its preview could not be opened." };
   return { ok: true, status: "completed", videoUrl: signed.signedUrl };
 }

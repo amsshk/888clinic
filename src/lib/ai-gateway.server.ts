@@ -16,14 +16,14 @@ export const IMAGE_MODEL = "google/gemini-3.1-flash-image";
  */
 export const PREVIEW_IMAGE_MODEL = "google/gemini-3-pro-image";
 
-
 const ENDPOINT = "https://ai.gateway.lovable.dev/v1/chat/completions";
 const MAX_ATTEMPTS = 3;
 
 export type GatewayResult<T> = { ok: true; data: T } | { ok: false; error: string; status: number };
 
 function patientMessage(status: number) {
-  if (status === 429) return "Our AI is busy right now — please try again in a moment.";
+  if (status === 429)
+    return "The AI provider rejected the request because of an account credit, usage, or rate limit. Check the provider dashboard, then try again.";
   if (status === 402 || status === 403)
     return "The AI scanner is temporarily unavailable. Please contact the clinic — you were not charged.";
   if (status === 400) return "We could not read that photo. Please upload a clear, well-lit photo.";
@@ -45,16 +45,14 @@ export async function callGateway(
 ): Promise<GatewayResult<Record<string, unknown>>> {
   let lastStatus = 500;
 
-  const { openaiKey, openaiChat, openaiImageEdit, wantsImage, hasVideoPart } = await import(
-    "@/lib/openai.server"
-  );
+  const { openaiKey, openaiChat, openaiImageEdit, wantsImage, hasVideoPart } =
+    await import("@/lib/openai.server");
   // `mask` is an OpenAI-only edit field; the Lovable gateway body must not carry it.
   const { mask: _mask, ...gatewayBody } = body;
   // The clinic's own OpenAI account is the primary provider; video understanding
   // is the one capability it cannot serve, so that stays on the Lovable gateway.
   const useOpenai = Boolean(openaiKey()) && !hasVideoPart(body);
   const openaiImage = useOpenai && wantsImage(body);
-
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
     let response: Response;
@@ -91,7 +89,6 @@ export async function callGateway(
       return { ok: false, status: lastStatus, error: patientMessage(lastStatus) };
     }
 
-
     if (response.ok) {
       const payload = (await response.json().catch(() => null)) as Record<string, unknown> | null;
       if (!payload) {
@@ -119,7 +116,11 @@ export async function callGateway(
 export function parseJsonContent(payload: Record<string, unknown>): Record<string, unknown> | null {
   const choices = payload["choices"] as Array<{ message?: { content?: string } }> | undefined;
   const raw = choices?.[0]?.message?.content ?? "";
-  const cleaned = raw.trim().replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
+  const cleaned = raw
+    .trim()
+    .replace(/^```(?:json)?/i, "")
+    .replace(/```$/, "")
+    .trim();
   const start = cleaned.indexOf("{");
   const end = cleaned.lastIndexOf("}");
   if (start === -1 || end <= start) return null;
@@ -133,8 +134,7 @@ export function parseJsonContent(payload: Record<string, unknown>): Record<strin
 /** Pull the generated image out of an image-capable chat completion. */
 export function parseImageContent(payload: Record<string, unknown>): string | null {
   const choices = payload["choices"] as
-    | Array<{ message?: { images?: Array<{ image_url?: { url?: string } }> } }>
-    | undefined;
+    Array<{ message?: { images?: Array<{ image_url?: { url?: string } }> } }> | undefined;
   const url = choices?.[0]?.message?.images?.[0]?.image_url?.url ?? "";
   return url.startsWith("data:image/") ? url : null;
 }
