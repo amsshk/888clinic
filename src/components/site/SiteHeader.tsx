@@ -9,12 +9,12 @@ import { AccountMenu } from "@/components/site/AccountMenu";
 import { useLang, type TKey } from "@/lib/i18n";
 
 const nav: { to: string; key: TKey }[] = [
+  { to: "/", key: "nav.home" },
   { to: "/services", key: "nav.treatments" },
   { to: "/pricing", key: "nav.pricing" },
   { to: "/products", key: "nav.skincare" },
   { to: "/ai-skin-analysis", key: "nav.ai" },
   { to: "/results", key: "nav.results" },
-
   { to: "/book", key: "nav.book" },
   { to: "/contact", key: "nav.contact" },
 ];
@@ -72,6 +72,7 @@ export function SiteHeader() {
               to={item.to}
               className="whitespace-nowrap text-[0.72rem] uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-foreground"
               activeProps={{ className: "text-foreground" }}
+              activeOptions={{ exact: item.to === "/" }}
             >
               {t(item.key)}
             </Link>
@@ -89,7 +90,10 @@ export function SiteHeader() {
           </a>
           <AccountMenu />
           <BookingDialog>
-            <Button size="sm" className="rounded-none px-5">
+            <Button
+              size="sm"
+              className="rounded-full bg-gradient-to-br from-gold-deep to-gold-soft px-6 text-primary-foreground shadow-gold hover:opacity-90"
+            >
               {t("cta.book")}
             </Button>
           </BookingDialog>
@@ -106,7 +110,7 @@ export function SiteHeader() {
       {open && (
         <div className="results-site-header__mobile border-t border-border bg-background px-5 pb-5 lg:hidden">
           <nav className="flex flex-col divide-y divide-border">
-            {[{ to: "/", key: "nav.home" as TKey }, ...nav].map((item) => (
+            {nav.map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
@@ -123,7 +127,9 @@ export function SiteHeader() {
             <AccountMenu onNavigate={() => setOpen(false)} />
           </div>
           <BookingDialog>
-            <Button className="mt-3 w-full rounded-none">{t("cta.book")}</Button>
+            <Button className="mt-3 w-full rounded-full bg-gradient-to-br from-gold-deep to-gold-soft text-primary-foreground shadow-gold hover:opacity-90">
+              {t("cta.book")}
+            </Button>
           </BookingDialog>
         </div>
       )}

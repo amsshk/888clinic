@@ -54,11 +54,6 @@ const maliCards: { icon: typeof ScanFace; title: TKey; body: TKey }[] = [
 
 function Home() {
   const { t } = useLang();
-  const stats: [string, TKey][] = [
-    ["12k+", "home.stat.patients"],
-    ["18", "home.stat.years"],
-    ["4.9", "home.stat.rating"],
-  ];
 
   return (
     <div>
@@ -90,19 +85,6 @@ function Home() {
                 <Link to="/ai-skin-analysis">{t("home.cta.scan")}</Link>
               </Button>
             </div>
-
-            <dl className="mt-12 grid max-w-md grid-cols-3 gap-6 border-t border-border pt-7">
-              {stats.map(([value, label]) => (
-                <div key={label}>
-                  <dt className="font-display text-3xl text-foreground">
-                    {value}
-                  </dt>
-                  <dd className="mt-1 text-xs uppercase tracking-widest text-muted-foreground">
-                    {t(label)}
-                  </dd>
-                </div>
-              ))}
-            </dl>
           </div>
 
           <div className="relative">
