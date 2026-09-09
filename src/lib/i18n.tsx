@@ -197,10 +197,10 @@ const en = {
 
   // Products
   "prod.eyebrow": "The 888 range",
-  "prod.title1": "Clinical skincare,",
-  "prod.title2": "no noise.",
+  "prod.title1": "Aftercare for",
+  "prod.title2": "botox, filler & facelift.",
   "prod.lede":
-    "Nine formulas, four steps. Dispensed in clinic and shipped to patients — each one tested in our own consultations.",
+    "Three formulas we hand our own patients after injectables and facelift procedures — dispensed in clinic and shipped to patients.",
   "prod.filter.All": "All",
   "prod.filter.Cleanse": "Cleanse",
   "prod.filter.Treat": "Treat",
@@ -763,10 +763,10 @@ const th: Record<keyof typeof en, string> = {
     "จองคิวคุยกับหมอ หรือลองให้ Dr Mali พรีวิวผลให้ดูก่อนตัดสินใจก็ได้ค่ะ",
 
   "prod.eyebrow": "สกินแคร์ 888",
-  "prod.title1": "สกินแคร์คลินิก",
-  "prod.title2": "ใช้ง่าย ไม่ซับซ้อน",
+  "prod.title1": "ดูแลผิวหลัง",
+  "prod.title2": "โบท็อกซ์ ฟิลเลอร์ และรีฟิต",
   "prod.lede":
-    "9 สูตร 4 ขั้นตอน จ่ายที่คลินิกและส่งถึงบ้าน — ทุกสูตรใช้จริงในห้องตรวจของเราก่อนค่ะ",
+    "3 สูตรที่เราแนะนำหลังฉีดโบท็อกซ์ ฟิลเลอร์ และทำรีฟิต จ่ายที่คลินิกและส่งถึงบ้าน",
   "prod.filter.All": "ทั้งหมด",
   "prod.filter.Cleanse": "ทำความสะอาด",
   "prod.filter.Treat": "บำรุงเฉพาะจุด",

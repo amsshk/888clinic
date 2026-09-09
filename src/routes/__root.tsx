@@ -135,8 +135,11 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
-const PUBLIC_LUXURY_PATHS = new Set([
+const PUBLIC_LUXURY_PATHS = [
   "/",
+  "/auth",
+  "/admin",
+  "/reset-password",
   "/services",
   "/pricing",
   "/products",
@@ -148,14 +151,16 @@ const PUBLIC_LUXURY_PATHS = new Set([
   "/privacy",
   "/terms",
   "/mali",
-]);
+];
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
-  const useLuxuryTheme = PUBLIC_LUXURY_PATHS.has(pathname);
+  const useLuxuryTheme = PUBLIC_LUXURY_PATHS.some(
+    (path) => pathname === path || pathname.startsWith(`${path}/`),
+  );
 
   return (
     <QueryClientProvider client={queryClient}>
