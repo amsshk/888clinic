@@ -18,6 +18,7 @@ import { MaliModelTab } from "@/components/admin/MaliModelTab";
 import { ScanTestTab } from "@/components/admin/ScanTestTab";
 import { BillingTab } from "@/components/admin/BillingTab";
 import { PricingTab } from "@/components/admin/PricingTab";
+import { CatalogueDesignPanel } from "@/components/admin/CatalogueDesignPanel";
 import { MarketingTab } from "@/components/admin/MarketingTab";
 import { CopyTab } from "@/components/admin/CopyTab";
 import { AssistantTab } from "@/components/admin/AssistantTab";
@@ -228,6 +229,9 @@ function AdminPage() {
         {isAdmin && (
           <TabsContent value="pricing" className="mt-8">
             <PricingTab />
+            <div className="mt-10">
+              <CatalogueDesignPanel />
+            </div>
           </TabsContent>
         )}
         {isAdmin && (
@@ -431,6 +435,7 @@ function MediaLibrary() {
   const [hint, setHint] = useState("");
   const [beforeFile, setBeforeFile] = useState<File | null>(null);
   const [afterFile, setAfterFile] = useState<File | null>(null);
+  const [finishedResultFile, setFinishedResultFile] = useState<File | null>(null);
   const [resultCategory, setResultCategory] = useState("");
 
   const load = useCallback(async () => {
@@ -571,11 +576,12 @@ function MediaLibrary() {
 
     try {
       const canvas = document.createElement("canvas");
-      const size = 1600;
-      const panelWidth = size / 2;
+      const canvasWidth = 2400;
+      const canvasHeight = 1600;
+      const panelWidth = canvasWidth / 2;
 
-      canvas.width = size;
-      canvas.height = size;
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
 
       const context = canvas.getContext("2d");
       if (!context) {
@@ -586,14 +592,12 @@ function MediaLibrary() {
       const drawingContext: CanvasRenderingContext2D = context;
 
       context.fillStyle = "#080808";
-      context.fillRect(0, 0, size, size);
+      context.fillRect(0, 0, canvasWidth, canvasHeight);
       context.imageSmoothingEnabled = true;
       context.imageSmoothingQuality = "high";
 
-      function drawContained(image: ImageBitmap, panelX: number, panelW: number, panelH: number) {
-        // Downscale large photos but never invent missing detail by enlarging
-        // a low-resolution clinical photograph.
-        const scale = Math.min(panelW / image.width, panelH / image.height, 1);
+      function drawFullBleed(image: ImageBitmap, panelX: number, panelW: number, panelH: number) {
+        const scale = Math.max(panelW / image.width, panelH / image.height);
 
         const width = Math.max(1, Math.round(image.width * scale));
         const height = Math.max(1, Math.round(image.height * scale));
@@ -608,8 +612,8 @@ function MediaLibrary() {
         drawingContext.restore();
       }
 
-      drawContained(beforeImage, 0, panelWidth, size);
-      drawContained(afterImage, panelWidth, panelWidth, size);
+      drawFullBleed(beforeImage, 0, panelWidth, canvasHeight);
+      drawFullBleed(afterImage, panelWidth, panelWidth, canvasHeight);
 
       const blob = await new Promise<Blob>((resolve, reject) => {
         canvas.toBlob(
@@ -618,7 +622,7 @@ function MediaLibrary() {
             else reject(new Error("Could not encode the combined result."));
           },
           "image/jpeg",
-          0.94,
+          0.98,
         );
       });
 
@@ -626,6 +630,30 @@ function MediaLibrary() {
     } finally {
       beforeImage.close();
       afterImage.close();
+    }
+  }
+
+  async function uploadFinishedResult() {
+    if (!finishedResultFile || !resultCategory) {
+      toast.error("Choose a finished image and treatment category.");
+      return;
+    }
+
+    setBusy(true);
+    try {
+      setStep("Uploading original finished result…");
+      const ok = await uploadOne(finishedResultFile, 0, 1, {
+        aiHint: `Finished Before & After result. Treatment category: ${resultCategory}. Describe only visible facts; do not diagnose, exaggerate, retouch, invent detail, or alter the clinical outcome.`,
+        resultCategory,
+      });
+      if (!ok) return;
+      setFinishedResultFile(null);
+      setResultCategory("");
+      toast.success("Finished Before & After result created and published");
+      await load();
+    } finally {
+      setBusy(false);
+      setStep("");
     }
   }
 
@@ -823,11 +851,47 @@ function MediaLibrary() {
       <div className="border border-gold/35 bg-card p-6">
         <div>
           <p className="eyebrow">Results media</p>
-          <h2 className="mt-2 text-xl">Create a Before &amp; After result</h2>
+          <h2 className="mt-2 text-xl">Publish a finished Before &amp; After result</h2>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-            Choose one clean Before photo and one clean After photo. The clinic software places
-            Before on the left and After on the right, combines them into one file, applies the
-            standard Results frame, and asks AI to write factual metadata.
+            Recommended: upload the clinic-approved finished image directly. The original file is
+            stored without resizing or recompression and published to Results under the selected
+            category.
+          </p>
+        </div>
+
+        <div className="mt-6 grid gap-5 lg:grid-cols-[1fr_auto] lg:items-end">
+          <label className="space-y-2">
+            <span className="block text-sm font-medium">Finished Before &amp; After image</span>
+            <input
+              key={finishedResultFile?.name ?? "finished-empty"}
+              type="file"
+              accept="image/*"
+              disabled={busy}
+              onChange={(event) => setFinishedResultFile(event.target.files?.[0] ?? null)}
+              className="block w-full border border-border bg-background px-3 py-2 text-sm file:mr-4 file:border-0 file:bg-primary file:px-4 file:py-2 file:text-primary-foreground"
+            />
+            {finishedResultFile && (
+              <span className="block truncate text-xs text-muted-foreground">
+                Original: {finishedResultFile.name}
+              </span>
+            )}
+          </label>
+          <Button
+            type="button"
+            className="rounded-none px-6"
+            disabled={busy || !finishedResultFile || !resultCategory}
+            onClick={uploadFinishedResult}
+          >
+            {busy ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}
+            {busy ? step || "Working…" : "Upload and publish"}
+          </Button>
+        </div>
+
+        <div className="mt-8 border-t border-border pt-6">
+          <h3 className="text-base">Or compose from separate photos</h3>
+          <p className="mt-2 text-sm text-muted-foreground">
+            The alternative composer creates equal full-bleed panels on a 2400 × 1600 canvas and
+            exports JPEG at quality 0.98.
           </p>
         </div>
 
@@ -898,9 +962,8 @@ function MediaLibrary() {
         </div>
 
         <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
-          Use clean original patient photographs with verified consent. The composer aligns and
-          resizes the originals but does not retouch skin, remove clinical detail, or generate a
-          different outcome.
+          Use clean original patient photographs with verified consent. Neither path retouches skin,
+          invents detail, or alters clinical outcomes.
         </p>
       </div>
 
