@@ -7,7 +7,6 @@ import {
   type PatientReportTemplate,
 } from "./report-template";
 
-
 export type PatientRecord = {
   id: string;
   hn: string | null;
@@ -26,6 +25,22 @@ const GRAPHITE: [number, number, number] = [42, 44, 48];
 const GREY: [number, number, number] = [110, 112, 118];
 
 const FONT = "NotoSansThai";
+const HEADER_HEIGHT = 108;
+
+let logoPromise: Promise<HTMLImageElement | null> | null = null;
+
+/** Loads the real crown logo once and caches it; resolves to `null` (never rejects) if it can't load. */
+function loadReportLogo(): Promise<HTMLImageElement | null> {
+  if (!logoPromise) {
+    logoPromise = new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => resolve(null);
+      img.src = "/images/888clinic-logo.png";
+    });
+  }
+  return logoPromise;
+}
 
 async function withThaiFont(doc: jsPDF) {
   const [{ notoSansThaiRegular }, { notoSansThaiBold }] = await Promise.all([
@@ -59,6 +74,7 @@ export async function buildPatientReport(
 ): Promise<jsPDF> {
   const t = template;
   const ACCENT = hexToRgb(t.accentColor);
+  const logo = await loadReportLogo();
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   await withThaiFont(doc);
   const page = doc.internal.pageSize;
@@ -66,26 +82,43 @@ export async function buildPatientReport(
   const H = page.getHeight();
   const M = 48;
 
-  // Header band
+  // Header band: charcoal background with the crown logo on the left.
   doc.setFillColor(...GRAPHITE);
-  doc.rect(0, 0, W, 92, "F");
-  doc.setFont(FONT, "bold");
-  doc.setFontSize(24);
-  doc.setTextColor(...ACCENT);
-  doc.text(t.brandAccent, M, 52);
-  doc.setTextColor(255, 255, 255);
-  doc.text(t.brandName, M + doc.getTextWidth(t.brandAccent), 52);
+  doc.rect(0, 0, W, HEADER_HEIGHT, "F");
+
+  const logoH = 36;
+  const logoY = 18;
+  if (logo && logo.naturalWidth > 0 && logo.naturalHeight > 0) {
+    const logoW = logoH * (logo.naturalWidth / logo.naturalHeight);
+    doc.addImage(logo, "PNG", M, logoY, logoW, logoH);
+  } else {
+    // Text fallback so the report still renders if the logo can't load.
+    doc.setFont(FONT, "bold");
+    doc.setFontSize(22);
+    doc.setTextColor(...ACCENT);
+    doc.text(t.brandAccent, M, logoY + logoH * 0.8);
+    doc.setTextColor(255, 255, 255);
+    doc.text(t.brandName, M + doc.getTextWidth(t.brandAccent), logoY + logoH * 0.8);
+  }
+
   doc.setFont(FONT, "normal");
   doc.setFontSize(8.5);
   doc.setTextColor(190, 190, 195);
-  if (t.tagline) doc.text(t.tagline.toUpperCase(), M, 70);
-  if (t.website) doc.text(t.website, W - M, 70, { align: "right" });
-  doc.setFontSize(11);
+  if (t.tagline) doc.text(t.tagline.toUpperCase(), M, logoY + logoH + 18);
+  if (t.website) doc.text(t.website, W - M, logoY + logoH + 18, { align: "right" });
+
+  doc.setFont(FONT, "bold");
+  doc.setFontSize(13);
   doc.setTextColor(255, 255, 255);
-  if (t.reportTitle) doc.text(t.reportTitle, W - M, 52, { align: "right" });
+  if (t.reportTitle) doc.text(t.reportTitle, W - M, logoY + logoH * 0.8 - 2, { align: "right" });
+
+  // Gold divider closing the header, matching the site's charcoal-and-gold letterhead.
+  doc.setDrawColor(...ACCENT);
+  doc.setLineWidth(1);
+  doc.line(0, HEADER_HEIGHT, W, HEADER_HEIGHT);
 
   // Name
-  let y = 132;
+  let y = HEADER_HEIGHT + 40;
   doc.setTextColor(...GREY);
   doc.setFontSize(7.5);
   doc.text("PATIENT", M, y);
@@ -228,7 +261,6 @@ async function buildWithSavedTemplate(patient: PatientRecord) {
   }
   return buildPatientReport(patient, template);
 }
-
 
 /** One-click download of the patient PDF. */
 export async function downloadPatientReport(patient: PatientRecord) {

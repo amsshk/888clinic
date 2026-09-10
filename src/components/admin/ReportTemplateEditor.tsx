@@ -95,10 +95,17 @@ export default function ReportTemplateEditor({ onClose }: { onClose: () => void 
           <p className="eyebrow">Report template</p>
           <h3 className="mt-1 text-lg">Choose the sections and branding on every patient PDF</h3>
           <p className="mt-1 text-sm text-muted-foreground">
-            Applies to every downloaded or printed patient record, for all admins.
+            Applies to every downloaded or printed patient record, for all admins. The preview
+            sample PDF uses the current crown logo from the site header.
           </p>
         </div>
-        <Button variant="ghost" size="icon" className="rounded-none" onClick={onClose} aria-label="Close template editor">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-none"
+          onClick={onClose}
+          aria-label="Close template editor"
+        >
           <X className="size-4" />
         </Button>
       </div>
@@ -156,14 +163,34 @@ export default function ReportTemplateEditor({ onClose }: { onClose: () => void 
         <div className="space-y-4">
           <p className="eyebrow">Branding</p>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Report title" value={template.reportTitle} onChange={(v) => patch({ reportTitle: v })} />
-            <Field label="Website" value={template.website} onChange={(v) => patch({ website: v })} />
-            <Field label="Wordmark (accent)" value={template.brandAccent} onChange={(v) => patch({ brandAccent: v })} />
-            <Field label="Wordmark (white)" value={template.brandName} onChange={(v) => patch({ brandName: v })} />
+            <Field
+              label="Report title"
+              value={template.reportTitle}
+              onChange={(v) => patch({ reportTitle: v })}
+            />
+            <Field
+              label="Website"
+              value={template.website}
+              onChange={(v) => patch({ website: v })}
+            />
+            <Field
+              label="Wordmark (accent)"
+              value={template.brandAccent}
+              onChange={(v) => patch({ brandAccent: v })}
+            />
+            <Field
+              label="Wordmark (white)"
+              value={template.brandName}
+              onChange={(v) => patch({ brandName: v })}
+            />
           </div>
           <Field label="Tagline" value={template.tagline} onChange={(v) => patch({ tagline: v })} />
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Sign-off name" value={template.signatureName} onChange={(v) => patch({ signatureName: v })} />
+            <Field
+              label="Sign-off name"
+              value={template.signatureName}
+              onChange={(v) => patch({ signatureName: v })}
+            />
             <Field
               label="Sign-off role (optional)"
               value={template.signatureRole}
@@ -203,7 +230,8 @@ export default function ReportTemplateEditor({ onClose }: { onClose: () => void 
 
       <div className="flex flex-wrap gap-3 border-t border-border p-5">
         <Button className="rounded-none" disabled={busy} onClick={save}>
-          {busy ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />} Save template
+          {busy ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />} Save
+          template
         </Button>
         <Button variant="outline" className="rounded-none" onClick={preview}>
           <Eye className="size-4" /> Preview sample PDF
@@ -233,7 +261,12 @@ function Field({
   return (
     <div className="space-y-2">
       <Label htmlFor={id}>{label}</Label>
-      <Input id={id} value={value} onChange={(e) => onChange(e.target.value)} className="rounded-none" />
+      <Input
+        id={id}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="rounded-none"
+      />
     </div>
   );
 }
