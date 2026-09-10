@@ -30,7 +30,6 @@ import { findAlternative } from "@/lib/catalog.shared";
 import { useLang } from "@/lib/i18n";
 import { conditionLabel, severityLabel, urgencyLabel } from "@/lib/public-content";
 
-
 type ScanRow = ScanResult & { body_area?: string; concern?: string };
 
 export function SkinScanTool() {
@@ -42,7 +41,10 @@ export function SkinScanTool() {
   const fetchModel = useServerFn(getActiveMaliModel);
   const { openCheckout, closeCheckout, checkoutElement } = useStripeCheckout();
   const inputRef = useRef<HTMLInputElement>(null);
-  const returnUrl = typeof window !== "undefined" ? `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}` : undefined;
+  const returnUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`
+      : undefined;
 
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -66,8 +68,12 @@ export function SkinScanTool() {
     email: user?.email ?? "",
   };
 
-  function download(scan: ScanRow) {
-    generateScanReport(scan as ReportScan, patient, lang);
+  async function download(scan: ScanRow) {
+    try {
+      await generateScanReport(scan as ReportScan, patient, lang);
+    } catch {
+      toast.error("Could not generate the PDF report");
+    }
   }
 
   async function onAnalyse() {
@@ -141,12 +147,13 @@ export function SkinScanTool() {
           <div>
             <p className="eyebrow">{t("sa.eyebrow")}</p>
             <h2 className="mt-4 text-3xl leading-tight sm:text-4xl">
-              {t("sa.title1")}{" "}
-              <span className="text-gradient-gold">{t("sa.title2")}</span>
+              {t("sa.title1")} <span className="text-gradient-gold">{t("sa.title2")}</span>
             </h2>
           </div>
           <div className="border border-border bg-card px-6 py-5">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">{t("sa.available")}</p>
+            <p className="text-xs uppercase tracking-widest text-muted-foreground">
+              {t("sa.available")}
+            </p>
             <p className="mt-2 font-display text-4xl text-foreground">{remaining}</p>
             <p className="mt-1 text-xs text-muted-foreground">
               {t("sa.availableSub", { free: wallet.free_scans_remaining, paid: wallet.credits })}
@@ -160,7 +167,11 @@ export function SkinScanTool() {
         <div>
           <div className="border border-dashed border-gold/60 bg-card p-8 text-center">
             {preview ? (
-              <img src={preview} alt={t("sa.previewAlt")} className="mx-auto max-h-64 object-contain" />
+              <img
+                src={preview}
+                alt={t("sa.previewAlt")}
+                className="mx-auto max-h-64 object-contain"
+              />
             ) : (
               <ImageIcon className="mx-auto size-10 text-gold" />
             )}
@@ -168,9 +179,7 @@ export function SkinScanTool() {
             <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
               {file?.name ?? t("sa.uploadHint")}
             </p>
-            <p className="mx-auto mt-3 max-w-sm text-xs text-muted-foreground">
-              {t("sa.consent")}
-            </p>
+            <p className="mx-auto mt-3 max-w-sm text-xs text-muted-foreground">{t("sa.consent")}</p>
             <input
               ref={inputRef}
               type="file"
@@ -233,20 +242,14 @@ export function SkinScanTool() {
 
           <div className="mt-6 flex gap-3 border border-border bg-secondary/60 p-5">
             <ShieldAlert className="mt-0.5 size-5 shrink-0 text-gold-deep" />
-            <p className="text-xs leading-relaxed text-muted-foreground">
-              {t("sa.triage")}
-            </p>
+            <p className="text-xs leading-relaxed text-muted-foreground">{t("sa.triage")}</p>
           </div>
 
           <div className="mt-4 flex gap-3 border border-gold/30 bg-gold/5 p-5">
             <ShieldAlert className="mt-0.5 size-5 shrink-0 text-gold" />
             <div className="text-xs leading-relaxed text-muted-foreground">
-              <p className="font-medium text-foreground">
-                {t("sa.limit.title")}
-              </p>
-              <p className="mt-1">
-                {t("sa.limit.body")}
-              </p>
+              <p className="font-medium text-foreground">{t("sa.limit.title")}</p>
+              <p className="mt-1">{t("sa.limit.body")}</p>
             </div>
           </div>
         </div>
@@ -256,12 +259,12 @@ export function SkinScanTool() {
           {result ? (
             <div className="border border-border bg-card p-8">
               <p className="eyebrow">{t("sa.latest")}</p>
-               <h2 className="mt-3 text-3xl">{conditionLabel(result.condition, lang)}</h2>
+              <h2 className="mt-3 text-3xl">{conditionLabel(result.condition, lang)}</h2>
               <p className="mt-3 text-sm text-gold-deep">
                 {t("sa.meta", {
                   c: Math.round(result.confidence * 100),
-                   s: severityLabel(result.severity, lang),
-                   u: urgencyLabel(result.urgency, lang),
+                  s: severityLabel(result.severity, lang),
+                  u: urgencyLabel(result.urgency, lang),
                 })}
               </p>
               <p className="mt-5 text-sm leading-relaxed text-muted-foreground">{result.summary}</p>
@@ -269,9 +272,7 @@ export function SkinScanTool() {
               {result.mali ? (
                 <div className="mt-6 border border-gold/40 bg-secondary/40 p-5">
                   <p className="text-xs uppercase tracking-widest text-gold-deep">
-                    {result.mali.primary
-                      ? t("sa.mali.primary")
-                      : t("sa.mali.support")}
+                    {result.mali.primary ? t("sa.mali.primary") : t("sa.mali.support")}
                   </p>
                   <div className="mt-3 grid grid-cols-3 gap-4 text-sm">
                     <div>
@@ -284,7 +285,9 @@ export function SkinScanTool() {
                     </div>
                     <div>
                       <p className="text-muted-foreground">{t("sa.mali.sk")}</p>
-                      <p className="text-lg">{Math.round(result.mali.seborrheicKeratosis * 100)}%</p>
+                      <p className="text-lg">
+                        {Math.round(result.mali.seborrheicKeratosis * 100)}%
+                      </p>
                     </div>
                   </div>
                   <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
@@ -295,7 +298,9 @@ export function SkinScanTool() {
 
               {result.findings.length > 0 && (
                 <div className="mt-7">
-                  <h3 className="text-xs uppercase tracking-widest text-muted-foreground">{t("sa.features")}</h3>
+                  <h3 className="text-xs uppercase tracking-widest text-muted-foreground">
+                    {t("sa.features")}
+                  </h3>
                   <ul className="mt-3 space-y-3">
                     {result.findings.map((f) => (
                       <li key={f.label} className="text-sm">
@@ -309,7 +314,9 @@ export function SkinScanTool() {
 
               {result.recommendations.length > 0 && (
                 <div className="mt-7">
-                  <h3 className="text-xs uppercase tracking-widest text-muted-foreground">{t("sa.next")}</h3>
+                  <h3 className="text-xs uppercase tracking-widest text-muted-foreground">
+                    {t("sa.next")}
+                  </h3>
                   <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
                     {result.recommendations.map((r) => (
                       <li key={r}>• {r}</li>
@@ -319,7 +326,7 @@ export function SkinScanTool() {
               )}
 
               <div className="mt-8 flex flex-wrap gap-3">
-                <Button className="rounded-none px-6" onClick={() => download(result)}>
+                <Button className="rounded-none px-6" onClick={() => void download(result)}>
                   <FileText className="mr-2 size-4" /> {t("sa.download")}
                 </Button>
                 <Button asChild variant="outline" className="rounded-none border-gold/60 px-6">
@@ -351,7 +358,9 @@ export function SkinScanTool() {
                     className={`flex items-center justify-between px-5 py-4 ${pack.available ? "bg-card" : "bg-secondary/40"}`}
                   >
                     <div>
-                      <p className={`text-sm font-semibold ${pack.available ? "" : "text-muted-foreground"}`}>
+                      <p
+                        className={`text-sm font-semibold ${pack.available ? "" : "text-muted-foreground"}`}
+                      >
                         {t("sa.packs.scans", { n: pack.credits ?? 1 })}
                         {!pack.available && (
                           <span className="ml-2 border border-border bg-background px-2 py-0.5 text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -391,7 +400,9 @@ export function SkinScanTool() {
                           quantity: 1,
                           userId: user.id,
                           customerEmail: user.email,
-                          returnUrl: returnUrl || `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
+                          returnUrl:
+                            returnUrl ||
+                            `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
                         });
                       }}
                     >
@@ -404,7 +415,6 @@ export function SkinScanTool() {
                   </div>
                 );
               })}
-
             </div>
             <p className="mt-4 text-xs text-muted-foreground">
               {t("sa.orders.q")}{" "}
@@ -413,9 +423,7 @@ export function SkinScanTool() {
               </Link>
               .
             </p>
-            <p className="mt-2 text-xs text-muted-foreground">
-              {t("sa.payNote")}
-            </p>
+            <p className="mt-2 text-xs text-muted-foreground">{t("sa.payNote")}</p>
           </div>
 
           <Dialog open={!!checkoutElement} onOpenChange={(open) => !open && closeCheckout()}>
@@ -437,9 +445,12 @@ export function SkinScanTool() {
         ) : (
           <ul className="mt-6 space-y-px border border-border bg-border">
             {history.map((scan) => (
-              <li key={scan.id} className="flex flex-wrap items-center justify-between gap-4 bg-card px-5 py-4">
+              <li
+                key={scan.id}
+                className="flex flex-wrap items-center justify-between gap-4 bg-card px-5 py-4"
+              >
                 <div>
-                   <p className="text-sm font-semibold">{conditionLabel(scan.condition, lang)}</p>
+                  <p className="text-sm font-semibold">{conditionLabel(scan.condition, lang)}</p>
                   <p className="text-xs text-muted-foreground">
                     {t("sa.history.meta", {
                       date: new Date(scan.created_at).toLocaleString(),
@@ -448,7 +459,12 @@ export function SkinScanTool() {
                     {scan.body_area ? ` · ${scan.body_area}` : ""}
                   </p>
                 </div>
-                <Button size="sm" variant="outline" className="rounded-none" onClick={() => download(scan)}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="rounded-none"
+                  onClick={() => void download(scan)}
+                >
                   <FileText className="mr-2 size-3.5" /> {t("sa.report")}
                 </Button>
               </li>
