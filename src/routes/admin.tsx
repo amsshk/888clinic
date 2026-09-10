@@ -172,7 +172,7 @@ function AdminPage() {
           )}
           {isAdmin && (
             <TabsTrigger value="backgrounds" className="rounded-none">
-              Product backgrounds
+              Product card style
             </TabsTrigger>
           )}
           {isAdmin && (

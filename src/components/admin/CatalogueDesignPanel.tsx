@@ -37,10 +37,13 @@ export function CatalogueDesignPanel() {
   return (
     <section className="border border-gold/35 bg-card p-6">
       <div>
-        <p className="eyebrow">Catalogue design</p>
-        <h3 className="mt-2 text-xl">Choose a public catalogue preset</h3>
+        <p className="eyebrow">Product card style</p>
+        <h3 className="mt-2 text-xl">Choose a filler-card colour style</h3>
         <p className="mt-2 text-sm text-muted-foreground">
-          Only administrators can save this setting.
+          This changes the card frame (background, border and text colour) around each filler
+          product on the public catalogue — it does not edit or replace the product photographs, and
+          it never touches the Results page or clinical photos. Only administrators can save this
+          setting.
         </p>
       </div>
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
