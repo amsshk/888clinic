@@ -12,6 +12,7 @@ import {
   Megaphone,
   RefreshCw,
   Sparkles,
+  Video,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { createFreeMarketingVideo, type FreeVideoSeconds } from "@/lib/free-marketing-video";
 import promoVideo from "@/assets/videos/888clinic-mali-promo-vertical.mp4.asset.json";
 
 const OBJECTIVES = [
@@ -141,7 +143,23 @@ export function MarketingTab() {
   const [referenceFile, setReferenceFile] = useState<File | null>(null);
   const [referenceImage, setReferenceImage] = useState("");
   const [referencePreparing, setReferencePreparing] = useState(false);
+  const [freeVideoLoading, setFreeVideoLoading] = useState(false);
+  const [freeVideoExtension, setFreeVideoExtension] = useState<"mp4" | "webm">("mp4");
+  const [isFreeVideo, setIsFreeVideo] = useState(false);
   const referenceInputRef = useRef<HTMLInputElement>(null);
+  // Blob URLs from the free renderer are owned by this component, so they are
+  // revoked when replaced and when the tab unmounts.
+  const freeVideoUrlRef = useRef("");
+
+  useEffect(
+    () => () => {
+      if (freeVideoUrlRef.current) {
+        URL.revokeObjectURL(freeVideoUrlRef.current);
+        freeVideoUrlRef.current = "";
+      }
+    },
+    [],
+  );
 
   // The crop depends on the chosen ad format, so re-prepare whenever it changes.
   useEffect(() => {
@@ -250,6 +268,8 @@ export function MarketingTab() {
   async function createVideo() {
     setVideoLoading(true);
     setVideoProgress(0);
+    setIsFreeVideo(false);
+    releaseFreeVideoUrl();
     setGeneratedVideoUrl("");
     // A retry starts clean: the previous failure must not linger next to a running job.
     setVideoError("");
@@ -281,6 +301,46 @@ export function MarketingTab() {
       setVideoLoading(false);
     }
   }
+
+  function releaseFreeVideoUrl() {
+    if (freeVideoUrlRef.current) {
+      URL.revokeObjectURL(freeVideoUrlRef.current);
+      freeVideoUrlRef.current = "";
+    }
+  }
+
+  /** Free path: renders and records in this browser tab — no API call, no credit. */
+  async function createFreeVideo() {
+    setFreeVideoLoading(true);
+    setVideoError("");
+    try {
+      const result = await createFreeMarketingVideo({
+        ...(referenceImage ? { image: referenceImage } : {}),
+        headline: objective,
+        offer,
+        format: videoFormat,
+        seconds: Number(videoDuration) as FreeVideoSeconds,
+      });
+      releaseFreeVideoUrl();
+      const url = URL.createObjectURL(result.blob);
+      freeVideoUrlRef.current = url;
+      setFreeVideoExtension(result.extension);
+      setIsFreeVideo(true);
+      setGeneratedVideoUrl(url);
+      toast.success("Free motion video ready");
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Could not create the free motion video";
+      toast.error(message);
+      setVideoError(message);
+    } finally {
+      setFreeVideoLoading(false);
+    }
+  }
+
+  const downloadName = isFreeVideo
+    ? `888clinic-meta-promo.${freeVideoExtension}`
+    : "888clinic-meta-promo.mp4";
 
   return (
     <div className="space-y-8">
@@ -547,7 +607,12 @@ export function MarketingTab() {
             <div className="flex flex-wrap items-center gap-3">
               <Button
                 className="rounded-none"
-                disabled={videoLoading || referencePreparing || videoPrompt.trim().length < 10}
+                disabled={
+                  videoLoading ||
+                  freeVideoLoading ||
+                  referencePreparing ||
+                  videoPrompt.trim().length < 10
+                }
                 onClick={() => void createVideo()}
               >
                 {videoLoading ? (
@@ -556,6 +621,19 @@ export function MarketingTab() {
                   <Sparkles className="size-4" />
                 )}
                 {videoLoading ? "Generating video…" : "Generate with OpenAI"}
+              </Button>
+              <Button
+                variant="outline"
+                className="rounded-none"
+                disabled={freeVideoLoading || videoLoading || referencePreparing}
+                onClick={() => void createFreeVideo()}
+              >
+                {freeVideoLoading ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Video className="size-4" />
+                )}
+                {freeVideoLoading ? "Recording…" : "Create free motion video"}
               </Button>
               {videoJobId && videoLoading && (
                 <Button
@@ -572,6 +650,10 @@ export function MarketingTab() {
                 </span>
               )}
             </div>
+            <p className="text-xs text-muted-foreground">
+              Free motion video runs entirely in your browser—no API key, credit, upload or charge.
+              Keep this tab open while it records in real time.
+            </p>
             {videoError && (
               <div
                 role="alert"
@@ -594,10 +676,14 @@ export function MarketingTab() {
             />
             <div className="mt-3 flex items-center justify-between gap-3">
               <span className="text-xs text-muted-foreground">
-                {generatedVideoUrl ? "New OpenAI video" : "Ready-made MALI promo"}
+                {isFreeVideo
+                  ? "Free browser-made motion video"
+                  : generatedVideoUrl
+                    ? "New OpenAI video"
+                    : "Ready-made MALI promo"}
               </span>
               <Button asChild variant="ghost" size="sm" className="rounded-none">
-                <a href={generatedVideoUrl || promoVideo.url} download="888clinic-meta-promo.mp4">
+                <a href={generatedVideoUrl || promoVideo.url} download={downloadName}>
                   <Download className="size-4" /> Download
                 </a>
               </Button>
