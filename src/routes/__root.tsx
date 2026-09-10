@@ -16,6 +16,11 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { Toaster } from "@/components/ui/sonner";
 import { LanguageProvider } from "@/lib/i18n";
+import {
+  META_PIXEL_INIT_SCRIPT,
+  MetaPixelNoScript,
+  MetaPixelRouteTracker,
+} from "@/components/site/MetaPixel";
 
 function NotFoundComponent() {
   return (
@@ -126,8 +131,10 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <script dangerouslySetInnerHTML={{ __html: META_PIXEL_INIT_SCRIPT }} />
       </head>
       <body>
+        <MetaPixelNoScript />
         {children}
         <Scripts />
       </body>
@@ -164,6 +171,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <MetaPixelRouteTracker />
       <LanguageProvider>
         <div
           className={
