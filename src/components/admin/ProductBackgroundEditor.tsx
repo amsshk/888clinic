@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { toast } from "sonner";
-import { Loader2, Redo2, Save, Undo2, Upload } from "lucide-react";
+import { Loader2, RotateCcw, Save, Undo2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
@@ -22,9 +22,12 @@ import {
 
 const WORK_MAX = 1100;
 const HISTORY_LIMIT = 20;
+/** Exact wording required when automatic segmentation cannot find a clean edge. */
+const SEGMENTATION_FAILED_MESSAGE =
+  "We could not completely identify the background. Try another photograph or open Advanced edge correction.";
 
 type BrushMode = "restore" | "erase";
-type BackgroundChoice = BackgroundPresetId | "custom-color" | "custom-image";
+type BackgroundChoice = BackgroundPresetId | "custom-color";
 
 type Props = {
   productId: string;
@@ -57,14 +60,6 @@ function drawCheckerboard(ctx: CanvasRenderingContext2D, w: number, h: number) {
   }
 }
 
-/** Fit `img` to cover the full `w`×`h` rect, cropping any overflow (like CSS background-size: cover). */
-function drawCover(ctx: CanvasRenderingContext2D, img: HTMLImageElement, w: number, h: number) {
-  const ratio = Math.max(w / img.naturalWidth, h / img.naturalHeight);
-  const dw = img.naturalWidth * ratio;
-  const dh = img.naturalHeight * ratio;
-  ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
-}
-
 /**
  * Client-side product photo editor: an ISNet segmentation model runs entirely
  * in the browser (no photo is ever sent to a third-party image-generation
@@ -87,33 +82,34 @@ export function ProductBackgroundEditor({
   const cutoutCanvasRef = useRef<HTMLCanvasElement>(null);
   const finalCanvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const bgFileInputRef = useRef<HTMLInputElement>(null);
 
   const autoMaskRef = useRef<ImageData | null>(null);
   const historyRef = useRef<ImageData[]>([]);
   const drawingRef = useRef(false);
   const lastPointRef = useRef<{ x: number; y: number } | null>(null);
   const pendingSourceFileRef = useRef<File | null>(null);
-  const customBgImageRef = useRef<HTMLImageElement | null>(null);
 
   const [loading, setLoading] = useState(Boolean(sourceUrl));
   const [ready, setReady] = useState(false);
   const [busySave, setBusySave] = useState(false);
+  const [segmentationFailed, setSegmentationFailed] = useState(false);
   const [mode, setMode] = useState<BrushMode>("restore");
   const [brushSize, setBrushSize] = useState(60);
   const [feather, setFeather] = useState(0.5);
   const [background, setBackground] = useState<BackgroundChoice>("warm-stone");
   const [customColor, setCustomColor] = useState("#cdbda6");
+  /** 0 = keep soft/faint edge pixels, 1 = hard, fully-committed cutout. 0.5 is the raw AI mask. */
+  const [strength, setStrength] = useState(0.5);
   const [scale, setScale] = useState(1);
   const [offsetX, setOffsetX] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
   const [shadow, setShadow] = useState(0.4);
-  const [brightness, setBrightness] = useState(1);
   const [canUndo, setCanUndo] = useState(false);
 
   async function runSegmentation(img: HTMLImageElement, pickedFile: File | null) {
     setLoading(true);
     setReady(false);
+    setSegmentationFailed(false);
     try {
       const ratio = Math.min(1, WORK_MAX / Math.max(img.naturalWidth, img.naturalHeight));
       const w = Math.max(1, Math.round(img.naturalWidth * ratio));
@@ -146,7 +142,7 @@ export function ProductBackgroundEditor({
         mctx.drawImage(maskImg, 0, 0, w, h);
         const raw = mctx.getImageData(0, 0, w, h);
         for (let i = 0; i < raw.data.length; i += 4) {
-          const a = raw.data[i + 3];
+          const a = raw.data[i + 3] ?? 0;
           raw.data[i] = a;
           raw.data[i + 1] = a;
           raw.data[i + 2] = a;
@@ -155,7 +151,8 @@ export function ProductBackgroundEditor({
         mctx.putImageData(raw, 0, 0);
       } catch (segError) {
         console.error("[product-photo] auto segmentation failed", segError);
-        toast.warning("Automatic cutout failed — use the restore brush to reveal the product.");
+        setSegmentationFailed(true);
+        toast.error(SEGMENTATION_FAILED_MESSAGE);
         mctx.fillStyle = "rgba(0,0,0,255)";
         mctx.fillRect(0, 0, w, h);
       }
@@ -190,6 +187,12 @@ export function ProductBackgroundEditor({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sourceUrl]);
 
+  /** Reshapes the raw AI alpha around the strength slider: 0.5 leaves it untouched. */
+  function shapeAlpha(a: number, strengthValue: number): number {
+    const gain = Math.max(0.2, 1 + (strengthValue - 0.5) * 6);
+    return Math.max(0, Math.min(255, 128 + (a - 128) * gain));
+  }
+
   function buildMaskedProduct(): HTMLCanvasElement {
     const source = sourceCanvasRef.current!;
     const mask = maskCanvasRef.current!;
@@ -203,35 +206,23 @@ export function ProductBackgroundEditor({
     const srcData = octx.getImageData(0, 0, w, h);
     const maskData = mask.getContext("2d")!.getImageData(0, 0, w, h);
     for (let i = 0; i < srcData.data.length; i += 4) {
-      srcData.data[i + 3] = maskData.data[i];
+      srcData.data[i + 3] = shapeAlpha(maskData.data[i] ?? 0, strength);
     }
     octx.putImageData(srcData, 0, 0);
     return out;
   }
 
   function drawBackground(ctx: CanvasRenderingContext2D, w: number, h: number) {
-    if (background === "custom-image" && customBgImageRef.current) {
-      drawCover(ctx, customBgImageRef.current, w, h);
-    } else {
-      const preset = BACKGROUND_PRESETS.find((p) => p.id === background);
-      const color = background === "custom-color" ? customColor : (preset?.color ?? "#ffffff");
-      const accent = background === "custom-color" ? customColor : (preset?.accent ?? color);
-      ctx.fillStyle = color;
-      ctx.fillRect(0, 0, w, h);
-      const grad = ctx.createRadialGradient(w / 2, h * 0.4, 0, w / 2, h * 0.4, w * 0.7);
-      grad.addColorStop(0, `${accent}66`);
-      grad.addColorStop(1, "transparent");
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, w, h);
-    }
-
-    if (brightness !== 1) {
-      ctx.fillStyle =
-        brightness > 1
-          ? `rgba(255,255,255,${Math.min(0.6, (brightness - 1) * 0.6)})`
-          : `rgba(0,0,0,${Math.min(0.6, (1 - brightness) * 0.6)})`;
-      ctx.fillRect(0, 0, w, h);
-    }
+    const preset = BACKGROUND_PRESETS.find((p) => p.id === background);
+    const color = background === "custom-color" ? customColor : (preset?.color ?? "#ffffff");
+    const accent = background === "custom-color" ? customColor : (preset?.accent ?? color);
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, w, h);
+    const grad = ctx.createRadialGradient(w / 2, h * 0.4, 0, w / 2, h * 0.4, w * 0.7);
+    grad.addColorStop(0, `${accent}66`);
+    grad.addColorStop(1, "transparent");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
   }
 
   function repaint() {
@@ -281,7 +272,7 @@ export function ProductBackgroundEditor({
   useEffect(() => {
     repaint();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [background, customColor, scale, offsetX, offsetY, shadow, brightness, ready]);
+  }, [background, customColor, scale, offsetX, offsetY, shadow, strength, ready]);
 
   function canvasPoint(e: ReactPointerEvent<HTMLCanvasElement>) {
     const canvas = cutoutCanvasRef.current!;
@@ -352,10 +343,11 @@ export function ProductBackgroundEditor({
     repaint();
   }
 
-  function resetMask() {
+  function restoreOriginal() {
     if (!autoMaskRef.current) return;
     pushHistory();
     maskCanvasRef.current!.getContext("2d")!.putImageData(autoMaskRef.current, 0, 0);
+    setStrength(0.5);
     repaint();
   }
 
@@ -366,18 +358,6 @@ export function ProductBackgroundEditor({
       await runSegmentation(img, file);
     } catch {
       toast.error("Could not read that photo");
-    } finally {
-      URL.revokeObjectURL(url);
-    }
-  }
-
-  async function pickBackgroundImage(file: File) {
-    const url = URL.createObjectURL(file);
-    try {
-      customBgImageRef.current = await loadImage(url);
-      setBackground("custom-image");
-    } catch {
-      toast.error("Could not read that background image");
     } finally {
       URL.revokeObjectURL(url);
     }
@@ -438,125 +418,60 @@ export function ProductBackgroundEditor({
 
   return (
     <Dialog open onOpenChange={(next) => !next && onClose()}>
-      <DialogContent className="max-w-4xl">
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Edit photo — {label}</DialogTitle>
           <DialogDescription>
-            Cuts the product out of its photo and places it on a clean background. Never applied to
-            the Results page or clinical photos.
+            Upload the genuine product photograph and the background is removed automatically. Never
+            applied to the Results page or clinical photos.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
-          <div>
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">
-              Cutout — restore or erase
-            </p>
-            <div className="relative mt-2 aspect-square w-full overflow-hidden rounded border border-border bg-secondary">
-              {loading && (
-                <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/70">
-                  <Loader2 className="size-6 animate-spin text-gold" />
-                </div>
-              )}
-              {!loading && !ready && (
-                <div className="absolute inset-0 z-10 flex items-center justify-center px-6 text-center text-sm text-muted-foreground">
-                  Upload a product photo to start cutting it out.
-                </div>
-              )}
-              <canvas
-                ref={cutoutCanvasRef}
-                className="h-full w-full touch-none object-contain"
-                onPointerDown={handlePointerDown}
-                onPointerMove={handlePointerMove}
-                onPointerUp={handlePointerUp}
-                onPointerLeave={handlePointerUp}
-              />
-            </div>
-
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <Button
-                size="sm"
-                variant={mode === "restore" ? "default" : "outline"}
-                className="rounded-none"
-                onClick={() => setMode("restore")}
-              >
-                Restore
-              </Button>
-              <Button
-                size="sm"
-                variant={mode === "erase" ? "default" : "outline"}
-                className="rounded-none"
-                onClick={() => setMode("erase")}
-              >
-                Erase
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="rounded-none"
-                onClick={undo}
-                disabled={!canUndo}
-              >
-                <Undo2 className="size-4" /> Undo
-              </Button>
-              <Button size="sm" variant="outline" className="rounded-none" onClick={resetMask}>
-                <Redo2 className="size-4" /> Reset to auto
-              </Button>
-            </div>
-
-            <div className="mt-4 space-y-3">
-              <div>
-                <Label className="text-xs text-muted-foreground">Brush size</Label>
-                <Slider
-                  value={[brushSize]}
-                  min={10}
-                  max={160}
-                  step={2}
-                  onValueChange={([v]) => setBrushSize(v)}
-                />
+        <div>
+          <div className="relative aspect-square w-full overflow-hidden rounded border border-border">
+            {loading && (
+              <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/70">
+                <Loader2 className="size-6 animate-spin text-gold" />
               </div>
-              <div>
-                <Label className="text-xs text-muted-foreground">Edge softness</Label>
-                <Slider
-                  value={[feather]}
-                  min={0}
-                  max={0.95}
-                  step={0.01}
-                  onValueChange={([v]) => setFeather(v)}
-                />
+            )}
+            {!loading && !ready && (
+              <div className="absolute inset-0 z-10 flex items-center justify-center bg-secondary px-6 text-center text-sm text-muted-foreground">
+                Upload the genuine product photograph to begin.
               </div>
-            </div>
-
-            <Button
-              size="sm"
-              variant="outline"
-              className="mt-4 rounded-none"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <Upload className="size-4" /> Upload a different photo
-            </Button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) void pickNewPhoto(file);
-                e.target.value = "";
-              }}
-            />
+            )}
+            {/* Edge-to-edge final composite — the exact pixels that get saved, no checkerboard. */}
+            <canvas ref={finalCanvasRef} className="h-full w-full" />
           </div>
 
-          <div>
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">
-              Final catalogue photo
+          {segmentationFailed && (
+            <p className="mt-2 border border-destructive/40 bg-destructive/10 p-3 text-xs text-destructive">
+              {SEGMENTATION_FAILED_MESSAGE}
             </p>
-            <div className="mt-2 aspect-square w-full overflow-hidden rounded border border-border">
-              <canvas ref={finalCanvasRef} className="h-full w-full object-contain" />
-            </div>
+          )}
 
-            <div className="mt-3 flex flex-wrap gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            className="mt-4 rounded-none"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <Upload className="size-4" /> {ready ? "Upload a different photo" : "Upload photograph"}
+          </Button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) void pickNewPhoto(file);
+              e.target.value = "";
+            }}
+          />
+
+          <div className="mt-5">
+            <Label className="text-xs text-muted-foreground">Background</Label>
+            <div className="mt-2 flex flex-wrap gap-2">
               {BACKGROUND_PRESETS.map((p) => (
                 <button
                   key={p.id}
@@ -588,94 +503,154 @@ export function ProductBackgroundEditor({
                   className="size-4 border-0 p-0"
                 />
               </button>
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                className="rounded-none"
-                onClick={() => bgFileInputRef.current?.click()}
-              >
-                Upload background
-              </Button>
-              <input
-                ref={bgFileInputRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) void pickBackgroundImage(file);
-                  e.target.value = "";
-                }}
+            </div>
+          </div>
+
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
+            <div>
+              <Label className="text-xs text-muted-foreground">Background-removal strength</Label>
+              <Slider
+                value={[strength]}
+                min={0}
+                max={1}
+                step={0.02}
+                onValueChange={([v]) => setStrength(v ?? strength)}
               />
             </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">Product size</Label>
+              <Slider
+                value={[scale]}
+                min={0.6}
+                max={1.4}
+                step={0.02}
+                onValueChange={([v]) => setScale(v ?? scale)}
+              />
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">Horizontal position</Label>
+              <Slider
+                value={[offsetX]}
+                min={-1}
+                max={1}
+                step={0.02}
+                onValueChange={([v]) => setOffsetX(v ?? offsetX)}
+              />
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">Vertical position</Label>
+              <Slider
+                value={[offsetY]}
+                min={-1}
+                max={1}
+                step={0.02}
+                onValueChange={([v]) => setOffsetY(v ?? offsetY)}
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <Label className="text-xs text-muted-foreground">Shadow strength</Label>
+              <Slider
+                value={[shadow]}
+                min={0}
+                max={1}
+                step={0.02}
+                onValueChange={([v]) => setShadow(v ?? shadow)}
+              />
+            </div>
+          </div>
 
-            <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3">
+          <Button
+            size="sm"
+            variant="outline"
+            className="mt-4 rounded-none"
+            onClick={restoreOriginal}
+            disabled={!ready}
+          >
+            <RotateCcw className="size-4" /> Restore original
+          </Button>
+
+          <details className="mt-6 rounded border border-border p-4">
+            <summary className="cursor-pointer text-sm font-semibold">
+              Advanced edge correction
+            </summary>
+            <p className="mt-2 text-xs text-muted-foreground">
+              Most products never need this — only open it if the automatic cutout missed an edge.
+            </p>
+
+            <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_1fr]">
               <div>
-                <Label className="text-xs text-muted-foreground">Product scale</Label>
-                <Slider
-                  value={[scale]}
-                  min={0.6}
-                  max={1.4}
-                  step={0.02}
-                  onValueChange={([v]) => setScale(v)}
-                />
+                <div className="relative aspect-square w-full overflow-hidden rounded border border-border bg-secondary">
+                  <canvas
+                    ref={cutoutCanvasRef}
+                    className="h-full w-full touch-none object-contain"
+                    onPointerDown={handlePointerDown}
+                    onPointerMove={handlePointerMove}
+                    onPointerUp={handlePointerUp}
+                    onPointerLeave={handlePointerUp}
+                  />
+                </div>
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <Button
+                    size="sm"
+                    variant={mode === "restore" ? "default" : "outline"}
+                    className="rounded-none"
+                    onClick={() => setMode("restore")}
+                  >
+                    Restore brush
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={mode === "erase" ? "default" : "outline"}
+                    className="rounded-none"
+                    onClick={() => setMode("erase")}
+                  >
+                    Erase brush
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="rounded-none"
+                    onClick={undo}
+                    disabled={!canUndo}
+                  >
+                    <Undo2 className="size-4" /> Undo
+                  </Button>
+                </div>
               </div>
-              <div>
-                <Label className="text-xs text-muted-foreground">Shadow strength</Label>
-                <Slider
-                  value={[shadow]}
-                  min={0}
-                  max={1}
-                  step={0.02}
-                  onValueChange={([v]) => setShadow(v)}
-                />
-              </div>
-              <div>
-                <Label className="text-xs text-muted-foreground">Horizontal position</Label>
-                <Slider
-                  value={[offsetX]}
-                  min={-1}
-                  max={1}
-                  step={0.02}
-                  onValueChange={([v]) => setOffsetX(v)}
-                />
-              </div>
-              <div>
-                <Label className="text-xs text-muted-foreground">Vertical position</Label>
-                <Slider
-                  value={[offsetY]}
-                  min={-1}
-                  max={1}
-                  step={0.02}
-                  onValueChange={([v]) => setOffsetY(v)}
-                />
-              </div>
-              <div className="col-span-2">
-                <Label className="text-xs text-muted-foreground">Background brightness</Label>
-                <Slider
-                  value={[brightness]}
-                  min={0.7}
-                  max={1.3}
-                  step={0.02}
-                  onValueChange={([v]) => setBrightness(v)}
-                />
+
+              <div className="space-y-3">
+                <div>
+                  <Label className="text-xs text-muted-foreground">Brush size</Label>
+                  <Slider
+                    value={[brushSize]}
+                    min={10}
+                    max={160}
+                    step={2}
+                    onValueChange={([v]) => setBrushSize(v ?? brushSize)}
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Edge softness</Label>
+                  <Slider
+                    value={[feather]}
+                    min={0}
+                    max={0.95}
+                    step={0.01}
+                    onValueChange={([v]) => setFeather(v ?? feather)}
+                  />
+                </div>
               </div>
             </div>
+          </details>
 
-            <div className="mt-5 flex justify-end gap-2">
-              <Button variant="outline" className="rounded-none" onClick={onClose}>
-                Cancel
-              </Button>
-              <Button className="rounded-none" onClick={handleSave} disabled={!ready || busySave}>
-                {busySave ? (
-                  <Loader2 className="size-4 animate-spin" />
-                ) : (
-                  <Save className="size-4" />
-                )}
-                Save photo
-              </Button>
-            </div>
+          <div className="mt-5 flex justify-end gap-2">
+            <Button variant="outline" className="rounded-none" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button className="rounded-none" onClick={handleSave} disabled={!ready || busySave}>
+              {busySave ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
+              Save product image
+            </Button>
           </div>
         </div>
 
