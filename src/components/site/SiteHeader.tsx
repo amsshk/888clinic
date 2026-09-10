@@ -12,7 +12,6 @@ const nav: { to: string; key: TKey }[] = [
   { to: "/", key: "nav.home" },
   { to: "/services", key: "nav.treatments" },
   { to: "/pricing", key: "nav.pricing" },
-  { to: "/products", key: "nav.skincare" },
   { to: "/ai-skin-analysis", key: "nav.ai" },
   { to: "/results", key: "nav.results" },
   { to: "/book", key: "nav.book" },

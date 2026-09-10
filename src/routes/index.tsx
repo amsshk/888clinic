@@ -31,8 +31,7 @@ export const Route = createFileRoute("/")({
       },
       {
         property: "og:description",
-        content:
-          "Specialist dermatology, aesthetic treatments and clinical skincare at 888clinic.",
+        content: "Specialist dermatology, aesthetic treatments and clinical skincare at 888clinic.",
       },
     ],
   }),
@@ -101,9 +100,7 @@ function Home() {
                   <Star key={i} className="size-3.5 fill-current" />
                 ))}
               </div>
-              <p className="mt-2 max-w-[15rem] text-sm text-muted-foreground">
-                {t("home.quote")}
-              </p>
+              <p className="mt-2 max-w-[15rem] text-sm text-muted-foreground">{t("home.quote")}</p>
             </div>
           </div>
         </div>
@@ -117,15 +114,10 @@ function Home() {
         </div>
         <div className="mt-12 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
           {pillars.map(({ icon: Icon, title, body }) => (
-            <div
-              key={title}
-              className="group bg-card p-7 transition-colors hover:bg-accent/50"
-            >
+            <div key={title} className="group bg-card p-7 transition-colors hover:bg-accent/50">
               <Icon className="size-6 text-gold" />
               <h3 className="mt-5 text-xl">{t(title)}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                {t(body)}
-              </p>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{t(body)}</p>
             </div>
           ))}
         </div>
@@ -141,7 +133,11 @@ function Home() {
               {t("home.results.body")}
             </p>
           </div>
-          <Button asChild variant="outline" className="rounded-none border-gold/60 px-6 hover:bg-accent">
+          <Button
+            asChild
+            variant="outline"
+            className="rounded-none border-gold/60 px-6 hover:bg-accent"
+          >
             <Link to="/results">
               {t("home.results.cta")} <ArrowRight className="ml-2 size-4" />
             </Link>
@@ -207,27 +203,7 @@ function Home() {
                 <Link to="/results">{t("home.mali.cta2")}</Link>
               </Button>
             </div>
-            <p className="mt-4 text-xs text-muted-foreground">
-              {t("home.mali.note")}
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Products */}
-      <section className="bg-secondary/60">
-        <div className="mx-auto max-w-3xl px-5 py-20">
-          <div>
-            <p className="eyebrow">{t("home.products.eyebrow")}</p>
-            <h2 className="mt-4 text-4xl">{t("home.products.title")}</h2>
-            <p className="mt-5 text-base leading-relaxed text-muted-foreground">
-              {t("home.products.body")}
-            </p>
-            <Button asChild size="lg" className="mt-8 rounded-none px-7">
-              <Link to="/products">
-                {t("home.products.cta")} <ArrowRight className="ml-2 size-4" />
-              </Link>
-            </Button>
+            <p className="mt-4 text-xs text-muted-foreground">{t("home.mali.note")}</p>
           </div>
         </div>
       </section>
@@ -235,19 +211,12 @@ function Home() {
       {/* CTA */}
       <section className="mx-auto max-w-6xl px-5 py-20">
         <div className="bg-gradient-gold px-8 py-14 text-center shadow-gold">
-          <h2 className="text-4xl text-primary-foreground">
-            {t("home.cta.title")}
-          </h2>
+          <h2 className="text-4xl text-primary-foreground">{t("home.cta.title")}</h2>
           <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-primary-foreground/85">
             {t("home.cta.body")}
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Button
-              asChild
-              size="lg"
-              variant="secondary"
-              className="rounded-none px-7"
-            >
+            <Button asChild size="lg" variant="secondary" className="rounded-none px-7">
               <Link to="/contact">{t("cta.book")}</Link>
             </Button>
             <Button
