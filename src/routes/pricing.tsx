@@ -34,13 +34,13 @@ export const Route = createFileRoute("/pricing")({
  * Keyed by `nameEn` so the catalogue order can change without breaking the map.
  */
 const FILLER_IMAGES: Record<string, string> = {
-  "Neuramis Deep Cross-Linked": "/images/fillers/neuramis-deep-cross-linked.webp",
-  "Neuramis Deep Lidocaine": "/images/fillers/neuramis-deep-lidocaine.webp",
-  "Neuramis Volume": "/images/fillers/neuramis-volume.webp",
-  "Restylane Skin Booster Vital Light": "/images/fillers/restylane-vital-light.webp",
-  "Restylane Perlane Lyft": "/images/fillers/restylane-perlane-lyft.webp",
-  "Juvederm Volbella": "/images/fillers/juvederm-volbella.webp",
-  "Juvederm Voluma 2": "/images/fillers/juvederm-voluma.webp",
+  "Neuramis Deep Cross-Linked": "/images/fillers/01-neuramis-deep-cross-linked.png",
+  "Neuramis Deep Lidocaine": "/images/fillers/02-neuramis-deep-lidocaine.png",
+  "Neuramis Volume": "/images/fillers/03-neuramis-volume.png",
+  "Restylane Skin Booster Vital Light": "/images/fillers/04-restylane-skinboosters-vital-light.png",
+  "Restylane Perlane Lyft": "/images/fillers/05-restylane-perlane-lyft.png",
+  "Juvederm Volbella": "/images/fillers/06-juvederm-volbella.png",
+  "Juvederm Voluma 2": "/images/fillers/07-juvederm-voluma-2.png",
 };
 
 const BRANDS = ["Neuramis", "Restylane", "Juvederm"] as const;
@@ -69,7 +69,7 @@ function FillerCard({ item, image, th }: { item: MenuItem; image: string; th: bo
           height={1200}
           loading="lazy"
           decoding="async"
-          className="aspect-square w-full object-cover"
+          className="aspect-square w-full bg-[#f4eee6] object-contain"
         />
       </div>
 
