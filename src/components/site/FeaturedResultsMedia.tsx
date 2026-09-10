@@ -11,15 +11,15 @@ type FeaturedItem = {
   results_category: string | null;
 };
 
-export type ResultsArea = "all" | "face" | "body";
+export type ResultsArea = "all" | "face";
 
 type Props = {
   filter: ResultsArea;
   onAvailabilityChange?: (available: boolean) => void;
 };
 
-function getResultsArea(category: string | null): Exclude<ResultsArea, "all"> {
-  return category?.toLowerCase().includes("body") ? "body" : "face";
+function isFaceResult(category: string | null): boolean {
+  return !category?.toLowerCase().includes("body");
 }
 
 function ComparisonOverlay() {
@@ -83,10 +83,7 @@ export function FeaturedResultsMedia({ filter, onAvailabilityChange }: Props) {
   }, [filter]);
 
   const filtered = useMemo(
-    () =>
-      filter === "all"
-        ? items
-        : items.filter((item) => getResultsArea(item.results_category) === filter),
+    () => (filter === "all" ? items : items.filter((item) => isFaceResult(item.results_category))),
     [filter, items],
   );
 

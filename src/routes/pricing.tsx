@@ -1,9 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLang } from "@/lib/i18n";
 import { TREATMENT_MENU, type MenuGroup, type MenuItem } from "@/lib/treatment-menu";
+import { supabase } from "@/integrations/supabase/client";
+import { DEFAULT_CATALOGUE_PRESET, type CataloguePreset } from "@/lib/catalogue-design.shared";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -21,10 +23,10 @@ export const Route = createFileRoute("/pricing")({
           "Browse the full 888clinic treatment menu — fillers by brand, botox, threads, vitamin drips, hair programs, IPL, lifting and meso.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://www.888clinic.co/pricing" },
+      { property: "og:url", content: "https://888clinic.co/pricing" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://www.888clinic.co/pricing" }],
+    links: [{ rel: "canonical", href: "https://888clinic.co/pricing" }],
   }),
   component: Catalogue,
 });
@@ -252,12 +254,24 @@ function ProgramCard({ group, th }: { group: MenuGroup; th: boolean }) {
 function Catalogue() {
   const { t, lang } = useLang();
   const th = lang === "th";
+  const [preset, setPreset] = useState<CataloguePreset>(DEFAULT_CATALOGUE_PRESET);
+
+  useEffect(() => {
+    supabase
+      .from("catalogue_design_settings")
+      .select("preset")
+      .eq("id", 1)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data?.preset) setPreset(data.preset as CataloguePreset);
+      });
+  }, []);
 
   const filler = TREATMENT_MENU.find((g) => g.id === "filler");
   const rest = TREATMENT_MENU.filter((g) => g.id !== "filler");
 
   return (
-    <div>
+    <div className={`catalogue-preset catalogue-preset--${preset}`}>
       {/* Catalogue cover */}
       <section className="border-b border-border bg-shell">
         <div className="mx-auto max-w-3xl px-5 py-20 text-center">

@@ -31,7 +31,6 @@ export const Route = createFileRoute("/results")({
 const tabs: Array<{ value: ResultsArea; label: string }> = [
   { value: "all", label: "All" },
   { value: "face", label: "Face" },
-  { value: "body", label: "Body" },
 ];
 
 function ComparisonOverlay() {
@@ -50,7 +49,7 @@ function ResultsPage() {
   const [filter, setFilter] = useState<ResultsArea>("all");
   const [hasFeatured, setHasFeatured] = useState<boolean | null>(null);
 
-  const fallbackItems = useMemo(() => (filter === "body" ? [] : BEFORE_AFTER), [filter]);
+  const fallbackItems = useMemo(() => BEFORE_AFTER, []);
 
   return (
     <main className="results-page">
@@ -113,12 +112,6 @@ function ResultsPage() {
                 })}
               </div>
             </div>
-          )}
-
-          {hasFeatured === false && fallbackItems.length === 0 && (
-            <p className="results-empty">
-              No body results are currently available. Please check again soon.
-            </p>
           )}
         </div>
       </section>

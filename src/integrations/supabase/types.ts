@@ -125,6 +125,27 @@ export type Database = {
         }
         Relationships: []
       }
+      catalogue_design_settings: {
+        Row: {
+          id: number
+          preset: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          id?: number
+          preset?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          id?: number
+          preset?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       copy_overrides: {
         Row: {
           copy_key: string
