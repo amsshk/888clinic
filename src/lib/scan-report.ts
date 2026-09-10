@@ -40,33 +40,93 @@ const HAIRLINE: [number, number, number] = [214, 214, 218];
 
 const M = 48;
 const FOOTER_SPACE = 74;
+const HEADER_HEIGHT = 118;
 const THAI_DOCS = new WeakSet<jsPDF>();
+/** Loaded logo per in-flight document, so `letterhead()` can redraw it on every page without re-fetching. */
+const DOC_LOGO = new WeakMap<jsPDF, HTMLImageElement | null>();
+
+let logoPromise: Promise<HTMLImageElement | null> | null = null;
+
+/** Loads the real crown logo once and caches it; resolves to `null` (never rejects) if it can't load. */
+function loadReportLogo(): Promise<HTMLImageElement | null> {
+  if (!logoPromise) {
+    logoPromise = new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => resolve(null);
+      img.src = "/images/888clinic-logo.png";
+    });
+  }
+  return logoPromise;
+}
 
 function setReportFont(doc: jsPDF, weight: "normal" | "bold" = "normal", serif = false) {
   if (THAI_DOCS.has(doc)) doc.setFont("NotoSansThai", weight);
   else doc.setFont(serif ? "times" : "helvetica", weight);
 }
 
-const reportCopy = (lang: Lang) => lang === "th" ? {
-  title: "รายงานคัดกรองผิวหนังด้วย AI", reportNo: "เลขที่รายงาน", patient: "ชื่อผู้รับบริการ", email: "อีเมล",
-  date: "วันที่ตรวจ", site: "บริเวณที่ตรวจ", modality: "วิธีตรวจ", modalityValue: "ภาพถ่ายดิจิทัล · วิเคราะห์ภาพด้วย AI",
-  reported: "ผู้จัดทำรายงาน", clinic: "คลินิกผู้ดูแล", s1: "1. ข้อมูลผู้รับบริการและเอกสาร", s2: "2. อาการหรือข้อกังวล",
-  noConcern: "ไม่ได้ระบุข้อกังวล", s3: "3. ความเห็นจาก AI", confidence: "ความมั่นใจของโมเดล", severity: "ระดับความรุนแรง",
-  review: "ระยะเวลาที่ควรพบแพทย์", status: "สถานะผล", screening: "ผลคัดกรองเบื้องต้น — ไม่ใช่การวินิจฉัย",
-  s3b: "3ข. โมเดลช่วยประเมินรอยโรค MALI", melanoma: "โอกาสเข้ากลุ่มเมลาโนมา", sk: "โอกาสเข้ากลุ่มกระเนื้อ",
-  version: "เวอร์ชันโมเดล", research: "เครื่องมือช่วยประเมิน — ไม่ใช่การวินิจฉัย",
-  maliNote: "โมเดล MALI เรียนรู้จากภาพรอยโรคผ่านกล้องผิวหนัง และใช้ประกอบความเห็นหลักของ AI เท่านั้น ระบบอาจแนะนำให้พบแพทย์เร็วขึ้น แต่จะไม่ลดระดับความเร่งด่วน การตรวจชิ้นเนื้อยังเป็นมาตรฐานยืนยันผลค่ะ",
-  s4: "4. สิ่งที่เห็นจากภาพ", noFindings: "ไม่พบรายละเอียดจำเพาะที่สรุปได้จากรูปนี้", s5: "5. สรุปการประเมิน",
-  noAssessment: "ยังไม่มีข้อความสรุปการประเมิน", s6: "6. คำแนะนำและแผนดูแล",
-  defaultPlan: "แนะนำให้พบแพทย์ผิวหนังที่ 888clinic เพื่อยืนยันผลและวางแผนดูแลที่เหมาะสมค่ะ",
-  s7: "7. ความงามและข้อมูลคลินิก", aesthetic1: "สามารถวางแผนดูแลด้านความงาม เช่น ทรีตเมนต์ เลเซอร์ หัตถการฉีด และสกินแคร์ทางการแพทย์ได้ในครั้งเดียวกัน หลังจากแพทย์ยืนยันผลด้านผิวหนังแล้วค่ะ",
-  aesthetic2: "หากต้องการนัดปรึกษาหรือนำรายงานนี้ให้แพทย์ตรวจ กรุณาติดต่อคลินิกตามข้อมูลด้านล่างค่ะ",
-  issued: "ออกเอกสารเมื่อ", disclaimer: "คำเตือนสำคัญ: เอกสารนี้เป็นรายงานคัดกรองด้วย AI จากภาพถ่ายดิจิทัล ไม่ใช่การวินิจฉัย ใบสั่งยา หรือใบส่งตัว และยังไม่ได้ลงนามโดยแพทย์ ผลทั้งหมดควรได้รับการยืนยันจากแพทย์ผิวหนังด้วยการตรวจจริง หากรอยโรคเปลี่ยนขนาด รูปร่าง หรือสี มีเลือดออก เป็นแผล คันต่อเนื่อง หรือโตเร็ว ควรพบแพทย์โดยเร็ว กรุณาเก็บรายงานนี้ไว้เป็นข้อมูลประกอบการรักษาค่ะ",
-  medical: "รายงานทางการแพทย์", confidential: "เอกสารผู้รับบริการ — กรุณาเก็บเป็นความลับ", appointments: "คลินิกและการนัดหมาย", page: "หน้า",
-} : null;
+const reportCopy = (lang: Lang) =>
+  lang === "th"
+    ? {
+        title: "รายงานคัดกรองผิวหนังด้วย AI",
+        reportNo: "เลขที่รายงาน",
+        patient: "ชื่อผู้รับบริการ",
+        email: "อีเมล",
+        date: "วันที่ตรวจ",
+        site: "บริเวณที่ตรวจ",
+        modality: "วิธีตรวจ",
+        modalityValue: "ภาพถ่ายดิจิทัล · วิเคราะห์ภาพด้วย AI",
+        reported: "ผู้จัดทำรายงาน",
+        clinic: "คลินิกผู้ดูแล",
+        s1: "1. ข้อมูลผู้รับบริการและเอกสาร",
+        s2: "2. อาการหรือข้อกังวล",
+        noConcern: "ไม่ได้ระบุข้อกังวล",
+        s3: "3. ความเห็นจาก AI",
+        confidence: "ความมั่นใจของโมเดล",
+        severity: "ระดับความรุนแรง",
+        review: "ระยะเวลาที่ควรพบแพทย์",
+        status: "สถานะผล",
+        screening: "ผลคัดกรองเบื้องต้น — ไม่ใช่การวินิจฉัย",
+        s3b: "3ข. โมเดลช่วยประเมินรอยโรค MALI",
+        melanoma: "โอกาสเข้ากลุ่มเมลาโนมา",
+        sk: "โอกาสเข้ากลุ่มกระเนื้อ",
+        version: "เวอร์ชันโมเดล",
+        research: "เครื่องมือช่วยประเมิน — ไม่ใช่การวินิจฉัย",
+        maliNote:
+          "โมเดล MALI เรียนรู้จากภาพรอยโรคผ่านกล้องผิวหนัง และใช้ประกอบความเห็นหลักของ AI เท่านั้น ระบบอาจแนะนำให้พบแพทย์เร็วขึ้น แต่จะไม่ลดระดับความเร่งด่วน การตรวจชิ้นเนื้อยังเป็นมาตรฐานยืนยันผลค่ะ",
+        s4: "4. สิ่งที่เห็นจากภาพ",
+        noFindings: "ไม่พบรายละเอียดจำเพาะที่สรุปได้จากรูปนี้",
+        s5: "5. สรุปการประเมิน",
+        noAssessment: "ยังไม่มีข้อความสรุปการประเมิน",
+        s6: "6. คำแนะนำและแผนดูแล",
+        defaultPlan: "แนะนำให้พบแพทย์ผิวหนังที่ 888clinic เพื่อยืนยันผลและวางแผนดูแลที่เหมาะสมค่ะ",
+        s7: "7. ความงามและข้อมูลคลินิก",
+        aesthetic1:
+          "สามารถวางแผนดูแลด้านความงาม เช่น ทรีตเมนต์ เลเซอร์ หัตถการฉีด และสกินแคร์ทางการแพทย์ได้ในครั้งเดียวกัน หลังจากแพทย์ยืนยันผลด้านผิวหนังแล้วค่ะ",
+        aesthetic2:
+          "หากต้องการนัดปรึกษาหรือนำรายงานนี้ให้แพทย์ตรวจ กรุณาติดต่อคลินิกตามข้อมูลด้านล่างค่ะ",
+        issued: "ออกเอกสารเมื่อ",
+        disclaimer:
+          "คำเตือนสำคัญ: เอกสารนี้เป็นรายงานคัดกรองด้วย AI จากภาพถ่ายดิจิทัล ไม่ใช่การวินิจฉัย ใบสั่งยา หรือใบส่งตัว และยังไม่ได้ลงนามโดยแพทย์ ผลทั้งหมดควรได้รับการยืนยันจากแพทย์ผิวหนังด้วยการตรวจจริง หากรอยโรคเปลี่ยนขนาด รูปร่าง หรือสี มีเลือดออก เป็นแผล คันต่อเนื่อง หรือโตเร็ว ควรพบแพทย์โดยเร็ว กรุณาเก็บรายงานนี้ไว้เป็นข้อมูลประกอบการรักษาค่ะ",
+        medical: "รายงานผิวหนังด้วย AI",
+        confidential: "เอกสารผู้รับบริการ — กรุณาเก็บเป็นความลับ",
+        appointments: "คลินิกและการนัดหมาย",
+        page: "หน้า",
+      }
+    : null;
 
-export function generateScanReport(scan: ReportScan, patient: { name: string; email: string }, lang: Lang = "en") {
+/**
+ * Builds and downloads the client-facing AI skin-scan PDF. Async so the real
+ * crown logo can finish loading before jsPDF renders the letterhead.
+ */
+export async function generateScanReport(
+  scan: ReportScan,
+  patient: { name: string; email: string },
+  lang: Lang = "en",
+) {
+  const logo = await loadReportLogo();
   const doc = new jsPDF({ unit: "pt", format: "a4" });
+  DOC_LOGO.set(doc, logo);
   if (lang === "th") {
     doc.addFileToVFS("NotoSansThai-Regular.ttf", notoSansThaiRegular);
     doc.addFileToVFS("NotoSansThai-Bold.ttf", notoSansThaiBold);
@@ -97,11 +157,16 @@ export function generateScanReport(scan: ReportScan, patient: { name: string; em
   y = sectionTitle(doc, th?.s1 ?? "1.  PATIENT & DOCUMENT IDENTIFICATION", y, W);
   y = fieldGrid(doc, y, W, [
     [th?.patient ?? "Patient name", patient.name || patient.email],
-    [th?.email ?? "Patient email", patient.email], [th?.reportNo ?? "Report no.", reportNo],
-    [th?.date ?? "Examination date", new Date(scan.created_at).toLocaleString(lang === "th" ? "th-TH" : "en-GB")],
+    [th?.email ?? "Patient email", patient.email],
+    [th?.reportNo ?? "Report no.", reportNo],
+    [
+      th?.date ?? "Examination date",
+      new Date(scan.created_at).toLocaleString(lang === "th" ? "th-TH" : "en-GB"),
+    ],
     [th?.site ?? "Site examined", scan.body_area || (th ? "ไม่ได้ระบุ" : "Not specified")],
     [th?.modality ?? "Modality", th?.modalityValue ?? "Digital photograph · AI image analysis"],
-    [th?.reported ?? "Reported by", `${CLINIC.doctor} — ${CLINIC.doctorTitle}`], [th?.clinic ?? "Reviewing clinic", CLINIC.legalName],
+    [th?.reported ?? "Reported by", `${CLINIC.doctor} — ${CLINIC.doctorTitle}`],
+    [th?.clinic ?? "Reviewing clinic", CLINIC.legalName],
   ]);
 
   // Section 2 — Clinical history
@@ -113,7 +178,10 @@ export function generateScanReport(scan: ReportScan, patient: { name: string; em
   setReportFont(doc, "bold", true);
   doc.setFontSize(16);
   doc.setTextColor(...GRAPHITE);
-  const cond = doc.splitTextToSize(conditionLabel(scan.condition || "Indeterminate", lang), W - M * 2) as string[];
+  const cond = doc.splitTextToSize(
+    conditionLabel(scan.condition || "Indeterminate", lang),
+    W - M * 2,
+  ) as string[];
   doc.text(cond, M, y + 4);
   y += cond.length * 18 + 6;
   setReportFont(doc);
@@ -129,12 +197,14 @@ export function generateScanReport(scan: ReportScan, patient: { name: string; em
     y = fieldGrid(doc, y, W, [
       [th?.melanoma ?? "Melanoma likelihood", `${Math.round(scan.mali.melanoma * 100)}%`],
       [th?.sk ?? "Seborrheic keratosis", `${Math.round(scan.mali.seborrheicKeratosis * 100)}%`],
-      [th?.version ?? "Model version", scan.mali.modelVersion], [th?.status ?? "Status", th?.research ?? "Research aid — not a diagnosis"],
+      [th?.version ?? "Model version", scan.mali.modelVersion],
+      [th?.status ?? "Status", th?.research ?? "Research aid — not a diagnosis"],
     ]);
     y = body(
       doc,
       [
-        th?.maliNote ?? "The MALI classifier is trained on dermoscopic lesion images and is reported alongside the primary AI impression. It may raise the recommended review interval but never reduces it. Histopathology remains the reference standard.",
+        th?.maliNote ??
+          "The MALI classifier is trained on dermoscopic lesion images and is reported alongside the primary AI impression. It may raise the recommended review interval but never reduces it. Histopathology remains the reference standard.",
       ],
       y,
       W,
@@ -145,7 +215,15 @@ export function generateScanReport(scan: ReportScan, patient: { name: string; em
   y = sectionTitle(doc, th?.s4 ?? "4.  OBJECTIVE FINDINGS ON IMAGE", y, W);
   y = scan.findings.length
     ? findingsTable(doc, scan.findings, y, W)
-    : body(doc, [th?.noFindings ?? "No discrete morphological features were extracted from the submitted image."], y, W);
+    : body(
+        doc,
+        [
+          th?.noFindings ??
+            "No discrete morphological features were extracted from the submitted image.",
+        ],
+        y,
+        W,
+      );
 
   // Section 5 — Assessment
   y = sectionTitle(doc, th?.s5 ?? "5.  ASSESSMENT", y, W);
@@ -157,7 +235,10 @@ export function generateScanReport(scan: ReportScan, patient: { name: string; em
     doc,
     scan.recommendations.length
       ? scan.recommendations
-       : [th?.defaultPlan ?? "In-person dermatological assessment at 888clinic for confirmation and treatment planning."],
+      : [
+          th?.defaultPlan ??
+            "In-person dermatological assessment at 888clinic for confirmation and treatment planning.",
+        ],
     y,
     W,
     true,
@@ -168,8 +249,10 @@ export function generateScanReport(scan: ReportScan, patient: { name: string; em
   y = body(
     doc,
     [
-      th?.aesthetic1 ?? "Aesthetic and cosmetic-dermatology options (medical facials, laser and light therapy, injectables, prescription skincare) can be planned in the same visit once the medical findings above are confirmed by a clinician.",
-      th?.aesthetic2 ?? "To arrange a consultation, or to have this report reviewed in person, contact the clinic using the details below.",
+      th?.aesthetic1 ??
+        "Aesthetic and cosmetic-dermatology options (medical facials, laser and light therapy, injectables, prescription skincare) can be planned in the same visit once the medical findings above are confirmed by a clinician.",
+      th?.aesthetic2 ??
+        "To arrange a consultation, or to have this report reviewed in person, contact the clinic using the details below.",
     ],
     y,
     W,
@@ -187,12 +270,18 @@ export function generateScanReport(scan: ReportScan, patient: { name: string; em
   doc.setFontSize(8.5);
   doc.setTextColor(...GREY);
   doc.text(`${CLINIC.doctorTitle} · ${CLINIC.legalName}`, M, y + 28);
-  doc.text(`${th?.issued ?? "Issued"} ${new Date().toLocaleString(lang === "th" ? "th-TH" : "en-GB")}`, W - M, y + 15, { align: "right" });
+  doc.text(
+    `${th?.issued ?? "Issued"} ${new Date().toLocaleString(lang === "th" ? "th-TH" : "en-GB")}`,
+    W - M,
+    y + 15,
+    { align: "right" },
+  );
   y += 48;
 
   // Disclaimer
   const note = doc.splitTextToSize(
-    th?.disclaimer ?? "IMPORTANT — MEDICAL DISCLAIMER: This document is an AI-assisted screening report generated from a digital photograph. It does not constitute a medical diagnosis, prescription, or referral, and it has not been signed by a licensed physician. All findings require confirmation by a dermatologist during an in-person examination. Any lesion that is changing in size, shape or colour, bleeding, ulcerating, persistently itching or growing rapidly must be reviewed urgently. Keep this report for your clinical file.",
+    th?.disclaimer ??
+      "IMPORTANT — MEDICAL DISCLAIMER: This document is an AI-assisted screening report generated from a digital photograph. It does not constitute a medical diagnosis, prescription, or referral, and it has not been signed by a licensed physician. All findings require confirmation by a dermatologist during an in-person examination. Any lesion that is changing in size, shape or colour, bleeding, ulcerating, persistently itching or growing rapidly must be reviewed urgently. Keep this report for your clinical file.",
     W - M * 2 - 24,
   ) as string[];
   const h = note.length * 10.5 + 22;
@@ -207,30 +296,51 @@ export function generateScanReport(scan: ReportScan, patient: { name: string; em
   doc.save(`888clinic-skin-report-${scan.id.slice(0, 8)}.pdf`);
 }
 
-/** Dark letterhead with full clinic contact details; returns the first usable y. */
+/** Dark letterhead with the crown logo and full clinic contact details; returns the first usable y. */
 function letterhead(doc: jsPDF, W: number) {
   const th = reportCopy(THAI_DOCS.has(doc) ? "th" : "en");
+  const logo = DOC_LOGO.get(doc) ?? null;
+
   doc.setFillColor(...GRAPHITE);
-  doc.rect(0, 0, W, 108, "F");
-  doc.setTextColor(...GOLD);
-  setReportFont(doc, "bold", true);
-  doc.setFontSize(26);
-  doc.text("888", M, 46);
-  doc.setTextColor(255, 255, 255);
-  doc.text("clinic", M + doc.getTextWidth("888"), 46);
+  doc.rect(0, 0, W, HEADER_HEIGHT, "F");
+
+  const logoH = 42;
+  const logoY = 20;
+  if (logo && logo.naturalWidth > 0 && logo.naturalHeight > 0) {
+    const logoW = logoH * (logo.naturalWidth / logo.naturalHeight);
+    doc.addImage(logo, "PNG", M, logoY, logoW, logoH);
+  } else {
+    // Small text fallback so the report still downloads if the logo can't load.
+    setReportFont(doc, "bold", true);
+    doc.setFontSize(22);
+    doc.setTextColor(...GOLD);
+    doc.text("888", M, logoY + logoH * 0.72);
+    doc.setTextColor(255, 255, 255);
+    doc.text("clinic", M + doc.getTextWidth("888"), logoY + logoH * 0.72);
+  }
+
   setReportFont(doc);
   doc.setFontSize(8);
   doc.setTextColor(190, 190, 195);
-  doc.text(CLINIC.tagline.toUpperCase(), M, 62);
-  doc.text(CLINIC.address, M, 78);
-  doc.text(`${CLINIC.phone}  ·  ${CLINIC.email}  ·  ${CLINIC.website}`, M, 92);
-  doc.setFontSize(10.5);
-  doc.setTextColor(255, 255, 255);
-  doc.text(th?.medical ?? "MEDICAL REPORT", W - M, 46, { align: "right" });
+  doc.text(CLINIC.tagline.toUpperCase(), M, logoY + logoH + 14);
+  doc.text(CLINIC.address, M, logoY + logoH + 28);
+  doc.text(`Tel ${CLINIC.phone}  ·  ${CLINIC.email}  ·  ${CLINIC.website}`, M, logoY + logoH + 42);
+
+  setReportFont(doc, "bold", true);
+  doc.setFontSize(11);
+  doc.setTextColor(...GOLD);
+  doc.text(th?.medical ?? "AI SKIN REPORT", W - M, 46, { align: "right" });
+  setReportFont(doc);
   doc.setFontSize(8);
   doc.setTextColor(190, 190, 195);
   doc.text(th?.confidential ?? "Confidential patient document", W - M, 62, { align: "right" });
-  return 134;
+
+  // Thin gold divider closing the letterhead on every page.
+  doc.setDrawColor(...GOLD);
+  doc.setLineWidth(1);
+  doc.line(0, HEADER_HEIGHT, W, HEADER_HEIGHT);
+
+  return HEADER_HEIGHT + 26;
 }
 
 function sectionTitle(doc: jsPDF, title: string, y: number, W: number) {
@@ -263,7 +373,12 @@ function fieldGrid(doc: jsPDF, y: number, W: number, fields: Array<[string, stri
   return y + rows * 28 + 10;
 }
 
-function findingsTable(doc: jsPDF, findings: Array<{ label: string; detail: string }>, y: number, W: number) {
+function findingsTable(
+  doc: jsPDF,
+  findings: Array<{ label: string; detail: string }>,
+  y: number,
+  W: number,
+) {
   const labelW = 150;
   const detailW = W - M * 2 - labelW - 12;
   findings.forEach((f) => {
@@ -345,7 +460,9 @@ function stampFooters(doc: jsPDF) {
     doc.setTextColor(...GREY);
     doc.text(`${CLINIC.legalName} · ${CLINIC.address}`, M, H - 32);
     doc.text(`Tel ${CLINIC.phone} · ${CLINIC.email} · ${CLINIC.website}`, M, H - 22);
-    doc.text(th ? `${th.page} ${p} / ${total}` : `Page ${p} of ${total}`, W - M, H - 22, { align: "right" });
+    doc.text(th ? `${th.page} ${p} / ${total}` : `Page ${p} of ${total}`, W - M, H - 22, {
+      align: "right",
+    });
   }
 }
 

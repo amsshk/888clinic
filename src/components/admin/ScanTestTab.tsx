@@ -13,7 +13,11 @@ import { runScanTest, type ScanTestResult } from "@/lib/scan-test.functions";
 import { getActiveMaliModel } from "@/lib/mali-models.functions";
 import { generateScanReport, type ReportScan } from "@/lib/scan-report";
 
-type Engine = { source: "mali" | "language-model"; modelVersion: string | null; maliPrimary: boolean };
+type Engine = {
+  source: "mali" | "language-model";
+  modelVersion: string | null;
+  maliPrimary: boolean;
+};
 
 export function ScanTestTab() {
   const { user } = useAuth();
@@ -70,7 +74,9 @@ export function ScanTestTab() {
       }
       setResult(response.scan);
       setEngine(response.engine);
-      toast.success("Test scan complete", { description: "No credit was used. Download the PDF to check it." });
+      toast.success("Test scan complete", {
+        description: "No credit was used. Download the PDF to check it.",
+      });
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Test scan failed");
     } finally {
@@ -85,16 +91,21 @@ export function ScanTestTab() {
         <p className="eyebrow">Scan test mode</p>
         <h2 className="mt-3 text-2xl">Run a photo through the live pipeline</h2>
         <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
-          This runs the exact MALI-first pipeline a patient gets — the live lesion model reads the photo,
-          the language model only writes the wording — then lets you download the PDF. No scan credit is
-          used, no face signature is stored and nothing is saved to the patient's scan history.
+          This runs the exact MALI-first pipeline a patient gets — the live lesion model reads the
+          photo, the language model only writes the wording — then lets you download the PDF. No
+          scan credit is used, no face signature is stored and nothing is saved to the patient's
+          scan history.
         </p>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-2">
           <div>
             <div className="rounded-2xl border border-dashed border-primary/50 bg-secondary/30 p-6 text-center">
               {preview ? (
-                <img src={preview} alt="Test photo preview" className="mx-auto max-h-56 object-contain" />
+                <img
+                  src={preview}
+                  alt="Test photo preview"
+                  className="mx-auto max-h-56 object-contain"
+                />
               ) : (
                 <FlaskConical className="mx-auto h-9 w-9 text-primary" />
               )}
@@ -113,7 +124,11 @@ export function ScanTestTab() {
                   setPreview(URL.createObjectURL(picked));
                 }}
               />
-              <Button variant="outline" className="mt-5 gap-2" onClick={() => fileRef.current?.click()}>
+              <Button
+                variant="outline"
+                className="mt-5 gap-2"
+                onClick={() => fileRef.current?.click()}
+              >
                 <Upload className="h-4 w-4" /> {preview ? "Change photo" : "Choose photo"}
               </Button>
             </div>
@@ -141,7 +156,11 @@ export function ScanTestTab() {
                 />
               </div>
               <Button onClick={run} disabled={!file || busy} className="w-full gap-2">
-                {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <FlaskConical className="h-4 w-4" />}
+                {busy ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <FlaskConical className="h-4 w-4" />
+                )}
                 {busy ? (stage ?? "Running…") : "Run test scan"}
               </Button>
             </div>
@@ -161,10 +180,12 @@ export function ScanTestTab() {
                 </div>
                 <h3 className="mt-4 text-xl">{result.condition}</h3>
                 <p className="mt-2 text-sm text-primary">
-                  Confidence {Math.round(result.confidence * 100)}% · Severity {result.severity} · Follow-up{" "}
-                  {result.urgency}
+                  Confidence {Math.round(result.confidence * 100)}% · Severity {result.severity} ·
+                  Follow-up {result.urgency}
                 </p>
-                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{result.summary}</p>
+                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                  {result.summary}
+                </p>
 
                 {result.mali ? (
                   <div className="mt-5 grid grid-cols-3 gap-3 text-sm">
@@ -205,10 +226,10 @@ export function ScanTestTab() {
                 <Button
                   className="mt-6 gap-2"
                   onClick={() =>
-                    generateScanReport(result as unknown as ReportScan, {
+                    void generateScanReport(result as unknown as ReportScan, {
                       name: "Test patient",
                       email: user?.email ?? "",
-                    })
+                    }).catch(() => toast.error("Could not generate the PDF report"))
                   }
                 >
                   <FileText className="h-4 w-4" /> Download PDF report
@@ -216,8 +237,8 @@ export function ScanTestTab() {
               </div>
             ) : (
               <div className="rounded-2xl border border-border/70 bg-secondary/20 p-6 text-sm text-muted-foreground">
-                Upload a photo and run a test scan. The verdict, the model version that produced it and the
-                downloadable PDF all appear here.
+                Upload a photo and run a test scan. The verdict, the model version that produced it
+                and the downloadable PDF all appear here.
               </div>
             )}
           </div>
