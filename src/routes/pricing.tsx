@@ -4,13 +4,6 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLang } from "@/lib/i18n";
 import { TREATMENT_MENU, type MenuGroup, type MenuItem } from "@/lib/treatment-menu";
-import filler0 from "@/assets/filler/filler-0.webp.asset.json";
-import filler1 from "@/assets/filler/filler-1.webp.asset.json";
-import filler2 from "@/assets/filler/filler-2.webp.asset.json";
-import filler3 from "@/assets/filler/filler-3.webp.asset.json";
-import filler4 from "@/assets/filler/filler-4.webp.asset.json";
-import filler5 from "@/assets/filler/filler-5.webp.asset.json";
-import filler6 from "@/assets/filler/filler-6.webp.asset.json";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -36,7 +29,19 @@ export const Route = createFileRoute("/pricing")({
   component: Catalogue,
 });
 
-const FILLER_IMAGES = [filler0, filler1, filler2, filler3, filler4, filler5, filler6];
+/**
+ * Genuine product photography, served from `public/images/fillers`.
+ * Keyed by `nameEn` so the catalogue order can change without breaking the map.
+ */
+const FILLER_IMAGES: Record<string, string> = {
+  "Neuramis Deep Cross-Linked": "/images/fillers/neuramis-deep-cross-linked.webp",
+  "Neuramis Deep Lidocaine": "/images/fillers/neuramis-deep-lidocaine.webp",
+  "Neuramis Volume": "/images/fillers/neuramis-volume.webp",
+  "Restylane Skin Booster Vital Light": "/images/fillers/restylane-vital-light.webp",
+  "Restylane Perlane Lyft": "/images/fillers/restylane-perlane-lyft.webp",
+  "Juvederm Volbella": "/images/fillers/juvederm-volbella.webp",
+  "Juvederm Voluma 2": "/images/fillers/juvederm-voluma.webp",
+};
 
 const BRANDS = ["Neuramis", "Restylane", "Juvederm"] as const;
 
@@ -45,8 +50,8 @@ function brandOf(item: MenuItem): string {
   return found ?? "Signature";
 }
 
-/** Frameless product card with soft drop-shadow and reflection, per the catalogue reference. */
-function FillerCard({ item, image, th }: { item: MenuItem; image?: string | undefined; th: boolean }) {
+/** Product card showing the genuine pack shot on its square studio canvas. */
+function FillerCard({ item, image, th }: { item: MenuItem; image: string; th: boolean }) {
   const desc = th ? item.descTh : item.descEn;
   return (
     <article className="flex flex-col">
@@ -56,35 +61,21 @@ function FillerCard({ item, image, th }: { item: MenuItem; image?: string | unde
         </span>
       </div>
 
-      <div className="relative mt-7 h-64 overflow-hidden">
-        {image ? (
-          <>
-            <img
-              src={image}
-              alt={item.nameEn}
-              loading="lazy"
-              className="absolute left-1/2 top-0 max-h-40 w-auto -translate-x-1/2 object-contain drop-shadow-[0_20px_30px_rgba(42,52,71,0.18)]"
-            />
-            <img
-              src={image}
-              alt=""
-              aria-hidden
-              loading="lazy"
-              className="pointer-events-none absolute left-1/2 top-40 max-h-40 w-auto -translate-x-1/2 scale-y-[-1] object-contain opacity-15 blur-[1px]"
-              style={{ maskImage: "linear-gradient(to top, transparent 40%, black)" }}
-            />
-          </>
-        ) : (
-          <div className="h-40 w-full bg-shell" />
-        )}
+      <div className="mt-7 overflow-hidden rounded-[20px] border border-border/60">
+        <img
+          src={image}
+          alt={`${item.nameEn} — authentic packaging`}
+          width={1200}
+          height={1200}
+          loading="lazy"
+          decoding="async"
+          className="aspect-square w-full object-cover"
+        />
       </div>
 
-      <div className="border-t border-border/70 pt-4">
-
+      <div className="mt-5 border-t border-border/70 pt-4">
         <h3 className="text-base leading-snug">{th ? item.nameTh : item.nameEn}</h3>
-        {desc && (
-          <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{desc}</p>
-        )}
+        {desc && <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{desc}</p>}
       </div>
     </article>
   );
@@ -149,15 +140,10 @@ function FillerSection({ group, th }: { group: MenuGroup; th: boolean }) {
       <div className="mt-10 rounded-[28px] border border-border bg-card px-6 py-10 shadow-soft sm:px-10">
         <div className="grid gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item) => {
-            const index = group.items.indexOf(item);
-            return (
-              <FillerCard
-                key={item.nameEn}
-                item={item}
-                image={FILLER_IMAGES[index]?.url}
-                th={th}
-              />
-            );
+            const image = FILLER_IMAGES[item.nameEn];
+            return image ? (
+              <FillerCard key={item.nameEn} item={item} image={image} th={th} />
+            ) : null;
           })}
         </div>
         <p className="mt-10 border-t border-border/70 pt-5 text-[0.6rem] uppercase tracking-[0.22em] text-muted-foreground">
