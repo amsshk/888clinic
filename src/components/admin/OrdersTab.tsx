@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { getStripeEnvironment } from "@/lib/stripe";
+import { getStripeEnvironment, isStripeConfigured } from "@/lib/stripe";
 import { formatThb } from "@/lib/skincare-catalog";
 
 type OrderItem = {
@@ -35,6 +35,11 @@ export function OrdersTab() {
   const [loading, setLoading] = useState(true);
 
   const load = async () => {
+    if (!isStripeConfigured()) {
+      setOrders([]);
+      setLoading(false);
+      return;
+    }
     const { data, error } = await supabase
       .from("orders")
       .select(
@@ -68,6 +73,14 @@ export function OrdersTab() {
 
   if (loading) {
     return <p className="text-sm text-muted-foreground">Loading orders…</p>;
+  }
+
+  if (!isStripeConfigured()) {
+    return (
+      <p className="text-sm text-muted-foreground">
+        Payments are not configured for this build, so orders cannot be shown yet.
+      </p>
+    );
   }
 
   if (!orders.length) {

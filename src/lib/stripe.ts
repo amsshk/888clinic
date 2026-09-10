@@ -2,7 +2,12 @@ import { loadStripe, Stripe } from "@stripe/stripe-js";
 
 export type StripeEnv = "sandbox" | "live";
 
-const clientToken = import.meta.env['VITE_PAYMENTS_CLIENT_TOKEN'];
+const clientToken = import.meta.env["VITE_PAYMENTS_CLIENT_TOKEN"];
+
+// True when a usable Stripe publishable key is present, without throwing.
+export function isStripeConfigured(): boolean {
+  return clientToken?.startsWith("pk_test_") || clientToken?.startsWith("pk_live_") || false;
+}
 
 export function getStripeEnvironment(): StripeEnv {
   if (clientToken?.startsWith("pk_test_")) return "sandbox";

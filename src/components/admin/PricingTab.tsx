@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { formatThb } from "@/lib/skincare-catalog";
-import { getStripeEnvironment } from "@/lib/stripe";
+import { getStripeEnvironment, isStripeConfigured } from "@/lib/stripe";
 import type { CatalogItem, CatalogKind } from "@/lib/catalog.shared";
 import {
   deleteCatalogItem,
@@ -82,7 +82,8 @@ export function PricingTab() {
   const [loading, setLoading] = useState(true);
   const [draft, setDraft] = useState<Draft | null>(null);
   const [busy, setBusy] = useState(false);
-  const [syncStripe, setSyncStripe] = useState(true);
+  const stripeConfigured = isStripeConfigured();
+  const [syncStripe, setSyncStripe] = useState(stripeConfigured);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -127,13 +128,14 @@ export function PricingTab() {
             .filter(Boolean),
           priceThb: Math.round(price),
           refillThb: draft.refillThb.trim() === "" ? null : Math.round(Number(draft.refillThb)),
-          credits: draft.kind === "scan_pack" ? Math.max(1, Math.round(Number(draft.credits) || 1)) : null,
+          credits:
+            draft.kind === "scan_pack" ? Math.max(1, Math.round(Number(draft.credits) || 1)) : null,
           oncePriceId: draft.oncePriceId.trim() || null,
           refillPriceId: draft.refillPriceId.trim() || null,
           available: draft.available,
           sortOrder: Math.round(Number(draft.sortOrder) || 100),
-          syncStripe,
-          environment: getStripeEnvironment(),
+          syncStripe: stripeConfigured && syncStripe,
+          ...(stripeConfigured ? { environment: getStripeEnvironment() } : {}),
         },
       });
       if (!result.ok) {
@@ -143,10 +145,14 @@ export function PricingTab() {
       setItems(result.items);
       setDraft(null);
       if (result.stripeNote) {
-        toast.warning("Saved, but checkout prices need attention", { description: result.stripeNote });
+        toast.warning("Saved, but checkout prices need attention", {
+          description: result.stripeNote,
+        });
       } else {
         toast.success("Saved", {
-          description: syncStripe ? "Website and checkout prices updated." : "Website price updated.",
+          description: syncStripe
+            ? "Website and checkout prices updated."
+            : "Website price updated.",
         });
       }
     } catch {
@@ -211,7 +217,10 @@ export function PricingTab() {
               <p className="flex items-center gap-2">
                 {item.name}
                 {!item.available && (
-                  <Badge variant="outline" className="rounded-none text-[0.6rem] uppercase tracking-[0.14em]">
+                  <Badge
+                    variant="outline"
+                    className="rounded-none text-[0.6rem] uppercase tracking-[0.14em]"
+                  >
                     Hidden
                   </Badge>
                 )}
@@ -225,15 +234,31 @@ export function PricingTab() {
             <div className="text-right">
               <p className="font-display text-xl">{formatThb(item.priceThb)}</p>
               {item.refillThb != null && (
-                <p className="text-xs text-muted-foreground">refill {formatThb(item.refillThb)}/mo</p>
+                <p className="text-xs text-muted-foreground">
+                  refill {formatThb(item.refillThb)}/mo
+                </p>
               )}
             </div>
             <div className="flex items-center gap-2">
-              <Switch checked={item.available} onCheckedChange={() => onToggle(item)} aria-label="Available" />
-              <Button size="sm" variant="outline" className="rounded-none" onClick={() => setDraft(toDraft(item))}>
+              <Switch
+                checked={item.available}
+                onCheckedChange={() => onToggle(item)}
+                aria-label="Available"
+              />
+              <Button
+                size="sm"
+                variant="outline"
+                className="rounded-none"
+                onClick={() => setDraft(toDraft(item))}
+              >
                 Edit
               </Button>
-              <Button size="sm" variant="ghost" className="rounded-none" onClick={() => onDelete(item)}>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="rounded-none"
+                onClick={() => onDelete(item)}
+              >
                 <Trash2 className="size-4" />
               </Button>
             </div>
@@ -251,8 +276,10 @@ export function PricingTab() {
       <div>
         <h2 className="text-2xl">Plans &amp; pricing</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Change prices, credits per pack, and what patients can see — no code, no redeploy. Saving also updates the
-          matching {getStripeEnvironment() === "live" ? "live" : "test"} checkout price.
+          Change prices, credits per pack, and what patients can see — no code, no redeploy.{" "}
+          {stripeConfigured
+            ? `Saving also updates the matching ${getStripeEnvironment() === "live" ? "live" : "test"} checkout price.`
+            : "Checkout price sync is disabled until payments are configured for this build."}
         </p>
       </div>
 
@@ -260,9 +287,15 @@ export function PricingTab() {
         <div className="border border-gold/50 bg-card p-6">
           <div className="flex items-start justify-between gap-4">
             <h3 className="text-lg">
-              {draft.isNew ? "New" : "Edit"} {draft.kind === "scan_pack" ? "scan pack" : "skincare product"}
+              {draft.isNew ? "New" : "Edit"}{" "}
+              {draft.kind === "scan_pack" ? "scan pack" : "skincare product"}
             </h3>
-            <Button size="sm" variant="ghost" className="rounded-none" onClick={() => setDraft(null)}>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="rounded-none"
+              onClick={() => setDraft(null)}
+            >
               <X className="size-4" />
             </Button>
           </div>
@@ -397,15 +430,23 @@ export function PricingTab() {
 
           <div className="mt-6 flex flex-wrap items-center gap-6">
             <label className="flex items-center gap-3 text-sm">
-              <Switch checked={draft.available} onCheckedChange={(v) => setDraft({ ...draft, available: v })} />
+              <Switch
+                checked={draft.available}
+                onCheckedChange={(v) => setDraft({ ...draft, available: v })}
+              />
               Visible to patients
             </label>
             <label className="flex items-center gap-3 text-sm">
-              <Switch checked={syncStripe} onCheckedChange={setSyncStripe} />
+              <Switch
+                checked={stripeConfigured && syncStripe}
+                onCheckedChange={setSyncStripe}
+                disabled={!stripeConfigured}
+              />
               Also update the checkout price
             </label>
             <Button className="rounded-none" onClick={onSave} disabled={busy}>
-              {busy ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />} Save
+              {busy ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}{" "}
+              Save
             </Button>
           </div>
         </div>
@@ -417,7 +458,12 @@ export function PricingTab() {
         packs,
         "What patients pay after their free scan, and how many scans each pack adds.",
       )}
-      {section("Skincare range", "skincare", skincare, "Shop prices, refill prices, and what is in stock.")}
+      {section(
+        "Skincare range",
+        "skincare",
+        skincare,
+        "Shop prices, refill prices, and what is in stock.",
+      )}
     </div>
   );
 }
