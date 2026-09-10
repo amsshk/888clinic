@@ -6,6 +6,7 @@ import { useLang } from "@/lib/i18n";
 import { TREATMENT_MENU, type MenuGroup, type MenuItem } from "@/lib/treatment-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { DEFAULT_CATALOGUE_PRESET, type CataloguePreset } from "@/lib/catalogue-design.shared";
+import { FILLER_PRODUCTS, fillerImageByName } from "@/lib/filler-products.shared";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -30,20 +31,6 @@ export const Route = createFileRoute("/pricing")({
   }),
   component: Catalogue,
 });
-
-/**
- * Genuine product photography, served from `public/images/fillers`.
- * Keyed by `nameEn` so the catalogue order can change without breaking the map.
- */
-const FILLER_IMAGES: Record<string, string> = {
-  "Neuramis Deep Cross-Linked": "/images/fillers/01-neuramis-deep-cross-linked.png",
-  "Neuramis Deep Lidocaine": "/images/fillers/02-neuramis-deep-lidocaine.png",
-  "Neuramis Volume": "/images/fillers/03-neuramis-volume.png",
-  "Restylane Skin Booster Vital Light": "/images/fillers/04-restylane-skinboosters-vital-light.png",
-  "Restylane Perlane Lyft": "/images/fillers/05-restylane-perlane-lyft.png",
-  "Juvederm Volbella": "/images/fillers/06-juvederm-volbella.png",
-  "Juvederm Voluma 2": "/images/fillers/07-juvederm-voluma-2.png",
-};
 
 const BRANDS = ["Neuramis", "Restylane", "Juvederm"] as const;
 
@@ -87,10 +74,12 @@ function FillerSection({
   group,
   th,
   preset,
+  photos,
 }: {
   group: MenuGroup;
   th: boolean;
   preset: CataloguePreset;
+  photos: Record<string, string>;
 }) {
   const [brand, setBrand] = useState<"All" | (typeof BRANDS)[number]>("All");
 
@@ -152,7 +141,8 @@ function FillerSection({
       >
         <div className="grid gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item) => {
-            const image = FILLER_IMAGES[item.nameEn];
+            const slug = FILLER_PRODUCTS.find((p) => p.nameEn === item.nameEn)?.slug;
+            const image = (slug && photos[slug]) || fillerImageByName(item.nameEn);
             return image ? (
               <FillerCard key={item.nameEn} item={item} image={image} th={th} />
             ) : null;
@@ -265,6 +255,7 @@ function Catalogue() {
   const { t, lang } = useLang();
   const th = lang === "th";
   const [preset, setPreset] = useState<CataloguePreset>(DEFAULT_CATALOGUE_PRESET);
+  const [fillerPhotos, setFillerPhotos] = useState<Record<string, string>>({});
 
   useEffect(() => {
     supabase
@@ -274,6 +265,29 @@ function Catalogue() {
       .maybeSingle()
       .then(({ data }) => {
         if (data?.preset) setPreset(data.preset as CataloguePreset);
+      });
+  }, []);
+
+  useEffect(() => {
+    supabase
+      .from("catalog_product_images")
+      .select("product_id, final_path")
+      .eq("kind", "filler")
+      .then(async ({ data }) => {
+        const rows = data ?? [];
+        const entries = await Promise.all(
+          rows
+            .filter((row) => row.final_path)
+            .map(async (row) => {
+              const { data: signed } = await supabase.storage
+                .from("media")
+                .createSignedUrl(row.final_path as string, 3600);
+              return [row.product_id, signed?.signedUrl ?? null] as const;
+            }),
+        );
+        const next: Record<string, string> = {};
+        for (const [id, url] of entries) if (url) next[id] = url;
+        setFillerPhotos(next);
       });
   }, []);
 
@@ -313,7 +327,7 @@ function Catalogue() {
         </div>
 
         <div className="py-14">
-          {filler && <FillerSection group={filler} th={th} preset={preset} />}
+          {filler && <FillerSection group={filler} th={th} preset={preset} photos={fillerPhotos} />}
 
           <div className="mt-14 grid gap-px border border-border bg-border md:grid-cols-2">
             {rest.map((group) => (

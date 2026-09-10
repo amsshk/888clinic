@@ -19,6 +19,7 @@ import { ScanTestTab } from "@/components/admin/ScanTestTab";
 import { BillingTab } from "@/components/admin/BillingTab";
 import { PricingTab } from "@/components/admin/PricingTab";
 import { CatalogueDesignPanel } from "@/components/admin/CatalogueDesignPanel";
+import { ProductPhotosTab } from "@/components/admin/ProductPhotosTab";
 import { MarketingTab } from "@/components/admin/MarketingTab";
 import { CopyTab } from "@/components/admin/CopyTab";
 import { AssistantTab } from "@/components/admin/AssistantTab";
@@ -176,6 +177,11 @@ function AdminPage() {
             </TabsTrigger>
           )}
           {isAdmin && (
+            <TabsTrigger value="photos" className="rounded-none">
+              Product photos
+            </TabsTrigger>
+          )}
+          {isAdmin && (
             <TabsTrigger value="copy" className="rounded-none">
               Wording &amp; Thai
             </TabsTrigger>
@@ -239,6 +245,11 @@ function AdminPage() {
         {isAdmin && (
           <TabsContent value="backgrounds" className="mt-8">
             <CatalogueDesignPanel />
+          </TabsContent>
+        )}
+        {isAdmin && (
+          <TabsContent value="photos" className="mt-8">
+            <ProductPhotosTab />
           </TabsContent>
         )}
         {isAdmin && (
