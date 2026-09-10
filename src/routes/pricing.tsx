@@ -83,7 +83,15 @@ function FillerCard({ item, image, th }: { item: MenuItem; image: string; th: bo
   );
 }
 
-function FillerSection({ group, th }: { group: MenuGroup; th: boolean }) {
+function FillerSection({
+  group,
+  th,
+  preset,
+}: {
+  group: MenuGroup;
+  th: boolean;
+  preset: CataloguePreset;
+}) {
   const [brand, setBrand] = useState<"All" | (typeof BRANDS)[number]>("All");
 
   const items = useMemo(
@@ -139,7 +147,9 @@ function FillerSection({ group, th }: { group: MenuGroup; th: boolean }) {
         </div>
       </div>
 
-      <div className="mt-10 rounded-[28px] border border-border bg-card px-6 py-10 shadow-soft sm:px-10">
+      <div
+        className={`catalogue-preset catalogue-preset--${preset} mt-10 rounded-[28px] border border-border bg-card px-6 py-10 shadow-soft sm:px-10`}
+      >
         <div className="grid gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item) => {
             const image = FILLER_IMAGES[item.nameEn];
@@ -271,7 +281,7 @@ function Catalogue() {
   const rest = TREATMENT_MENU.filter((g) => g.id !== "filler");
 
   return (
-    <div className={`catalogue-preset catalogue-preset--${preset}`}>
+    <div>
       {/* Catalogue cover */}
       <section className="border-b border-border bg-shell">
         <div className="mx-auto max-w-3xl px-5 py-20 text-center">
@@ -303,7 +313,7 @@ function Catalogue() {
         </div>
 
         <div className="py-14">
-          {filler && <FillerSection group={filler} th={th} />}
+          {filler && <FillerSection group={filler} th={th} preset={preset} />}
 
           <div className="mt-14 grid gap-px border border-border bg-border md:grid-cols-2">
             {rest.map((group) => (

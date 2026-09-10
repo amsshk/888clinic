@@ -120,7 +120,7 @@ function AdminPage() {
       </div>
 
       <Tabs defaultValue={isAdmin ? "patients" : "inbox"} className="mt-10">
-        <TabsList className="rounded-none">
+        <TabsList className="h-auto flex-wrap justify-start gap-2 rounded-none bg-transparent p-0">
           {isAdmin && (
             <TabsTrigger value="patients" className="rounded-none">
               Patients
@@ -168,6 +168,11 @@ function AdminPage() {
           {isAdmin && (
             <TabsTrigger value="pricing" className="rounded-none">
               Plans &amp; pricing
+            </TabsTrigger>
+          )}
+          {isAdmin && (
+            <TabsTrigger value="backgrounds" className="rounded-none">
+              Product backgrounds
             </TabsTrigger>
           )}
           {isAdmin && (
@@ -229,9 +234,11 @@ function AdminPage() {
         {isAdmin && (
           <TabsContent value="pricing" className="mt-8">
             <PricingTab />
-            <div className="mt-10">
-              <CatalogueDesignPanel />
-            </div>
+          </TabsContent>
+        )}
+        {isAdmin && (
+          <TabsContent value="backgrounds" className="mt-8">
+            <CatalogueDesignPanel />
           </TabsContent>
         )}
         {isAdmin && (

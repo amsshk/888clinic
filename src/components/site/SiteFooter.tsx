@@ -60,17 +60,16 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
-              <Link to="/products" className="hover:text-foreground">
-                {t("nav.skincare")}
-              </Link>
-            </li>
-            <li>
               <Link to="/ai-skin-analysis" className="hover:text-foreground">
                 {t("nav.ai")}
               </Link>
             </li>
             <li>
-              <Link to="/mali" search={{ tool: "before-after" as const }} className="hover:text-foreground">
+              <Link
+                to="/mali"
+                search={{ tool: "before-after" as const }}
+                className="hover:text-foreground"
+              >
                 {t("nav.predict")}
               </Link>
             </li>
@@ -107,7 +106,10 @@ export function SiteFooter() {
                   >
                     {branch.name} — {branch.address}
                   </a>
-                  <a href={branch.phoneHref} className="mt-1 flex items-center gap-2 hover:text-foreground">
+                  <a
+                    href={branch.phoneHref}
+                    className="mt-1 flex items-center gap-2 hover:text-foreground"
+                  >
                     <Phone className="size-3.5 shrink-0 text-gold" />
                     {branch.phone}
                   </a>
