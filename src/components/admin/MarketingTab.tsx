@@ -350,7 +350,7 @@ export function MarketingTab() {
         <div className="flex items-start gap-3">
           <Megaphone className="mt-1 size-5 text-gold" />
           <div>
-            <h3 className="font-serif text-xl">EZ888N campaign studio</h3>
+            <h3 className="font-serif text-xl">ezWar campaign studio</h3>
             <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
               Write Facebook and Instagram ad copy for the clinic in English and local Thai, then
               paste it straight into Ads Manager. Restricted to the configured super admin.
