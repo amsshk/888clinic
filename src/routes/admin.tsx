@@ -34,14 +34,14 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
-      { title: "Clinic Admin — 888clinic" },
+      { title: "EZ888N & Clinic Admin — 888clinic" },
       {
         name: "description",
-        content: "Enquiry inbox and AI-assisted media library for 888clinic staff.",
+        content: "EZ888N patient records, enquiry inbox, and AI-assisted media library for 888clinic staff.",
       },
       { name: "robots", content: "noindex" },
-      { property: "og:title", content: "Clinic Admin — 888clinic" },
-      { property: "og:description", content: "Manage enquiries and clinic media." },
+      { property: "og:title", content: "EZ888N & Clinic Admin — 888clinic" },
+      { property: "og:description", content: "Manage EZ888N patient records, enquiries, and clinic media." },
     ],
   }),
   component: AdminPage,
@@ -151,7 +151,7 @@ function AdminPage() {
         <TabsList className="h-auto flex-wrap justify-start gap-2 rounded-none bg-transparent p-0">
           {isAdmin && (
             <TabsTrigger value="patients" className="rounded-none">
-              Patients
+              EZ888N
             </TabsTrigger>
           )}
           <TabsTrigger value="inbox" className="rounded-none">
