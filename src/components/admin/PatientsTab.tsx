@@ -1,6 +1,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, Loader2, Search, Plus, Printer, Save, X, FileDown, ScrollText, SlidersHorizontal } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
+  Search,
+  Plus,
+  Printer,
+  Save,
+  X,
+  FileDown,
+  ScrollText,
+  SlidersHorizontal,
+  Upload,
+} from "lucide-react";
 import ReportTemplateEditor from "./ReportTemplateEditor";
+import { PatientBulkImport } from "./PatientBulkImport";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,7 +32,6 @@ import {
 function recordReportAccess(patientId: string, action: ReportAuditAction) {
   void logPatientReportAccess({ data: { patientId, action } }).catch(() => undefined);
 }
-
 
 type Patient = {
   id: string;
@@ -47,16 +60,15 @@ export function PatientsTab() {
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Patient | null>(null);
   const [adding, setAdding] = useState(false);
+  const [importing, setImporting] = useState(false);
   const [showAudit, setShowAudit] = useState(false);
   const [showTemplate, setShowTemplate] = useState(false);
   const requestId = useRef(0);
-
 
   const openPatient = useCallback((p: Patient) => {
     setSelected(p);
     recordReportAccess(p.id, "open");
   }, []);
-
 
   const load = useCallback(async (term: string, requestedPage: number) => {
     const currentRequest = ++requestId.current;
@@ -128,6 +140,9 @@ export function PatientsTab() {
           >
             <SlidersHorizontal className="size-4" /> Report template
           </Button>
+          <Button variant="outline" className="rounded-none" onClick={() => setImporting(true)}>
+            <Upload className="size-4" /> Bulk import
+          </Button>
           <Button className="rounded-none" onClick={() => setAdding(true)}>
             <Plus className="size-4" /> New patient
           </Button>
@@ -136,8 +151,17 @@ export function PatientsTab() {
 
       {showTemplate && <ReportTemplateEditor onClose={() => setShowTemplate(false)} />}
 
-      {showAudit && <ReportAuditLog />}
+      {importing && (
+        <PatientBulkImport
+          onClose={() => setImporting(false)}
+          onImported={() => {
+            setImporting(false);
+            load(query, page);
+          }}
+        />
+      )}
 
+      {showAudit && <ReportAuditLog />}
 
       <p className="text-xs uppercase tracking-wider text-muted-foreground">
         {total === null ? "—" : `${total} patient${total === 1 ? "" : "s"} on file`}
@@ -162,7 +186,10 @@ export function PatientsTab() {
       ) : (
         <div className="space-y-px bg-border">
           {rows.map((row) => (
-            <div key={row.id} className="flex items-center gap-2 bg-card pr-3 transition-colors hover:bg-shell">
+            <div
+              key={row.id}
+              className="flex items-center gap-2 bg-card pr-3 transition-colors hover:bg-shell"
+            >
               <button
                 type="button"
                 onClick={() => openPatient(row)}
@@ -192,7 +219,10 @@ export function PatientsTab() {
       )}
 
       {total !== null && total > PAGE_SIZE && (
-        <nav className="flex items-center justify-between border-t border-border pt-4" aria-label="Patient pages">
+        <nav
+          className="flex items-center justify-between border-t border-border pt-4"
+          aria-label="Patient pages"
+        >
           <Button
             type="button"
             variant="outline"
@@ -216,7 +246,6 @@ export function PatientsTab() {
           </Button>
         </nav>
       )}
-
 
       {selected && (
         <PatientReport
@@ -263,7 +292,9 @@ function PatientForm({
     setBusy(false);
 
     if (error) {
-      toast.error(error.message.includes("patients_hn_key") ? "That HN already exists" : "Could not save");
+      toast.error(
+        error.message.includes("patients_hn_key") ? "That HN already exists" : "Could not save",
+      );
       return;
     }
     toast.success("Patient added");
@@ -389,14 +420,19 @@ function PatientReport({
           <Detail label="Phone" value={patient.phone} />
           <Detail label="Age" value={patient.age ? String(patient.age) : null} />
           <Detail label="First visit" value={patient.first_visit} />
-          <Detail label="Record created" value={new Date(patient.created_at).toLocaleDateString()} />
+          <Detail
+            label="Record created"
+            value={new Date(patient.created_at).toLocaleDateString()}
+          />
           <div className="sm:col-span-2">
             <Detail label="Address" value={patient.address} />
           </div>
         </div>
 
         <div className="border-t border-border p-6">
-          <p className="text-xs uppercase tracking-wider text-muted-foreground">Treatment history</p>
+          <p className="text-xs uppercase tracking-wider text-muted-foreground">
+            Treatment history
+          </p>
           {lines.length > 0 ? (
             <ul className="mt-3 space-y-2 text-sm">
               {lines.map((line, i) => (
@@ -422,7 +458,8 @@ function PatientReport({
 
           <div className="mt-5 flex flex-wrap gap-3">
             <Button className="rounded-none" disabled={busy} onClick={save}>
-              {busy ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />} Save
+              {busy ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}{" "}
+              Save
             </Button>
             <ReportActions patient={patient} />
           </div>
@@ -447,7 +484,6 @@ function ReportActions({ patient, compact = false }: { patient: Patient; compact
         await printPatientReport(patient);
         recordReportAccess(patient.id, "print");
       }
-
     } catch {
       toast.error("Could not generate the report");
     } finally {
@@ -490,7 +526,6 @@ function ReportActions({ patient, compact = false }: { patient: Patient; compact
     </div>
   );
 }
-
 
 function Detail({ label, value }: { label: string; value: string | null }) {
   return (
@@ -537,7 +572,13 @@ function ReportAuditLog() {
             Every time a patient record is opened, downloaded or printed.
           </p>
         </div>
-        <Button variant="ghost" size="sm" className="rounded-none" disabled={loading} onClick={() => void load()}>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="rounded-none"
+          disabled={loading}
+          onClick={() => void load()}
+        >
           {loading ? <Loader2 className="size-4 animate-spin" /> : "Refresh"}
         </Button>
       </div>
@@ -550,7 +591,10 @@ function ReportAuditLog() {
       ) : (
         <ul className="max-h-80 divide-y divide-border overflow-y-auto">
           {entries.map((e) => (
-            <li key={e.id} className="flex flex-wrap items-baseline justify-between gap-2 p-3 text-sm">
+            <li
+              key={e.id}
+              className="flex flex-wrap items-baseline justify-between gap-2 p-3 text-sm"
+            >
               <span>
                 {ACTION_LABEL[e.action]} · {e.patient_name}
                 <span className="text-muted-foreground"> · HN {e.patient_hn ?? "—"}</span>
