@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, Sparkles, Upload, LogOut, Download } from "lucide-react";
+import { Loader2, Sparkles, Upload, LogOut, Download, Megaphone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { describeMedia } from "@/lib/media.functions";
@@ -21,6 +21,7 @@ import { PricingTab } from "@/components/admin/PricingTab";
 import { CatalogueDesignPanel } from "@/components/admin/CatalogueDesignPanel";
 import { ProductPhotosTab } from "@/components/admin/ProductPhotosTab";
 import { MarketingTab } from "@/components/admin/MarketingTab";
+import { TeamPromotionsTab } from "@/components/admin/TeamPromotionsTab";
 import { getSuperAdminStatus } from "@/lib/super-admin.functions";
 import { CopyTab } from "@/components/admin/CopyTab";
 import { AssistantTab } from "@/components/admin/AssistantTab";
@@ -76,6 +77,7 @@ function AdminPage() {
   const getEzWarStatus = useServerFn(getSuperAdminStatus);
   const navigate = useNavigate();
   const [canUseEzWar, setCanUseEzWar] = useState(false);
+  const [activeTab, setActiveTab] = useState("inbox");
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/auth" });
@@ -98,6 +100,10 @@ function AdminPage() {
       active = false;
     };
   }, [getEzWarStatus, isAdmin]);
+
+  useEffect(() => {
+    if (isAdmin && activeTab === "inbox") setActiveTab("patients");
+  }, [isAdmin, activeTab]);
 
   if (loading) {
     return (
@@ -141,7 +147,7 @@ function AdminPage() {
         </div>
       </div>
 
-      <Tabs defaultValue={isAdmin ? "patients" : "inbox"} className="mt-10">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-10">
         <TabsList className="h-auto flex-wrap justify-start gap-2 rounded-none bg-transparent p-0">
           {isAdmin && (
             <TabsTrigger value="patients" className="rounded-none">
@@ -153,6 +159,13 @@ function AdminPage() {
           </TabsTrigger>
           <TabsTrigger value="media" className="rounded-none">
             Media library
+          </TabsTrigger>
+          <TabsTrigger
+            value="team-promotions"
+            className="rounded-none border-gold/60 text-gold data-[state=active]:bg-gold data-[state=active]:text-background"
+          >
+            <Megaphone className="size-4" />
+            Marketing team
           </TabsTrigger>
           {isAdmin && (
             <TabsTrigger value="video-upload" className="rounded-none">
@@ -224,6 +237,9 @@ function AdminPage() {
         </TabsContent>
         <TabsContent value="media" className="mt-8">
           <MediaLibrary />
+        </TabsContent>
+        <TabsContent value="team-promotions" className="mt-8">
+          <TeamPromotionsTab onOpenMediaLibrary={() => setActiveTab("media")} />
         </TabsContent>
         {isAdmin && (
           <TabsContent value="video-upload" className="mt-8">
