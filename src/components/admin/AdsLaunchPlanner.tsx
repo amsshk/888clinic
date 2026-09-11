@@ -51,9 +51,9 @@ export function AdsLaunchPlanner() {
       <div className="mt-6 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <div className="space-y-4">
           <div>
-            <Label htmlFor="ezwar-campaign">Campaign name</Label>
+            <Label htmlFor="ez888n-campaign">Campaign name</Label>
             <Input
-              id="ezwar-campaign"
+              id="ez888n-campaign"
               className="mt-2 rounded-none"
               value={campaign}
               onChange={(event) => setCampaign(event.target.value)}
@@ -62,9 +62,9 @@ export function AdsLaunchPlanner() {
             />
           </div>
           <div>
-            <Label htmlFor="ezwar-offer">Public offer</Label>
+            <Label htmlFor="ez888n-offer">Public offer</Label>
             <Input
-              id="ezwar-offer"
+              id="ez888n-offer"
               className="mt-2 rounded-none"
               value={offer}
               onChange={(event) => setOffer(event.target.value)}

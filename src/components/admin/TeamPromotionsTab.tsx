@@ -124,7 +124,7 @@ export function TeamPromotionsTab({ onOpenMediaLibrary }: TeamPromotionsTabProps
             <h2 className="font-serif text-2xl">Marketing team</h2>
             <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
               Visible to clinic staff → Marketing team. Prepare an organic campaign without opening
-              ezWar. Everything here runs in this browser, uses no OpenAI credit, and does not send
+              EZ888N. Everything here runs in this browser, uses no OpenAI credit, and does not send
               anything to an advertising platform.
             </p>
           </div>

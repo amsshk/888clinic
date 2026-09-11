@@ -75,9 +75,9 @@ type MediaItem = {
 
 function AdminPage() {
   const { user, isStaff, isAdmin, loading, signOut } = useAuth();
-  const getEzWarStatus = useServerFn(getSuperAdminStatus);
+  const checkSuperAdminStatus = useServerFn(getSuperAdminStatus);
   const navigate = useNavigate();
-  const [canUseEzWar, setCanUseEzWar] = useState(false);
+  const [canUseEz888nAds, setCanUseEz888nAds] = useState(false);
   const [activeTab, setActiveTab] = useState("inbox");
 
   useEffect(() => {
@@ -86,21 +86,21 @@ function AdminPage() {
 
   useEffect(() => {
     if (!isAdmin) {
-      setCanUseEzWar(false);
+      setCanUseEz888nAds(false);
       return;
     }
     let active = true;
-    void getEzWarStatus({})
+    void checkSuperAdminStatus({})
       .then((status) => {
-        if (active) setCanUseEzWar(status.allowed);
+        if (active) setCanUseEz888nAds(status.allowed);
       })
       .catch(() => {
-        if (active) setCanUseEzWar(false);
+        if (active) setCanUseEz888nAds(false);
       });
     return () => {
       active = false;
     };
-  }, [getEzWarStatus, isAdmin]);
+  }, [checkSuperAdminStatus, isAdmin]);
 
   useEffect(() => {
     if (isAdmin && activeTab === "inbox") setActiveTab("patients");
@@ -201,9 +201,9 @@ function AdminPage() {
               Billing
             </TabsTrigger>
           )}
-          {canUseEzWar && (
+          {canUseEz888nAds && (
             <TabsTrigger value="marketing" className="rounded-none">
-              ezWar engine
+              EZ888N engine
             </TabsTrigger>
           )}
           {isAdmin && (
@@ -280,7 +280,7 @@ function AdminPage() {
             <BillingTab />
           </TabsContent>
         )}
-        {canUseEzWar && (
+        {canUseEz888nAds && (
           <TabsContent value="marketing" className="mt-8">
             <MarketingTab />
           </TabsContent>
