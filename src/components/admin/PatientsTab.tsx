@@ -108,20 +108,6 @@ export function PatientsTab() {
 
   return (
     <div className="space-y-6">
-      <div className="border-b border-border pb-4">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <p className="text-xs uppercase tracking-widest text-gold">Patient Records System</p>
-            <h2 className="text-2xl font-light tracking-wide text-foreground">
-              EZ888N <span className="text-sm font-normal text-muted-foreground">· 888clinic.co</span>
-            </h2>
-          </div>
-        </div>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Migrated patient-record workspace with unified search, record creation, clinical review, report printing, and bulk migration tools.
-        </p>
-      </div>
-
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-[260px] flex-1 space-y-2">
           <Label htmlFor="patient-search">Search by phone number, HN or name</Label>

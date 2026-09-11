@@ -13,6 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OrdersTab } from "@/components/admin/OrdersTab";
 import { PatientsTab } from "@/components/admin/PatientsTab";
+import { EZ888NTab } from "@/components/admin/EZ888NTab";
 import { AccessTab } from "@/components/admin/AccessTab";
 import { MaliModelTab } from "@/components/admin/MaliModelTab";
 import { ScanTestTab } from "@/components/admin/ScanTestTab";
@@ -151,6 +152,11 @@ function AdminPage() {
         <TabsList className="h-auto flex-wrap justify-start gap-2 rounded-none bg-transparent p-0">
           {isAdmin && (
             <TabsTrigger value="patients" className="rounded-none">
+              Patients
+            </TabsTrigger>
+          )}
+          {isAdmin && (
+            <TabsTrigger value="ez888n" className="rounded-none">
               EZ888N
             </TabsTrigger>
           )}
@@ -230,6 +236,11 @@ function AdminPage() {
         {isAdmin && (
           <TabsContent value="patients" className="mt-8">
             <PatientsTab />
+          </TabsContent>
+        )}
+        {isAdmin && (
+          <TabsContent value="ez888n" className="mt-8">
+            <EZ888NTab onNavigateToPatients={() => setActiveTab("patients")} />
           </TabsContent>
         )}
         <TabsContent value="inbox" className="mt-8">
