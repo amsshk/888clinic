@@ -131,7 +131,12 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
-        <script dangerouslySetInnerHTML={{ __html: META_PIXEL_INIT_SCRIPT }} />
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              import.meta.env.VITE_META_PIXEL_ENABLED === "true" ? META_PIXEL_INIT_SCRIPT : "",
+          }}
+        />
       </head>
       <body>
         <MetaPixelNoScript />

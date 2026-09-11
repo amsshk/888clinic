@@ -21,6 +21,7 @@ import { PricingTab } from "@/components/admin/PricingTab";
 import { CatalogueDesignPanel } from "@/components/admin/CatalogueDesignPanel";
 import { ProductPhotosTab } from "@/components/admin/ProductPhotosTab";
 import { MarketingTab } from "@/components/admin/MarketingTab";
+import { getSuperAdminStatus } from "@/lib/super-admin.functions";
 import { CopyTab } from "@/components/admin/CopyTab";
 import { AssistantTab } from "@/components/admin/AssistantTab";
 import { VideoUploader } from "@/components/VideoUploader";
@@ -72,11 +73,31 @@ type MediaItem = {
 
 function AdminPage() {
   const { user, isStaff, isAdmin, loading, signOut } = useAuth();
+  const getEzWarStatus = useServerFn(getSuperAdminStatus);
   const navigate = useNavigate();
+  const [canUseEzWar, setCanUseEzWar] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/auth" });
   }, [loading, user, navigate]);
+
+  useEffect(() => {
+    if (!isAdmin) {
+      setCanUseEzWar(false);
+      return;
+    }
+    let active = true;
+    void getEzWarStatus({})
+      .then((status) => {
+        if (active) setCanUseEzWar(status.allowed);
+      })
+      .catch(() => {
+        if (active) setCanUseEzWar(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [getEzWarStatus, isAdmin]);
 
   if (loading) {
     return (
@@ -161,9 +182,9 @@ function AdminPage() {
               Billing
             </TabsTrigger>
           )}
-          {isAdmin && (
+          {canUseEzWar && (
             <TabsTrigger value="marketing" className="rounded-none">
-              Marketing
+              ezWar engine
             </TabsTrigger>
           )}
           {isAdmin && (
@@ -232,7 +253,7 @@ function AdminPage() {
             <BillingTab />
           </TabsContent>
         )}
-        {isAdmin && (
+        {canUseEzWar && (
           <TabsContent value="marketing" className="mt-8">
             <MarketingTab />
           </TabsContent>
