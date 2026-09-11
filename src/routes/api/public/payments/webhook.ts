@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type Stripe from "stripe";
 import { createStripeClient, getStripeErrorMessage, verifyWebhook } from "@/lib/stripe.server";
+import { sendMetaPurchaseEvent } from "@/lib/meta-pixel.server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 type StripeEnvParam = "sandbox" | "live";
@@ -221,6 +222,42 @@ async function handleRefillRenewal(env: StripeEnvParam, invoice: Stripe.Invoice)
   });
 }
 
+type SessionLineItemLike = {
+  price?: {
+    lookup_key?: string | null;
+  } | null;
+};
+
+async function emitMetaPurchaseForSession(
+  session: Stripe.Checkout.Session,
+  lineItems: SessionLineItemLike[] | undefined,
+) {
+  if (!session.id) return;
+
+  const amountCents = session.amount_total ?? 0;
+  const currency = (session.currency ?? "thb").toUpperCase();
+  const email = session.customer_details?.email ?? session.customer_email ?? null;
+  const phone = session.customer_details?.phone ?? null;
+  const contentIds = (lineItems ?? [])
+    .map((item) => item.price?.lookup_key)
+    .filter((lookupKey): lookupKey is string => Boolean(lookupKey))
+    .map(String);
+
+  try {
+    await sendMetaPurchaseEvent({
+      eventId: session.id,
+      amountCents,
+      currency,
+      email,
+      phone,
+      contentIds,
+      contentType: "product",
+    });
+  } catch (error) {
+    console.error("[meta] purchase event failed", error);
+  }
+}
+
 export const Route = createFileRoute("/api/public/payments/webhook")({
   server: {
     handlers: {
@@ -245,16 +282,18 @@ export const Route = createFileRoute("/api/public/payments/webhook")({
               return new Response("Missing userId in session metadata", { status: 200 });
             }
 
+            const lineItems = await stripe.checkout.sessions.listLineItems(session.id, {
+              limit: 20,
+            });
+
             if (session.metadata?.["kind"] === "product_order") {
               const ok = await handleProductOrder(stripe, env, session, userId);
+              if (ok) await emitMetaPurchaseForSession(session, lineItems.data);
               return new Response(ok ? "ok" : "Fulfillment failed", { status: ok ? 200 : 500 });
             }
 
             // Scan credit packs
             const amountThb = session.amount_total ?? 0;
-            const lineItems = await stripe.checkout.sessions.listLineItems(session.id, {
-              limit: 10,
-            });
             const packKeys = lineItems.data
               .map((item) => item.price?.lookup_key)
               .filter((key): key is string => Boolean(key));
@@ -289,6 +328,8 @@ export const Route = createFileRoute("/api/public/payments/webhook")({
               console.error("fulfill_credit_purchase error:", error);
               return new Response("Fulfillment failed", { status: 500 });
             }
+
+            await emitMetaPurchaseForSession(session, lineItems.data);
           }
 
           if (

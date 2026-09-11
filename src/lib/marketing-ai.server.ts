@@ -1,15 +1,12 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { AdVariant, MarketingVideoStatus } from "@/lib/marketing-ai.shared";
+import { requireSuperAdmin } from "@/lib/super-admin.server";
 
-type MarketingContext = { supabase: SupabaseClient; userId: string };
-
-async function requireAdmin(context: MarketingContext): Promise<boolean> {
-  const { data } = await context.supabase.rpc("has_role", {
-    _user_id: context.userId,
-    _role: "admin",
-  });
-  return Boolean(data);
-}
+type MarketingContext = {
+  supabase: SupabaseClient;
+  userId: string;
+  claims?: Record<string, unknown>;
+};
 
 function openAiKey(): string {
   return process.env["OPENAI_API_KEY"] ?? "";
@@ -27,8 +24,8 @@ export async function createAdCopy(
   },
   context: MarketingContext,
 ): Promise<{ ok: true; variants: AdVariant[] } | { ok: false; error: string }> {
-  if (!(await requireAdmin(context)))
-    return { ok: false, error: "Marketing tools are admin-only." };
+  if (!(await requireSuperAdmin(context)))
+    return { ok: false, error: "The ezWar engine is restricted to the configured super admin." };
 
   const instruction = [
     "You are a senior performance marketer writing Meta (Facebook + Instagram) ads for 888clinic, a modern dermatology and aesthetic skin clinic in Bangkok, Thailand.",
@@ -159,8 +156,8 @@ export async function startVideoGeneration(
   },
   context: MarketingContext,
 ): Promise<{ ok: true; jobId: string } | { ok: false; error: string }> {
-  if (!(await requireAdmin(context)))
-    return { ok: false, error: "Marketing tools are admin-only." };
+  if (!(await requireSuperAdmin(context)))
+    return { ok: false, error: "The ezWar engine is restricted to the configured super admin." };
   const key = openAiKey();
   if (!key) return { ok: false, error: "OpenAI video generation is not connected yet." };
 
@@ -219,8 +216,8 @@ export async function readVideoGeneration(
   jobId: string,
   context: MarketingContext,
 ): Promise<MarketingVideoStatus> {
-  if (!(await requireAdmin(context)))
-    return { ok: false, error: "Marketing tools are admin-only." };
+  if (!(await requireSuperAdmin(context)))
+    return { ok: false, error: "The ezWar engine is restricted to the configured super admin." };
   const key = openAiKey();
   if (!key) return { ok: false, error: "OpenAI video generation is not connected yet." };
 

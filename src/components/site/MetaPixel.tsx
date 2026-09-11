@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useRouterState } from "@tanstack/react-router";
 
 const META_PIXEL_ID = "1437834427873532";
+const META_PIXEL_ENABLED = import.meta.env.VITE_META_PIXEL_ENABLED === "true";
 
 declare global {
   interface Window {
@@ -22,6 +23,7 @@ fbq('init', '${META_PIXEL_ID}');
 fbq('track', 'PageView');`;
 
 export function MetaPixelNoScript() {
+  if (!META_PIXEL_ENABLED) return null;
   return (
     <noscript>
       <img
@@ -42,6 +44,7 @@ export function MetaPixelRouteTracker() {
   const isFirstRender = useRef(true);
 
   useEffect(() => {
+    if (!META_PIXEL_ENABLED) return;
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;

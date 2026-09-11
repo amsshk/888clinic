@@ -9,6 +9,7 @@ import {
   type TeamMember,
 } from "@/lib/admin-users.shared";
 import { recordAccessAudit } from "@/lib/access-audit.server";
+import { isConfiguredSuperAdmin } from "@/lib/super-admin.server";
 
 export type { TeamMember };
 
@@ -20,13 +21,19 @@ export const listTeam = createServerFn({ method: "POST" })
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const { data: list, error } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 });
+    const { data: list, error } = await supabaseAdmin.auth.admin.listUsers({
+      page: 1,
+      perPage: 200,
+    });
     if (error) return { ok: false, error: "Could not load accounts." };
 
     const ids = list.users.map((u) => u.id);
     const [{ data: roles }, { data: wallets }, { data: profiles }] = await Promise.all([
       supabaseAdmin.from("user_roles").select("user_id, role").in("user_id", ids),
-      supabaseAdmin.from("scan_wallets").select("user_id, credits, free_scans_remaining").in("user_id", ids),
+      supabaseAdmin
+        .from("scan_wallets")
+        .select("user_id, credits, free_scans_remaining")
+        .in("user_id", ids),
       supabaseAdmin.from("profiles").select("id, full_name").in("id", ids),
     ]);
 
@@ -42,7 +49,8 @@ export const listTeam = createServerFn({ method: "POST" })
       return {
         id: u.id,
         email: u.email ?? null,
-        full_name: nameMap.get(u.id) ?? (u.user_metadata?.["full_name"] as string | undefined) ?? null,
+        full_name:
+          nameMap.get(u.id) ?? (u.user_metadata?.["full_name"] as string | undefined) ?? null,
         created_at: u.created_at,
         last_sign_in_at: u.last_sign_in_at ?? null,
         confirmed: Boolean(u.email_confirmed_at ?? u.confirmed_at),
@@ -53,7 +61,8 @@ export const listTeam = createServerFn({ method: "POST" })
     });
 
     members.sort((a, b) => {
-      const rank = (m: TeamMember) => (m.roles.includes("admin") ? 0 : m.roles.includes("staff") ? 1 : 2);
+      const rank = (m: TeamMember) =>
+        m.roles.includes("admin") ? 0 : m.roles.includes("staff") ? 1 : 2;
       return rank(a) - rank(b) || (a.email ?? "").localeCompare(b.email ?? "");
     });
 
@@ -85,14 +94,17 @@ export const createTeamUser = createServerFn({ method: "POST" })
       const { error: roleError } = await supabaseAdmin
         .from("user_roles")
         .insert({ user_id: newId, role: data.role });
-      if (roleError) return { ok: false, error: "Account created, but the role could not be assigned." };
+      if (roleError)
+        return { ok: false, error: "Account created, but the role could not be assigned." };
     }
 
     if (data.credits > 0) {
-      await supabaseAdmin.from("scan_wallets").upsert(
-        { user_id: newId, credits: data.credits, free_scans_remaining: 1 },
-        { onConflict: "user_id" },
-      );
+      await supabaseAdmin
+        .from("scan_wallets")
+        .upsert(
+          { user_id: newId, credits: data.credits, free_scans_remaining: 1 },
+          { onConflict: "user_id" },
+        );
     }
 
     const actorEmail = (context.claims?.["email"] as string | undefined) ?? null;
@@ -121,6 +133,14 @@ export const setTeamRole = createServerFn({ method: "POST" })
     }
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: targetAccount } = await supabaseAdmin.auth.admin.getUserById(data.userId);
+    if (
+      data.role === "admin" &&
+      !data.grant &&
+      isConfiguredSuperAdmin(data.userId, targetAccount.user?.email)
+    ) {
+      return { ok: false, error: "The configured super-admin owner cannot lose admin access." };
+    }
 
     if (data.grant) {
       const { error } = await supabaseAdmin
