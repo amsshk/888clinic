@@ -113,12 +113,14 @@ export function PatientsTab() {
           <div>
             <p className="text-xs uppercase tracking-widest text-gold">Patient Records System</p>
             <h2 className="text-2xl font-light tracking-wide text-foreground">
-              EZ888N <span className="text-sm font-normal text-muted-foreground">· 888clinic.co</span>
+              Patients{" "}
+              <span className="text-sm font-normal text-muted-foreground">· 888clinic.co</span>
             </h2>
           </div>
         </div>
         <p className="mt-1 text-xs text-muted-foreground">
-          Migrated patient-record workspace with unified search, record creation, clinical review, report printing, and bulk migration tools.
+          Patient record workspace with unified search, record creation, clinical review, report
+          printing, and record-management tools.
         </p>
       </div>
 
