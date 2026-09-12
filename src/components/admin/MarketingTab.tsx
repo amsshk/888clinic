@@ -36,6 +36,7 @@ import {
 import { createFreeMarketingVideo, type FreeVideoSeconds } from "@/lib/free-marketing-video";
 import promoVideo from "@/assets/videos/888clinic-mali-promo-vertical.mp4.asset.json";
 import { AdsLaunchPlanner } from "@/components/admin/AdsLaunchPlanner";
+import { EZ888NConnection } from "@/components/admin/EZ888NConnection";
 
 const OBJECTIVES = [
   "Free MALI skin scan sign-ups",
@@ -345,6 +346,7 @@ export function MarketingTab() {
 
   return (
     <div className="space-y-8">
+      <EZ888NConnection />
       <AdsLaunchPlanner />
       <section className="border border-border/70 bg-card p-6">
         <div className="flex items-start gap-3">

@@ -25,6 +25,7 @@ npm run dev
 
 Set the following variables in Railway before deploying or testing the payment webhook:
 
+- `VITE_EZ888N_APP_URL` — the non-secret public HTTPS URL for the deployed EZ888N application (e.g. `https://ez888n.888clinic.co`)
 - `SUPABASE_URL` — the Supabase project URL
 - `SUPABASE_SERVICE_ROLE_KEY` — the Supabase service-role key used by server-side functions
 - `STRIPE_SANDBOX_API_KEY` / `STRIPE_LIVE_API_KEY` — the Stripe connection API keys for each environment
@@ -35,8 +36,8 @@ Set the following variables in Railway before deploying or testing the payment w
 - `META_CONVERSIONS_API_ENABLED` — set to `true` only after privacy review; defaults to `false`
 - `META_CONVERSIONS_API_TOKEN` — the server-only Meta Conversions API token
 - `META_TEST_EVENT_CODE` — optional server-only Meta test event code
-- `SUPER_ADMIN_EMAILS=the-owner-login-email` — comma-separated server-only EZ888N super-admin allow list
-- `SUPER_ADMIN_USER_IDS=` — comma-separated server-only EZ888N super-admin user ID allow list
+- `SUPER_ADMIN_EMAILS=the-owner-login-email` — comma-separated server-only EZ888N allow list
+- `SUPER_ADMIN_USER_IDS=` — comma-separated server-only EZ888N user ID allow list
 - `OPENAI_API_KEY` — optional server-only OpenAI key for EZ888N marketing video generation
 - `OPENAI_VIDEO_MODEL` — optional server-only OpenAI video model name (defaults to `sora-2`)
 
@@ -47,9 +48,10 @@ Keep `META_CONVERSIONS_API_TOKEN`, `META_TEST_EVENT_CODE`, `SUPER_ADMIN_EMAILS`,
 To run EZ888N features in production:
 - **Authentication**: Supabase project credentials with an active user session.
 - **Super Admin Access**: The signed-in user's email or ID must match `SUPER_ADMIN_EMAILS` or `SUPER_ADMIN_USER_IDS`.
+- **Application URL**: Configure `VITE_EZ888N_APP_URL` with your EZ888N application's HTTPS endpoint to enable the admin connection.
 - **AI Copywriting**: Requires `LOVABLE_API_KEY` configured in server variables to generate bilingual ad angles.
 - **AI Video Generation (Optional)**: Requires `OPENAI_API_KEY` with access to the configured video model (`OPENAI_VIDEO_MODEL`).
-- **Meta Insights & Reporting**: Any displayed campaign benchmarks in the UI represent reference historical campaign performance snapshots (derived from offline campaign records). Live Meta Insights require a separate Meta Marketing API app integration, approved `ads_read`/`read_insights` permissions, an Ad Account ID, and a long-lived System User Access Token. Note that the existing `META_CONVERSIONS_API_TOKEN` is strictly scoped for server-side event tracking and cannot be used as an Insights API credential.
+- **Meta Insights & Reporting**: Any displayed campaign benchmarks in the UI represent reference historical campaign performance snapshots. Live Meta Insights require a separate Meta Marketing API app integration, approved `ads_read`/`read_insights` permissions, an Ad Account ID, and a long-lived System User Access Token. Note that `META_CONVERSIONS_API_TOKEN` is strictly scoped for server-side event tracking and cannot be used for Insights API requests.
 
 ## Built with
 

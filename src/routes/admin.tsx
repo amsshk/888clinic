@@ -13,7 +13,6 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OrdersTab } from "@/components/admin/OrdersTab";
 import { PatientsTab } from "@/components/admin/PatientsTab";
-import { EZ888NTab } from "@/components/admin/EZ888NTab";
 import { AccessTab } from "@/components/admin/AccessTab";
 import { MaliModelTab } from "@/components/admin/MaliModelTab";
 import { ScanTestTab } from "@/components/admin/ScanTestTab";
@@ -75,9 +74,9 @@ type MediaItem = {
 
 function AdminPage() {
   const { user, isStaff, isAdmin, loading, signOut } = useAuth();
-  const checkSuperAdminStatus = useServerFn(getSuperAdminStatus);
+  const getEzWarStatus = useServerFn(getSuperAdminStatus);
   const navigate = useNavigate();
-  const [canUseEz888nAds, setCanUseEz888nAds] = useState(false);
+  const [canUseEzWar, setCanUseEzWar] = useState(false);
   const [activeTab, setActiveTab] = useState("inbox");
 
   useEffect(() => {
@@ -86,21 +85,21 @@ function AdminPage() {
 
   useEffect(() => {
     if (!isAdmin) {
-      setCanUseEz888nAds(false);
+      setCanUseEzWar(false);
       return;
     }
     let active = true;
-    void checkSuperAdminStatus({})
+    void getEzWarStatus({})
       .then((status) => {
-        if (active) setCanUseEz888nAds(status.allowed);
+        if (active) setCanUseEzWar(status.allowed);
       })
       .catch(() => {
-        if (active) setCanUseEz888nAds(false);
+        if (active) setCanUseEzWar(false);
       });
     return () => {
       active = false;
     };
-  }, [checkSuperAdminStatus, isAdmin]);
+  }, [getEzWarStatus, isAdmin]);
 
   useEffect(() => {
     if (isAdmin && activeTab === "inbox") setActiveTab("patients");
@@ -152,11 +151,6 @@ function AdminPage() {
         <TabsList className="h-auto flex-wrap justify-start gap-2 rounded-none bg-transparent p-0">
           {isAdmin && (
             <TabsTrigger value="patients" className="rounded-none">
-              Patients
-            </TabsTrigger>
-          )}
-          {isAdmin && (
-            <TabsTrigger value="ez888n" className="rounded-none">
               EZ888N
             </TabsTrigger>
           )}
@@ -201,9 +195,9 @@ function AdminPage() {
               Billing
             </TabsTrigger>
           )}
-          {canUseEz888nAds && (
+          {canUseEzWar && (
             <TabsTrigger value="marketing" className="rounded-none">
-              EZ888N engine
+              ezWar engine
             </TabsTrigger>
           )}
           {isAdmin && (
@@ -236,11 +230,6 @@ function AdminPage() {
         {isAdmin && (
           <TabsContent value="patients" className="mt-8">
             <PatientsTab />
-          </TabsContent>
-        )}
-        {isAdmin && (
-          <TabsContent value="ez888n" className="mt-8">
-            <EZ888NTab onNavigateToPatients={() => setActiveTab("patients")} />
           </TabsContent>
         )}
         <TabsContent value="inbox" className="mt-8">
@@ -280,7 +269,7 @@ function AdminPage() {
             <BillingTab />
           </TabsContent>
         )}
-        {canUseEz888nAds && (
+        {canUseEzWar && (
           <TabsContent value="marketing" className="mt-8">
             <MarketingTab />
           </TabsContent>
