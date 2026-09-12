@@ -36,6 +36,7 @@ import {
 import { createFreeMarketingVideo, type FreeVideoSeconds } from "@/lib/free-marketing-video";
 import promoVideo from "@/assets/videos/888clinic-mali-promo-vertical.mp4.asset.json";
 import { AdsLaunchPlanner } from "@/components/admin/AdsLaunchPlanner";
+import { EZ888NConnection } from "@/components/admin/EZ888NConnection";
 
 const OBJECTIVES = [
   "Free MALI skin scan sign-ups",
@@ -345,12 +346,13 @@ export function MarketingTab() {
 
   return (
     <div className="space-y-8">
+      <EZ888NConnection />
       <AdsLaunchPlanner />
       <section className="border border-border/70 bg-card p-6">
         <div className="flex items-start gap-3">
           <Megaphone className="mt-1 size-5 text-gold" />
           <div>
-            <h3 className="font-serif text-xl">ezWar campaign studio</h3>
+            <h3 className="font-serif text-xl">EZ888N campaign studio</h3>
             <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
               Write Facebook and Instagram ad copy for the clinic in English and local Thai, then
               paste it straight into Ads Manager. Restricted to the configured super admin.
