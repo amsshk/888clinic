@@ -1,4 +1,4 @@
-# Welcome to your Lovable project
+# Welcome to 888clinic
 
 This project was built with [Lovable](https://lovable.dev).
 
