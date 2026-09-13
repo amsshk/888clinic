@@ -54,7 +54,7 @@ function loadReportLogo(): Promise<HTMLImageElement | null> {
       const img = new Image();
       img.onload = () => resolve(img);
       img.onerror = () => resolve(null);
-      img.src = "/images/888clinic-logo.png";
+      img.src = "/images/888logonew.png";
     });
   }
   return logoPromise;
