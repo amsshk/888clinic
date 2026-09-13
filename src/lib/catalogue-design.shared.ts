@@ -7,4 +7,4 @@ export const CATALOGUE_PRESETS = [
 
 export type CataloguePreset = (typeof CATALOGUE_PRESETS)[number];
 
-export const DEFAULT_CATALOGUE_PRESET: CataloguePreset = "charcoal-gold";
+export const DEFAULT_CATALOGUE_PRESET: CataloguePreset = "pearl-white";
