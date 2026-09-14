@@ -34,6 +34,14 @@ export async function requireSuperAdmin(context: SuperAdminContext): Promise<boo
   return hasSuperAdminAccess(context);
 }
 
+export async function hasClinicAdminAccess(context: SuperAdminContext): Promise<boolean> {
+  return await assertAdmin(context.supabase, context.userId);
+}
+
+export async function requireClinicAdmin(context: SuperAdminContext): Promise<boolean> {
+  return hasClinicAdminAccess(context);
+}
+
 export function safeSuperAdminStatus() {
   return {
     pixelId: process.env["META_PIXEL_ID"] ?? "",
