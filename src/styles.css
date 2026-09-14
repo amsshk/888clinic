@@ -980,3 +980,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .public-luxury-shell *,
+  .public-luxury-shell *::before,
+  .public-luxury-shell *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
