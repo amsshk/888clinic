@@ -61,12 +61,12 @@
 :root {
   --radius: 0.25rem;
 
-  --background: #f3e8dc;
+  --background: #f7efe6;
   --foreground: #2c2523;
 
-  --card: #f8efe3;
+  --card: #fbf4ea;
   --card-foreground: #2c2523;
-  --popover: #f8efe3;
+  --popover: #fbf4ea;
   --popover-foreground: #2c2523;
 
   /* Gold is the brand primary */
@@ -77,9 +77,9 @@
   --gold-deep: #8c6b3e;
   --graphite: #f4e8d9;
 
-  --secondary: #eee1d2;
+  --secondary: #f0e3d4;
   --secondary-foreground: #2c2523;
-  --muted: #eee1d2;
+  --muted: #f0e3d4;
   --muted-foreground: #6b5d54;
   --accent: #e5d3bf;
   --accent-foreground: #2c2523;
@@ -87,8 +87,8 @@
   --destructive: oklch(0.65 0.2 25);
   --destructive-foreground: #ffffff;
 
-  --border: #dcd0c2;
-  --input: #dcd0c2;
+  --border: #d7c7b6;
+  --input: #d7c7b6;
   --ring: #b8935a;
 
   --chart-1: #b8935a;
@@ -97,13 +97,13 @@
   --chart-4: #a89284;
   --chart-5: #e3c98f;
 
-  --sidebar: #f3e8dc;
+  --sidebar: #f7efe6;
   --sidebar-foreground: #2c2523;
   --sidebar-primary: #b8935a;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #e5d3bf;
   --sidebar-accent-foreground: #2c2523;
-  --sidebar-border: #dcd0c2;
+  --sidebar-border: #d7c7b6;
   --sidebar-ring: #b8935a;
 
   --gradient-gold: linear-gradient(
@@ -112,18 +112,18 @@
     #b8935a 45%,
     #e3c98f 100%
   );
-  --gradient-shell: linear-gradient(180deg, #f8efe3 0%, #f3e8dc 100%);
+  --gradient-shell: linear-gradient(180deg, #fbf4ea 0%, #f7efe6 100%);
   --shadow-soft:
     0 1px 2px rgba(44, 37, 35, 0.04), 0 12px 32px -12px rgba(44, 37, 35, 0.12);
   --shadow-gold: 0 14px 40px -16px rgba(184, 147, 90, 0.35);
 }
 
 .dark {
-  --background: #f3e8dc;
+  --background: #f7efe6;
   --foreground: #2c2523;
-  --card: #f8efe3;
+  --card: #fbf4ea;
   --card-foreground: #2c2523;
-  --popover: #f8efe3;
+  --popover: #fbf4ea;
   --popover-foreground: #2c2523;
   --primary: #b8935a;
   --primary-foreground: #ffffff;
@@ -131,22 +131,22 @@
   --gold-soft: #e3c98f;
   --gold-deep: #8c6b3e;
   --graphite: #2c2523;
-  --secondary: #eee1d2;
+  --secondary: #f0e3d4;
   --secondary-foreground: #2c2523;
-  --muted: #eee1d2;
+  --muted: #f0e3d4;
   --muted-foreground: #6b5d54;
   --accent: #e5d3bf;
   --accent-foreground: #2c2523;
-  --border: #dcd0c2;
-  --input: #dcd0c2;
+  --border: #d7c7b6;
+  --input: #d7c7b6;
   --ring: #b8935a;
-  --sidebar: #f3e8dc;
+  --sidebar: #f7efe6;
   --sidebar-foreground: #2c2523;
   --sidebar-primary: #b8935a;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #e5d3bf;
   --sidebar-accent-foreground: #2c2523;
-  --sidebar-border: #dcd0c2;
+  --sidebar-border: #d7c7b6;
   --sidebar-ring: #b8935a;
 }
 
@@ -158,9 +158,9 @@
   html,
   body {
     min-height: 100%;
-    background-color: #f3e8dc !important;
+    background-color: #f7efe6 !important;
     background-image: url("/images/logo-bg.jpeg") !important;
-    background-size: 200% 200% !important;
+    background-size: 180% 180% !important;
     background-position: center bottom !important;
     background-attachment: fixed !important;
     background-repeat: no-repeat !important;
@@ -927,8 +927,12 @@
     [data-lovable-badge],
     [data-lovable-widget],
     [data-gptengineer-badge],
+    [data-lovable-floating-widget],
+    [data-lovable-assistant],
     iframe[src*="gptengineer.app"],
-    iframe[src*="gpt-eng.com"]
+    iframe[src*="gpt-eng.com"],
+    iframe[src*="lovable"],
+    iframe[title*="Lovable"]
   ) {
   display: none !important;
 }
