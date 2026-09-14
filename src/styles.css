@@ -159,11 +159,6 @@
   body {
     min-height: 100%;
     background-color: #f7efe6 !important;
-    background-image: url("/images/logo-bg.jpeg") !important;
-    background-size: 180% 180% !important;
-    background-position: center bottom !important;
-    background-attachment: fixed !important;
-    background-repeat: no-repeat !important;
     color: var(--foreground) !important;
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
@@ -734,11 +729,6 @@
 .public-luxury-shell {
   min-height: 100vh;
   background-color: #f3e8dc !important;
-  background-image: url("/images/logo-bg.jpeg") !important;
-  background-size: cover !important;
-  background-position: center !important;
-  background-attachment: fixed !important;
-  background-repeat: no-repeat !important;
   color-scheme: light;
 }
 
@@ -757,13 +747,8 @@
     0 1px 2px rgba(44, 37, 35, 0.04), 0 12px 32px -12px rgba(44, 37, 35, 0.12);
   --shadow-gold: 0 14px 40px -16px rgb(184 147 90 / 38%);
 
-  color: #f4e8d9;
-  background-color: transparent !important;
-  background-image: url("/images/logo-bg.jpeg") !important;
-  background-size: cover !important;
-  background-position: center !important;
-  background-attachment: fixed !important;
-  background-repeat: no-repeat !important;
+  color: #2c2523;
+  background-color: #f3e8dc !important;
   color-scheme: light;
 }
 
@@ -777,12 +762,9 @@
 }
 
 .public-luxury-shell > header {
-  border-color: rgb(220 190 150 / 18%);
-  color: #f4e8d9;
-  background-color: rgb(243 232 220 / 72%) !important;
-  background-image: url("/images/logo-bg.jpeg") !important;
-  background-size: 200% 200% !important;
-  background-position: center bottom !important;
+  border-color: rgb(180 140 100 / 22%);
+  color: #2c2523;
+  background-color: rgb(248 239 227 / 92%) !important;
   backdrop-filter: none;
 }
 
@@ -791,16 +773,16 @@
 }
 
 .public-luxury-shell > header .text-muted-foreground {
-  color: rgb(226 211 193 / 72%);
+  color: rgb(85 72 65 / 78%);
 }
 
 .public-luxury-shell > header .text-foreground,
 .public-luxury-shell > header a:hover {
-  color: #e3c98f;
+  color: #8c6b3e;
 }
 
 .public-luxury-shell > header .border-border {
-  border-color: rgb(220 190 150 / 18%);
+  border-color: rgb(180 140 100 / 22%);
 }
 
 .public-luxury-shell > header button:focus-visible,
@@ -998,10 +980,3 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .public-luxury-shell *,
-  .public-luxury-shell *::before,
-  .public-luxury-shell *::after {
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
-  }
-}
