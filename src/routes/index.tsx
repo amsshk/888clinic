@@ -171,7 +171,7 @@ function Home() {
           <div>
             <p className="eyebrow">{t("home.mali.eyebrow")}</p>
             <h2 className="mt-4 text-4xl">
-              {t("home.mali.title1")}{" "}
+              {t("home.mali.title1")} {" "}
               <span className="text-gradient-gold">{t("home.mali.title2")}</span>
             </h2>
             <p className="mt-5 max-w-lg text-base leading-relaxed text-muted-foreground">
