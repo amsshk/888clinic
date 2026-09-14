@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { AdVariant, MarketingVideoStatus } from "@/lib/marketing-ai.shared";
-import { requireSuperAdmin } from "@/lib/super-admin.server";
+import { requireClinicAdmin } from "@/lib/super-admin.server";
 
 type MarketingContext = {
   supabase: SupabaseClient;
@@ -24,8 +24,8 @@ export async function createAdCopy(
   },
   context: MarketingContext,
 ): Promise<{ ok: true; variants: AdVariant[] } | { ok: false; error: string }> {
-  if (!(await requireSuperAdmin(context)))
-    return { ok: false, error: "The ezWar engine is restricted to the configured super admin." };
+  if (!(await requireClinicAdmin(context)))
+    return { ok: false, error: "This AI studio is restricted to clinic administrators." };
 
   const instruction = [
     "You are a senior performance marketer writing Meta (Facebook + Instagram) ads for 888clinic, a modern dermatology and aesthetic skin clinic in Bangkok, Thailand.",
@@ -156,8 +156,8 @@ export async function startVideoGeneration(
   },
   context: MarketingContext,
 ): Promise<{ ok: true; jobId: string } | { ok: false; error: string }> {
-  if (!(await requireSuperAdmin(context)))
-    return { ok: false, error: "The ezWar engine is restricted to the configured super admin." };
+  if (!(await requireClinicAdmin(context)))
+    return { ok: false, error: "This AI studio is restricted to clinic administrators." };
   const key = openAiKey();
   if (!key) return { ok: false, error: "OpenAI video generation is not connected yet." };
 
@@ -216,8 +216,8 @@ export async function readVideoGeneration(
   jobId: string,
   context: MarketingContext,
 ): Promise<MarketingVideoStatus> {
-  if (!(await requireSuperAdmin(context)))
-    return { ok: false, error: "The ezWar engine is restricted to the configured super admin." };
+  if (!(await requireClinicAdmin(context)))
+    return { ok: false, error: "This AI studio is restricted to clinic administrators." };
   const key = openAiKey();
   if (!key) return { ok: false, error: "OpenAI video generation is not connected yet." };
 

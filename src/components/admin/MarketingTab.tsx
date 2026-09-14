@@ -355,7 +355,7 @@ export function MarketingTab() {
             <h3 className="font-serif text-xl">EZ888N campaign studio</h3>
             <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
               Write Facebook and Instagram ad copy for the clinic in English and local Thai, then
-              paste it straight into Ads Manager. Restricted to the configured super admin.
+              paste it straight into Ads Manager. Restricted to clinic administrators.
             </p>
           </div>
         </div>

@@ -22,7 +22,6 @@ import { CatalogueDesignPanel } from "@/components/admin/CatalogueDesignPanel";
 import { ProductPhotosTab } from "@/components/admin/ProductPhotosTab";
 import { MarketingTab } from "@/components/admin/MarketingTab";
 import { TeamPromotionsTab } from "@/components/admin/TeamPromotionsTab";
-import { getSuperAdminStatus } from "@/lib/super-admin.functions";
 import { CopyTab } from "@/components/admin/CopyTab";
 import { AssistantTab } from "@/components/admin/AssistantTab";
 import { VideoUploader } from "@/components/VideoUploader";
@@ -78,7 +77,6 @@ type MediaItem = {
 
 function AdminPage() {
   const { user, isStaff, isAdmin, loading, signOut } = useAuth();
-  const getEzWarStatus = useServerFn(getSuperAdminStatus);
   const navigate = useNavigate();
   const [canUseEzWar, setCanUseEzWar] = useState(false);
   const [activeTab, setActiveTab] = useState("inbox");
@@ -88,22 +86,8 @@ function AdminPage() {
   }, [loading, user, navigate]);
 
   useEffect(() => {
-    if (!isAdmin) {
-      setCanUseEzWar(false);
-      return;
-    }
-    let active = true;
-    void getEzWarStatus({})
-      .then((status) => {
-        if (active) setCanUseEzWar(status.allowed);
-      })
-      .catch(() => {
-        if (active) setCanUseEzWar(false);
-      });
-    return () => {
-      active = false;
-    };
-  }, [getEzWarStatus, isAdmin]);
+    setCanUseEzWar(isAdmin);
+  }, [isAdmin]);
 
   useEffect(() => {
     if (isAdmin && activeTab === "inbox") setActiveTab("patients");
