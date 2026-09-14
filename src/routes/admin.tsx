@@ -150,7 +150,7 @@ function AdminPage() {
           </TabsTrigger>
           <TabsTrigger
             value="team-promotions"
-            className="rounded-none border-gold/60 text-gold data-[state=active]:bg-gold data-[state=active]:text-background"
+            className="rounded-none border-gold/60 text-gold data-[state=active]:bg-gold data-[state=active]:text-foreground"
           >
             <Megaphone className="size-4" />
             Marketing team
