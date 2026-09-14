@@ -62,12 +62,12 @@
   --radius: 0.25rem;
 
   --background: #171513;
-  --foreground: #8c6b3e;
+  --foreground: #2c2523;
 
   --card: #211e1b;
-  --card-foreground: #8c6b3e;
+  --card-foreground: #2c2523;
   --popover: #211e1b;
-  --popover-foreground: #8c6b3e;
+  --popover-foreground: #2c2523;
 
   /* Gold is the brand primary */
   --primary: #b8935a;
@@ -78,11 +78,11 @@
   --graphite: #f4e8d9;
 
   --secondary: #24211e;
-  --secondary-foreground: #8c6b3e;
+  --secondary-foreground: #2c2523;
   --muted: #24211e;
-  --muted-foreground: #b8935a;
+  --muted-foreground: #6b5d54;
   --accent: #332a20;
-  --accent-foreground: #8c6b3e;
+  --accent-foreground: #2c2523;
 
   --destructive: oklch(0.65 0.2 25);
   --destructive-foreground: #ffffff;
@@ -98,7 +98,7 @@
   --chart-5: #e3c98f;
 
   --sidebar: #171513;
-  --sidebar-foreground: #8c6b3e;
+  --sidebar-foreground: #2c2523;
   --sidebar-primary: #b8935a;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #332a20;
@@ -120,11 +120,11 @@
 
 .dark {
   --background: #f3e8dc;
-  --foreground: #8c6b3e;
+  --foreground: #2c2523;
   --card: #f8efe3;
-  --card-foreground: #8c6b3e;
+  --card-foreground: #2c2523;
   --popover: #f8efe3;
-  --popover-foreground: #8c6b3e;
+  --popover-foreground: #2c2523;
   --primary: #b8935a;
   --primary-foreground: #ffffff;
   --gold: #b8935a;
@@ -132,16 +132,16 @@
   --gold-deep: #8c6b3e;
   --graphite: #2c2523;
   --secondary: #eee1d2;
-  --secondary-foreground: #8c6b3e;
+  --secondary-foreground: #2c2523;
   --muted: #eee1d2;
-  --muted-foreground: #b8935a;
+  --muted-foreground: #6b5d54;
   --accent: #e5d3bf;
-  --accent-foreground: #8c6b3e;
+  --accent-foreground: #2c2523;
   --border: #dcd0c2;
   --input: #dcd0c2;
   --ring: #b8935a;
   --sidebar: #f3e8dc;
-  --sidebar-foreground: #8c6b3e;
+  --sidebar-foreground: #2c2523;
   --sidebar-primary: #b8935a;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #e5d3bf;
@@ -181,6 +181,15 @@
     font-family: var(--font-display);
     font-weight: 300;
     letter-spacing: -0.01em;
+    color: var(--gold-deep);
+  }
+
+  h1,
+  h2,
+  h3,
+  h5,
+  h6 {
+    color: var(--gold-deep);
   }
 
   input,

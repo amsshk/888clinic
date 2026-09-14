@@ -150,7 +150,6 @@ function RootShell({ children }: { children: ReactNode }) {
 const PUBLIC_LUXURY_PATHS = [
   "/",
   "/auth",
-  "/admin",
   "/reset-password",
   "/services",
   "/pricing",
