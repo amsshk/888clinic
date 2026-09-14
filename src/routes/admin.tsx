@@ -136,7 +136,7 @@ function AdminPage() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-10">
-        <TabsList className="h-auto flex-wrap justify-start gap-2 rounded-none bg-transparent p-0">
+        <TabsList className="h-auto flex-wrap justify-start gap-2 rounded-none border border-gold/35 bg-card/85 p-2 shadow-sm">
           {isAdmin && (
             <TabsTrigger value="patients" className="rounded-none">
               Patients
