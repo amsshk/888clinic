@@ -62,27 +62,27 @@
   --radius: 0.25rem;
 
   --background: #171513;
-  --foreground: #f4e8d9;
+  --foreground: #8c6b3e;
 
   --card: #211e1b;
-  --card-foreground: #f4e8d9;
+  --card-foreground: #8c6b3e;
   --popover: #211e1b;
-  --popover-foreground: #f4e8d9;
+  --popover-foreground: #8c6b3e;
 
   /* Gold is the brand primary */
   --primary: #b8935a;
-  --primary-foreground: #171513;
+  --primary-foreground: #ffffff;
   --gold: #b8935a;
   --gold-soft: #e3c98f;
   --gold-deep: #8c6b3e;
   --graphite: #f4e8d9;
 
   --secondary: #24211e;
-  --secondary-foreground: #f4e8d9;
+  --secondary-foreground: #8c6b3e;
   --muted: #24211e;
-  --muted-foreground: #b8aa9c;
+  --muted-foreground: #b8935a;
   --accent: #332a20;
-  --accent-foreground: #f4e8d9;
+  --accent-foreground: #8c6b3e;
 
   --destructive: oklch(0.65 0.2 25);
   --destructive-foreground: #ffffff;
@@ -98,7 +98,7 @@
   --chart-5: #e3c98f;
 
   --sidebar: #171513;
-  --sidebar-foreground: #f4e8d9;
+  --sidebar-foreground: #8c6b3e;
   --sidebar-primary: #b8935a;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #332a20;
@@ -120,11 +120,11 @@
 
 .dark {
   --background: #f3e8dc;
-  --foreground: #2c2523;
+  --foreground: #8c6b3e;
   --card: #f8efe3;
-  --card-foreground: #2c2523;
+  --card-foreground: #8c6b3e;
   --popover: #f8efe3;
-  --popover-foreground: #2c2523;
+  --popover-foreground: #8c6b3e;
   --primary: #b8935a;
   --primary-foreground: #ffffff;
   --gold: #b8935a;
@@ -132,16 +132,16 @@
   --gold-deep: #8c6b3e;
   --graphite: #2c2523;
   --secondary: #eee1d2;
-  --secondary-foreground: #2c2523;
+  --secondary-foreground: #8c6b3e;
   --muted: #eee1d2;
-  --muted-foreground: #6b5d54;
+  --muted-foreground: #b8935a;
   --accent: #e5d3bf;
-  --accent-foreground: #2c2523;
+  --accent-foreground: #8c6b3e;
   --border: #dcd0c2;
   --input: #dcd0c2;
   --ring: #b8935a;
   --sidebar: #f3e8dc;
-  --sidebar-foreground: #2c2523;
+  --sidebar-foreground: #8c6b3e;
   --sidebar-primary: #b8935a;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #e5d3bf;
@@ -164,7 +164,7 @@
     background-position: center bottom !important;
     background-attachment: fixed !important;
     background-repeat: no-repeat !important;
-    color: #2c2523 !important;
+    color: var(--foreground) !important;
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
@@ -182,6 +182,18 @@
     font-weight: 300;
     letter-spacing: -0.01em;
   }
+
+  input,
+  textarea,
+  select,
+  button {
+    color: var(--foreground);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--muted-foreground);
+  }
 }
 
 @utility text-gradient-gold {
@@ -195,7 +207,7 @@
 }
 
 @utility bg-shell {
-  background: var(--gradient-shell);
+  background: color-mix(in srgb, var(--background) 34%, transparent);
 }
 
 .catalogue-preset--cream-studio {
