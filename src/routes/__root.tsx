@@ -181,8 +181,8 @@ function RootComponent() {
         <div
           className={
             useLuxuryTheme
-              ? "public-luxury-shell flex min-h-screen flex-col bg-background text-foreground"
-              : "flex min-h-screen flex-col bg-background text-foreground"
+              ? "public-luxury-shell flex min-h-screen flex-col bg-transparent text-foreground"
+              : "site-shell flex min-h-screen flex-col bg-transparent text-foreground"
           }
         >
           <SiteHeader />

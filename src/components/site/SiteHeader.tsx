@@ -55,8 +55,8 @@ export function SiteHeader() {
     <header
       className={
         isResultsPage
-          ? "results-site-header sticky top-0 z-50 border-b backdrop-blur-xl"
-          : "sticky top-0 z-50 border-b border-border/70 bg-background/85 backdrop-blur-xl"
+          ? "results-site-header sticky top-0 z-50 border-b bg-transparent"
+          : "sticky top-0 z-50 border-b border-border/70 bg-transparent"
       }
     >
       <div className="results-site-header__inner mx-auto flex h-20 max-w-6xl items-center justify-between gap-6 px-5">
@@ -107,7 +107,7 @@ export function SiteHeader() {
       </div>
 
       {open && (
-        <div className="results-site-header__mobile border-t border-border bg-background px-5 pb-5 lg:hidden">
+        <div className="results-site-header__mobile border-t border-border bg-transparent px-5 pb-5 lg:hidden">
           <nav className="flex flex-col divide-y divide-border">
             {nav.map((item) => (
               <Link

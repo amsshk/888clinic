@@ -28,6 +28,7 @@ import { Route as AuthenticatedMaliRouteImport } from './routes/_authenticated/m
 import { Route as AuthenticatedOrdersRouteImport } from './routes/_authenticated/orders'
 import { Route as AuthenticatedPredictRouteImport } from './routes/_authenticated/predict'
 import { Route as AuthenticatedSkinAiRouteImport } from './routes/_authenticated/skin-ai'
+import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout/return'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
@@ -126,6 +127,11 @@ const AuthenticatedSkinAiRoute = AuthenticatedSkinAiRouteImport.update({
   path: '/skin-ai',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiHealthRoute = ApiHealthRouteImport.update({
+  id: '/api/health',
+  path: '/api/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
   id: '/checkout/return',
   path: '/checkout/return',
@@ -163,6 +169,7 @@ export interface FileRoutesByFullPath {
   '/orders': typeof AuthenticatedOrdersRoute
   '/predict': typeof AuthenticatedPredictRoute
   '/skin-ai': typeof AuthenticatedSkinAiRoute
+  '/api/health': typeof ApiHealthRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -186,6 +193,7 @@ export interface FileRoutesByTo {
   '/orders': typeof AuthenticatedOrdersRoute
   '/predict': typeof AuthenticatedPredictRoute
   '/skin-ai': typeof AuthenticatedSkinAiRoute
+  '/api/health': typeof ApiHealthRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -211,6 +219,7 @@ export interface FileRoutesById {
   '/_authenticated/orders': typeof AuthenticatedOrdersRoute
   '/_authenticated/predict': typeof AuthenticatedPredictRoute
   '/_authenticated/skin-ai': typeof AuthenticatedSkinAiRoute
+  '/api/health': typeof ApiHealthRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -236,6 +245,7 @@ export interface FileRouteTypes {
     | '/orders'
     | '/predict'
     | '/skin-ai'
+    | '/api/health'
     | '/checkout/return'
     | '/api/public/payments/webhook'
     | '/lovable/email/transactional/preview'
@@ -259,6 +269,7 @@ export interface FileRouteTypes {
     | '/orders'
     | '/predict'
     | '/skin-ai'
+    | '/api/health'
     | '/checkout/return'
     | '/api/public/payments/webhook'
     | '/lovable/email/transactional/preview'
@@ -283,6 +294,7 @@ export interface FileRouteTypes {
     | '/_authenticated/orders'
     | '/_authenticated/predict'
     | '/_authenticated/skin-ai'
+    | '/api/health'
     | '/checkout/return'
     | '/api/public/payments/webhook'
     | '/lovable/email/transactional/preview'
@@ -304,6 +316,7 @@ export interface RootRouteChildren {
   ResultsRoute: typeof ResultsRoute
   ServicesRoute: typeof ServicesRoute
   TermsRoute: typeof TermsRoute
+  ApiHealthRoute: typeof ApiHealthRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
@@ -444,6 +457,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSkinAiRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/health': {
+      id: '/api/health'
+      path: '/api/health'
+      fullPath: '/api/health'
+      preLoaderRoute: typeof ApiHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/checkout/return': {
       id: '/checkout/return'
       path: '/checkout/return'
@@ -501,6 +521,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResultsRoute: ResultsRoute,
   ServicesRoute: ServicesRoute,
   TermsRoute: TermsRoute,
+  ApiHealthRoute: ApiHealthRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,

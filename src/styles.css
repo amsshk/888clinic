@@ -61,35 +61,34 @@
 :root {
   --radius: 0.25rem;
 
-  /* Pearly logo background #f3e8dc */
-  --background: #f3e8dc;
-  --foreground: #2c2523;
+  --background: #171513;
+  --foreground: #f4e8d9;
 
-  --card: #f8efe3;
-  --card-foreground: #2c2523;
-  --popover: #f8efe3;
-  --popover-foreground: #2c2523;
+  --card: #211e1b;
+  --card-foreground: #f4e8d9;
+  --popover: #211e1b;
+  --popover-foreground: #f4e8d9;
 
   /* Gold is the brand primary */
   --primary: #b8935a;
-  --primary-foreground: #ffffff;
+  --primary-foreground: #171513;
   --gold: #b8935a;
   --gold-soft: #e3c98f;
   --gold-deep: #8c6b3e;
-  --graphite: #2c2523;
+  --graphite: #f4e8d9;
 
-  --secondary: #eee1d2;
-  --secondary-foreground: #2c2523;
-  --muted: #eee1d2;
-  --muted-foreground: #6b5d54;
-  --accent: #e5d3bf;
-  --accent-foreground: #2c2523;
+  --secondary: #24211e;
+  --secondary-foreground: #f4e8d9;
+  --muted: #24211e;
+  --muted-foreground: #b8aa9c;
+  --accent: #332a20;
+  --accent-foreground: #f4e8d9;
 
-  --destructive: oklch(0.577 0.245 27.325);
+  --destructive: oklch(0.65 0.2 25);
   --destructive-foreground: #ffffff;
 
-  --border: #dcd0c2;
-  --input: #dcd0c2;
+  --border: #40372f;
+  --input: #4a3d32;
   --ring: #b8935a;
 
   --chart-1: #b8935a;
@@ -98,13 +97,13 @@
   --chart-4: #a89284;
   --chart-5: #e3c98f;
 
-  --sidebar: #f3e8dc;
-  --sidebar-foreground: #2c2523;
+  --sidebar: #171513;
+  --sidebar-foreground: #f4e8d9;
   --sidebar-primary: #b8935a;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #e5d3bf;
-  --sidebar-accent-foreground: #2c2523;
-  --sidebar-border: #dcd0c2;
+  --sidebar-accent: #332a20;
+  --sidebar-accent-foreground: #f4e8d9;
+  --sidebar-border: #40372f;
   --sidebar-ring: #b8935a;
 
   --gradient-gold: linear-gradient(
@@ -158,10 +157,21 @@
 
   html,
   body {
+    min-height: 100%;
     background-color: #f3e8dc !important;
+    background-image: url("/images/logo-bg.jpeg") !important;
+    background-size: 200% 200% !important;
+    background-position: center bottom !important;
+    background-attachment: fixed !important;
+    background-repeat: no-repeat !important;
     color: #2c2523 !important;
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+  }
+
+  body,
+  #root {
+    min-height: 100vh;
   }
 
   h1,
@@ -699,39 +709,59 @@
   }
 }
 
+.site-shell,
+.public-luxury-shell {
+  min-height: 100vh;
+  background-color: #171513 !important;
+  background-image: url("/images/logo-bg.jpeg") !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
+  color-scheme: dark;
+}
+
+.site-shell > main,
+.public-luxury-shell > main {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
 /* Shared public-site pearly luxury design system */
 .public-luxury-shell {
   --gradient-shell:
-    radial-gradient(circle at 50% 5%, rgb(255 255 255 / 60%), transparent 32rem),
-    linear-gradient(180deg, #f8efe3 0%, #f3e8dc 100%);
-  --shadow-soft: 0 1px 2px rgb(0 0 0 / 4%), 0 12px 32px -12px rgb(138 108 72 / 12%);
-  --shadow-gold: 0 14px 40px -16px rgb(180 135 85 / 35%);
+    radial-gradient(circle at 50% 0%, rgb(255 226 184 / 8%), transparent 34rem),
+    linear-gradient(180deg, rgb(33 29 25 / 40%) 0%, rgb(23 21 19 / 60%) 100%);
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 28%), 0 14px 36px -14px rgb(0 0 0 / 55%);
+  --shadow-gold: 0 14px 40px -16px rgb(184 147 90 / 38%);
 
-  color: #2c2523;
-  background-color: #f3e8dc;
-  color-scheme: light;
+  color: #f4e8d9;
+  background-color: transparent !important;
+  background-image: url("/images/logo-bg.jpeg") !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
+  color-scheme: dark;
 }
 
 .public-luxury-shell > main {
   position: relative;
   isolation: isolate;
-  background-color: #f3e8dc;
+  background-color: transparent !important;
   background-image:
-    radial-gradient(circle at 50% 8%, rgb(255 255 255 / 50%), transparent 36rem),
-    radial-gradient(circle at 10% 52%, rgb(191 150 107 / 8%), transparent 28rem),
-    repeating-linear-gradient(
-      118deg,
-      rgb(191 150 107 / 2%) 0,
-      rgb(191 150 107 / 2%) 1px,
-      transparent 1px,
-      transparent 5px
-    );
+    radial-gradient(circle at 50% 8%, rgb(255 226 184 / 6%), transparent 36rem),
+    radial-gradient(circle at 10% 52%, rgb(191 150 107 / 5%), transparent 28rem);
 }
 
 .public-luxury-shell > header {
-  border-color: rgb(180 140 100 / 22%);
-  color: #2c2523;
-  background: rgb(248 239 227 / 94%);
+  border-color: rgb(220 190 150 / 18%);
+  color: #f4e8d9;
+  background-color: rgb(243 232 220 / 72%) !important;
+  background-image: url("/images/logo-bg.jpeg") !important;
+  background-size: 200% 200% !important;
+  background-position: center bottom !important;
+  backdrop-filter: none;
 }
 
 .public-luxury-shell > header > div:first-child {
@@ -739,16 +769,16 @@
 }
 
 .public-luxury-shell > header .text-muted-foreground {
-  color: rgb(85 72 65 / 78%);
+  color: rgb(226 211 193 / 72%);
 }
 
 .public-luxury-shell > header .text-foreground,
 .public-luxury-shell > header a:hover {
-  color: #8c6b3e;
+  color: #e3c98f;
 }
 
 .public-luxury-shell > header .border-border {
-  border-color: rgb(180 140 100 / 22%);
+  border-color: rgb(220 190 150 / 18%);
 }
 
 .public-luxury-shell > header button:focus-visible,
@@ -760,22 +790,22 @@
 }
 
 .public-luxury-shell .bg-shell {
-  background: var(--gradient-shell);
+  background: rgb(248 239 227 / 58%);
 }
 
 .public-luxury-shell .bg-card {
-  border-color: rgb(180 140 100 / 22%);
-  background-color: rgb(248 241 232 / 95%);
+  border-color: rgb(220 190 150 / 18%);
+  background-color: rgb(33 30 27 / 94%);
 }
 
 .public-luxury-shell .bg-secondary\/60,
 .public-luxury-shell .bg-secondary\/40 {
-  background-color: rgb(240 228 214 / 80%);
+  background-color: rgb(51 42 32 / 72%);
 }
 
 .public-luxury-shell .bg-accent\/40,
 .public-luxury-shell .bg-accent\/50 {
-  background-color: rgb(180 140 100 / 12%);
+  background-color: rgb(220 190 150 / 10%);
 }
 
 .public-luxury-shell .bg-border {
