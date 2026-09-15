@@ -90,7 +90,7 @@ function AdminPage() {
   }, [isAdmin]);
 
   useEffect(() => {
-    if (isAdmin && activeTab === "inbox") setActiveTab("patients");
+    if (!isAdmin && activeTab === "patients") setActiveTab("inbox");
   }, [isAdmin, activeTab]);
 
   if (loading) {
