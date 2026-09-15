@@ -30,6 +30,7 @@ import { Route as AuthenticatedPredictRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedSkinAiRouteImport } from './routes/_authenticated/skin-ai'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout/return'
+import { Route as ApiPublicMetaLeadsRouteImport } from './routes/api/public/meta-leads'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 
@@ -137,6 +138,11 @@ const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
   path: '/checkout/return',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicMetaLeadsRoute = ApiPublicMetaLeadsRouteImport.update({
+  id: '/api/public/meta-leads',
+  path: '/api/public/meta-leads',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -171,6 +177,7 @@ export interface FileRoutesByFullPath {
   '/skin-ai': typeof AuthenticatedSkinAiRoute
   '/api/health': typeof ApiHealthRoute
   '/checkout/return': typeof CheckoutReturnRoute
+  '/api/public/meta-leads': typeof ApiPublicMetaLeadsRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
@@ -195,6 +202,7 @@ export interface FileRoutesByTo {
   '/skin-ai': typeof AuthenticatedSkinAiRoute
   '/api/health': typeof ApiHealthRoute
   '/checkout/return': typeof CheckoutReturnRoute
+  '/api/public/meta-leads': typeof ApiPublicMetaLeadsRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
@@ -221,6 +229,7 @@ export interface FileRoutesById {
   '/_authenticated/skin-ai': typeof AuthenticatedSkinAiRoute
   '/api/health': typeof ApiHealthRoute
   '/checkout/return': typeof CheckoutReturnRoute
+  '/api/public/meta-leads': typeof ApiPublicMetaLeadsRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
@@ -247,6 +256,7 @@ export interface FileRouteTypes {
     | '/skin-ai'
     | '/api/health'
     | '/checkout/return'
+    | '/api/public/meta-leads'
     | '/api/public/payments/webhook'
     | '/lovable/email/transactional/preview'
   fileRoutesByTo: FileRoutesByTo
@@ -271,6 +281,7 @@ export interface FileRouteTypes {
     | '/skin-ai'
     | '/api/health'
     | '/checkout/return'
+    | '/api/public/meta-leads'
     | '/api/public/payments/webhook'
     | '/lovable/email/transactional/preview'
   id:
@@ -296,6 +307,7 @@ export interface FileRouteTypes {
     | '/_authenticated/skin-ai'
     | '/api/health'
     | '/checkout/return'
+    | '/api/public/meta-leads'
     | '/api/public/payments/webhook'
     | '/lovable/email/transactional/preview'
   fileRoutesById: FileRoutesById
@@ -318,6 +330,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   ApiHealthRoute: typeof ApiHealthRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
+  ApiPublicMetaLeadsRoute: typeof ApiPublicMetaLeadsRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
 }
@@ -471,6 +484,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CheckoutReturnRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/meta-leads': {
+      id: '/api/public/meta-leads'
+      path: '/api/public/meta-leads'
+      fullPath: '/api/public/meta-leads'
+      preLoaderRoute: typeof ApiPublicMetaLeadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -523,6 +543,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   ApiHealthRoute: ApiHealthRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
+  ApiPublicMetaLeadsRoute: ApiPublicMetaLeadsRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
 }
