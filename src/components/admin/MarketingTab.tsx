@@ -37,7 +37,6 @@ import { createFreeMarketingVideo, type FreeVideoSeconds } from "@/lib/free-mark
 import promoVideo from "@/assets/videos/888clinic-mali-promo-vertical.mp4.asset.json";
 import { AdsLaunchPlanner } from "@/components/admin/AdsLaunchPlanner";
 import { EZ888NConnection } from "@/components/admin/EZ888NConnection";
-import { MedicalAnimationStudio } from "@/components/admin/MedicalAnimationStudio";
 
 const OBJECTIVES = [
   "Free MALI skin scan sign-ups",
@@ -149,7 +148,7 @@ export function MarketingTab() {
   const [freeVideoLoading, setFreeVideoLoading] = useState(false);
   const [freeVideoExtension, setFreeVideoExtension] = useState<"mp4" | "webm">("mp4");
   const [isFreeVideo, setIsFreeVideo] = useState(false);
-  const [subView, setSubView] = useState<"copy-video" | "animation-studio" | "planner" | "ez888n">(
+  const [subView, setSubView] = useState<"copy-video" | "planner" | "ez888n">(
     "copy-video",
   );
   const referenceInputRef = useRef<HTMLInputElement>(null);
@@ -365,17 +364,6 @@ export function MarketingTab() {
         </button>
         <button
           type="button"
-          onClick={() => setSubView("animation-studio")}
-          className={`flex items-center gap-2 px-3.5 py-2 text-xs font-medium transition ${
-            subView === "animation-studio"
-              ? "bg-gold text-primary-foreground"
-              : "text-muted-foreground hover:bg-gold/10 hover:text-foreground"
-          }`}
-        >
-          <Film className="size-3.5" /> Medical Animation Studio
-        </button>
-        <button
-          type="button"
           onClick={() => setSubView("planner")}
           className={`flex items-center gap-2 px-3.5 py-2 text-xs font-medium transition ${
             subView === "planner"
@@ -400,7 +388,6 @@ export function MarketingTab() {
 
       {subView === "ez888n" && <EZ888NConnection />}
       {subView === "planner" && <AdsLaunchPlanner />}
-      {subView === "animation-studio" && <MedicalAnimationStudio />}
 
       {subView === "copy-video" && (
         <>

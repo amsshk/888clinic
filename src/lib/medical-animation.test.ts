@@ -15,12 +15,18 @@ test("medical animation studio component contains precision scenes and layer con
   assert.match(studioSource, /Render MP4 Video \(Disabled\)|Render.*disabled/i);
 });
 
-test("marketing tab integrates medical animation studio component", () => {
+test("marketing tab does not expose medical animation studio and keeps active promo tools", () => {
   const marketingTabSource = readFileSync(
     new URL("../components/admin/MarketingTab.tsx", import.meta.url),
     "utf8",
   );
 
-  assert.match(marketingTabSource, /MedicalAnimationStudio/);
-  assert.match(marketingTabSource, /Medical Animation Studio/);
+  assert.doesNotMatch(marketingTabSource, /MedicalAnimationStudio/);
+  assert.doesNotMatch(marketingTabSource, /Medical Animation Studio/);
+  assert.doesNotMatch(marketingTabSource, /<MedicalAnimationStudio\s*\/>/);
+  assert.doesNotMatch(marketingTabSource, /"animation-studio"/);
+  assert.match(marketingTabSource, /AI Campaign &amp; Video Studio/);
+  assert.match(marketingTabSource, /Generate with OpenAI/);
+  assert.match(marketingTabSource, /Ads Launch Planner/);
+  assert.match(marketingTabSource, /EZ888N Connection/);
 });
