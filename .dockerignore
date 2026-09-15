@@ -11,5 +11,12 @@ dist/
 .DS_Store
 *.swp
 .turbo/
-remotion/
+remotion/node_modules/
+remotion/out/
+remotion/dist/
+remotion/coverage/
+remotion/.cache/
+remotion/.eslintcache
+remotion/*.tsbuildinfo
+remotion/*.tgz
 ml/
