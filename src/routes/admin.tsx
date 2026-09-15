@@ -185,7 +185,7 @@ function AdminPage() {
           )}
           {canUseEzWar && (
             <TabsTrigger value="marketing" className="rounded-none">
-              ezWar engine
+              AI promotions
             </TabsTrigger>
           )}
           {isAdmin && (

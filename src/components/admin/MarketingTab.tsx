@@ -37,6 +37,7 @@ import { createFreeMarketingVideo, type FreeVideoSeconds } from "@/lib/free-mark
 import promoVideo from "@/assets/videos/888clinic-mali-promo-vertical.mp4.asset.json";
 import { AdsLaunchPlanner } from "@/components/admin/AdsLaunchPlanner";
 import { EZ888NConnection } from "@/components/admin/EZ888NConnection";
+import { MedicalAnimationStudio } from "@/components/admin/MedicalAnimationStudio";
 
 const OBJECTIVES = [
   "Free MALI skin scan sign-ups",
@@ -148,6 +149,9 @@ export function MarketingTab() {
   const [freeVideoLoading, setFreeVideoLoading] = useState(false);
   const [freeVideoExtension, setFreeVideoExtension] = useState<"mp4" | "webm">("mp4");
   const [isFreeVideo, setIsFreeVideo] = useState(false);
+  const [subView, setSubView] = useState<"copy-video" | "animation-studio" | "planner" | "ez888n">(
+    "copy-video",
+  );
   const referenceInputRef = useRef<HTMLInputElement>(null);
   // Blob URLs from the free renderer are owned by this component, so they are
   // revoked when replaced and when the tab unmounts.
@@ -346,19 +350,71 @@ export function MarketingTab() {
 
   return (
     <div className="space-y-8">
-      <EZ888NConnection />
-      <AdsLaunchPlanner />
-      <section className="border border-border/70 bg-card p-6">
-        <div className="flex items-start gap-3">
-          <Megaphone className="mt-1 size-5 text-gold" />
-          <div>
-            <h3 className="font-serif text-xl">EZ888N campaign studio</h3>
-            <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-              Write Facebook and Instagram ad copy for the clinic in English and local Thai, then
-              paste it straight into Ads Manager. Restricted to clinic administrators.
-            </p>
-          </div>
-        </div>
+      {/* Sub-navigation for AI Promotions & Marketing Suite */}
+      <div className="flex flex-wrap gap-2 border border-gold/30 bg-card/90 p-2 shadow-xs">
+        <button
+          type="button"
+          onClick={() => setSubView("copy-video")}
+          className={`flex items-center gap-2 px-3.5 py-2 text-xs font-medium transition ${
+            subView === "copy-video"
+              ? "bg-gold text-primary-foreground"
+              : "text-muted-foreground hover:bg-gold/10 hover:text-foreground"
+          }`}
+        >
+          <Sparkles className="size-3.5" /> AI Campaign &amp; Video Studio
+        </button>
+        <button
+          type="button"
+          onClick={() => setSubView("animation-studio")}
+          className={`flex items-center gap-2 px-3.5 py-2 text-xs font-medium transition ${
+            subView === "animation-studio"
+              ? "bg-gold text-primary-foreground"
+              : "text-muted-foreground hover:bg-gold/10 hover:text-foreground"
+          }`}
+        >
+          <Film className="size-3.5" /> Medical Animation Studio
+        </button>
+        <button
+          type="button"
+          onClick={() => setSubView("planner")}
+          className={`flex items-center gap-2 px-3.5 py-2 text-xs font-medium transition ${
+            subView === "planner"
+              ? "bg-gold text-primary-foreground"
+              : "text-muted-foreground hover:bg-gold/10 hover:text-foreground"
+          }`}
+        >
+          <Megaphone className="size-3.5" /> Ads Launch Planner
+        </button>
+        <button
+          type="button"
+          onClick={() => setSubView("ez888n")}
+          className={`flex items-center gap-2 px-3.5 py-2 text-xs font-medium transition ${
+            subView === "ez888n"
+              ? "bg-gold text-primary-foreground"
+              : "text-muted-foreground hover:bg-gold/10 hover:text-foreground"
+          }`}
+        >
+          <ExternalLink className="size-3.5" /> EZ888N Connection
+        </button>
+      </div>
+
+      {subView === "ez888n" && <EZ888NConnection />}
+      {subView === "planner" && <AdsLaunchPlanner />}
+      {subView === "animation-studio" && <MedicalAnimationStudio />}
+
+      {subView === "copy-video" && (
+        <>
+          <section className="border border-border/70 bg-card p-6">
+            <div className="flex items-start gap-3">
+              <Megaphone className="mt-1 size-5 text-gold" />
+              <div>
+                <h3 className="font-serif text-xl">EZ888N campaign studio</h3>
+                <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+                  Write Facebook and Instagram ad copy for the clinic in English and local Thai, then
+                  paste it straight into Ads Manager. Restricted to clinic administrators.
+                </p>
+              </div>
+            </div>
 
         <div className="mt-6 grid gap-5 md:grid-cols-2">
           <div>
@@ -782,6 +838,8 @@ export function MarketingTab() {
           )}
         </section>
       ))}
+        </>
+      )}
     </div>
   );
 }
