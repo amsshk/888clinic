@@ -1,6 +1,9 @@
 {
   "name": "tanstack_start_ts",
   "private": true,
+  "workspaces": [
+    "remotion"
+  ],
   "sideEffects": false,
   "type": "module",
   "scripts": {

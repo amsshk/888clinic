@@ -8,8 +8,27 @@ type MarketingContext = {
   claims?: Record<string, unknown>;
 };
 
+export type VideoGenerationInput = {
+  objective: string;
+  offer: string;
+  audience: string;
+  prompt: string;
+  duration: "4" | "8" | "12";
+  format: "vertical" | "square" | "landscape";
+  referenceImage?: string | undefined;
+};
+
+type OpenAiVideoJobState =
+  | { ok: true; status: "queued" | "in_progress"; progress: number }
+  | { ok: true; status: "completed" }
+  | { ok: false; error: string };
+
 function openAiKey(): string {
   return process.env["OPENAI_API_KEY"] ?? "";
+}
+
+function marketingComplianceRules() {
+  return "Meta ad policy: no guaranteed results, diagnosis, body or skin shaming, personal-attribute targeting, percentages, cure claims, or exaggerated superlatives.";
 }
 
 export async function createAdCopy(
@@ -43,7 +62,7 @@ export async function createAdCopy(
         ? "Leave the English fields as empty strings."
         : "Fill both English and Thai fields.",
     "creativeIdea: one sentence describing the image or video to pair with it.",
-    "Meta ad policy: no guaranteed results, diagnosis, body or skin shaming, personal-attribute targeting, percentages, cure claims, or exaggerated superlatives.",
+    marketingComplianceRules(),
     "hashtags: 3-6 short mixed Thai/English tags without spaces.",
   ]
     .filter(Boolean)
@@ -97,8 +116,10 @@ function decodeReferenceImage(dataUrl: string): { blob: Blob; filename: string }
   const match = /^data:(image\/(?:jpeg|jpg|png|webp));base64,(.+)$/.exec(dataUrl);
   if (!match) return null;
   const mime = match[1] === "image/jpg" ? "image/jpeg" : match[1];
+  const base64 = match[2];
+  if (!mime || !base64) return null;
   try {
-    const binary = Buffer.from(match[2], "base64");
+    const binary = Buffer.from(base64, "base64");
     if (!binary.length) return null;
     const extension = mime === "image/png" ? "png" : mime === "image/webp" ? "webp" : "jpg";
     return {
@@ -144,20 +165,9 @@ function videoStartError(status: number, message: string): string {
   return "OpenAI could not start the video. Check video-model access and try again.";
 }
 
-export async function startVideoGeneration(
-  data: {
-    objective: string;
-    offer: string;
-    audience: string;
-    prompt: string;
-    duration: "4" | "8" | "12";
-    format: "vertical" | "square" | "landscape";
-    referenceImage?: string;
-  },
-  context: MarketingContext,
+export async function startOpenAiVideoJob(
+  data: VideoGenerationInput,
 ): Promise<{ ok: true; jobId: string } | { ok: false; error: string }> {
-  if (!(await requireClinicAdmin(context)))
-    return { ok: false, error: "This AI studio is restricted to clinic administrators." };
   const key = openAiKey();
   if (!key) return { ok: false, error: "OpenAI video generation is not connected yet." };
 
@@ -187,17 +197,18 @@ export async function startVideoGeneration(
 
   if (data.referenceImage) {
     const reference = decodeReferenceImage(data.referenceImage);
-    if (!reference)
+    if (!reference) {
       return {
         ok: false,
         error: "That starting image could not be read. Please upload a JPEG, PNG or WebP photo.",
       };
+    }
     form.append("input_reference", reference.blob, reference.filename);
   }
 
   const response = await fetch("https://api.openai.com/v1/videos", {
     method: "POST",
-    headers: { Authorization: `Bearer ${key}` },
+    headers: { Authorization: "Bearer " + key },
     body: form,
   });
   const payload = (await response.json().catch(() => null)) as {
@@ -212,17 +223,12 @@ export async function startVideoGeneration(
   return { ok: true, jobId: payload.id };
 }
 
-export async function readVideoGeneration(
-  jobId: string,
-  context: MarketingContext,
-): Promise<MarketingVideoStatus> {
-  if (!(await requireClinicAdmin(context)))
-    return { ok: false, error: "This AI studio is restricted to clinic administrators." };
+export async function getOpenAiVideoJobState(jobId: string): Promise<OpenAiVideoJobState> {
   const key = openAiKey();
   if (!key) return { ok: false, error: "OpenAI video generation is not connected yet." };
 
   const response = await fetch(`https://api.openai.com/v1/videos/${encodeURIComponent(jobId)}`, {
-    headers: { Authorization: `Bearer ${key}` },
+    headers: { Authorization: "Bearer " + key },
   });
   const job = (await response.json().catch(() => null)) as {
     status?: string;
@@ -239,27 +245,89 @@ export async function readVideoGeneration(
       progress: Math.max(0, Math.min(99, Number(job.progress) || 0)),
     };
   }
+  return { ok: true, status: "completed" };
+}
+
+export async function downloadOpenAiVideoBytes(
+  jobId: string,
+): Promise<{ ok: true; bytes: Uint8Array } | { ok: false; error: string }> {
+  const key = openAiKey();
+  if (!key) return { ok: false, error: "OpenAI video generation is not connected yet." };
 
   const videoResponse = await fetch(
     `https://api.openai.com/v1/videos/${encodeURIComponent(jobId)}/content`,
     {
-      headers: { Authorization: `Bearer ${key}` },
+      headers: { Authorization: "Bearer " + key },
     },
   );
   if (!videoResponse.ok)
     return { ok: false, error: "The video finished but could not be downloaded." };
-  const bytes = await videoResponse.arrayBuffer();
-  const storagePath = `${context.userId}/marketing/${Date.now()}-${jobId.replace(/[^a-zA-Z0-9_-]/g, "")}.mp4`;
+  return { ok: true, bytes: new Uint8Array(await videoResponse.arrayBuffer()) };
+}
+
+export async function uploadPrivateMediaAsset(
+  context: MarketingContext,
+  storagePath: string,
+  bytes: Uint8Array,
+  contentType: string,
+): Promise<{ ok: true; storagePath: string } | { ok: false; error: string }> {
   const { error: uploadError } = await context.supabase.storage
     .from("media")
-    .upload(storagePath, bytes, { contentType: "video/mp4", upsert: false });
-  if (uploadError)
-    return { ok: false, error: "The video finished but could not be saved to the media library." };
+    .upload(storagePath, bytes, { contentType, upsert: false });
+  if (uploadError) {
+    return {
+      ok: false,
+      error:
+        contentType === "video/mp4"
+          ? "The video finished but could not be saved to the media library."
+          : "The generated media could not be saved to the media library.",
+    };
+  }
+  return { ok: true, storagePath };
+}
 
+export async function createPrivateMediaSignedUrl(
+  context: MarketingContext,
+  storagePath: string,
+  expiresInSeconds = 60 * 60 * 24,
+): Promise<string | null> {
   const { data: signed, error: signedError } = await context.supabase.storage
     .from("media")
-    .createSignedUrl(storagePath, 60 * 60 * 24);
-  if (signedError || !signed?.signedUrl)
-    return { ok: false, error: "The video was saved but its preview could not be opened." };
-  return { ok: true, status: "completed", videoUrl: signed.signedUrl };
+    .createSignedUrl(storagePath, expiresInSeconds);
+  if (signedError || !signed?.signedUrl) return null;
+  return signed.signedUrl;
 }
+
+export async function startVideoGeneration(
+  data: VideoGenerationInput,
+  context: MarketingContext,
+): Promise<{ ok: true; jobId: string } | { ok: false; error: string }> {
+  if (!(await requireClinicAdmin(context)))
+    return { ok: false, error: "This AI studio is restricted to clinic administrators." };
+  return startOpenAiVideoJob(data);
+}
+
+export async function readVideoGeneration(
+  jobId: string,
+  context: MarketingContext,
+): Promise<MarketingVideoStatus> {
+  if (!(await requireClinicAdmin(context)))
+    return { ok: false, error: "This AI studio is restricted to clinic administrators." };
+
+  const state = await getOpenAiVideoJobState(jobId);
+  if (!state.ok) return state;
+  if (state.status !== "completed") return state;
+
+  const download = await downloadOpenAiVideoBytes(jobId);
+  if (!download.ok) return download;
+  const storagePath = `${context.userId}/marketing/${Date.now()}-${jobId.replace(/[^a-zA-Z0-9_-]/g, "")}.mp4`;
+  const uploaded = await uploadPrivateMediaAsset(context, storagePath, download.bytes, "video/mp4");
+  if (!uploaded.ok) return uploaded;
+
+  const videoUrl = await createPrivateMediaSignedUrl(context, storagePath);
+  if (!videoUrl)
+    return { ok: false, error: "The video was saved but its preview could not be opened." };
+  return { ok: true, status: "completed", videoUrl };
+}
+
+export { marketingComplianceRules };

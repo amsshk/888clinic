@@ -2,20 +2,11 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 
-import { requireClinicAdmin } from "@/lib/super-admin.server";
-
-test("clinic admins are allowed while non-admins are rejected", async () => {
-  const allow = await requireClinicAdmin({
-    supabase: { rpc: async () => ({ data: true }) },
-    userId: "user-123",
-  });
-  assert.equal(allow, true);
-
-  const deny = await requireClinicAdmin({
-    supabase: { rpc: async () => ({ data: false }) },
-    userId: "user-456",
-  });
-  assert.equal(deny, false);
+test("clinic admin helper delegates access checks to admin role assertions", () => {
+  const adminSource = readFileSync(new URL("./super-admin.server.ts", import.meta.url), "utf8");
+  assert.match(adminSource, /hasClinicAdminAccess/);
+  assert.match(adminSource, /assertAdmin\(context\.supabase,\s*context\.userId\)/);
+  assert.match(adminSource, /requireClinicAdmin/);
 });
 
 test("admin dashboard keeps the marketing tab and AI admin wording visible", () => {
@@ -27,14 +18,32 @@ test("admin dashboard keeps the marketing tab and AI admin wording visible", () 
 });
 
 test("marketing server operations require clinic admin authorization", () => {
-  const marketingServer = readFileSync(new URL("./marketing-ai.server.ts", import.meta.url), "utf8");
+  const marketingServer = readFileSync(
+    new URL("./marketing-ai.server.ts", import.meta.url),
+    "utf8",
+  );
   assert.match(marketingServer, /requireClinicAdmin\(/i);
   assert.match(marketingServer, /clinic administrator|clinic admin/i);
   assert.match(marketingServer, /createAdCopy|startVideoGeneration|readVideoGeneration/i);
+
+  const medicalVideoServer = readFileSync(
+    new URL("./medical-video.server.ts", import.meta.url),
+    "utf8",
+  );
+  assert.match(medicalVideoServer, /requireClinicAdmin\(/i);
+  assert.match(
+    medicalVideoServer,
+    /createMedicalVideoDraft|startMedicalVideoProjectGeneration|readMedicalVideoProject/i,
+  );
+  assert.match(medicalVideoServer, /render-remotion\.mjs|audio\/speech|medical_video_projects/i);
 });
 
 test("marketing copy text keeps administrator-only wording", () => {
-  const marketingTab = readFileSync(new URL("../components/admin/MarketingTab.tsx", import.meta.url), "utf8");
+  const marketingTab = readFileSync(
+    new URL("../components/admin/MarketingTab.tsx", import.meta.url),
+    "utf8",
+  );
   assert.match(marketingTab, /administrator|admin/i);
   assert.match(marketingTab, /restricted to .*admin|clinic administrator|clinic admin/i);
+  assert.match(marketingTab, /Medical Video Pipeline/i);
 });

@@ -26,6 +26,7 @@ test("marketing tab does not expose medical animation studio and keeps active pr
   assert.doesNotMatch(marketingTabSource, /<MedicalAnimationStudio\s*\/>/);
   assert.doesNotMatch(marketingTabSource, /"animation-studio"/);
   assert.match(marketingTabSource, /AI Campaign &amp; Video Studio/);
+  assert.match(marketingTabSource, /Medical Video Pipeline/);
   assert.match(marketingTabSource, /Generate with OpenAI/);
   assert.match(marketingTabSource, /Ads Launch Planner/);
   assert.match(marketingTabSource, /EZ888N Connection/);

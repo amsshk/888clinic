@@ -410,6 +410,69 @@ export type Database = {
         };
         Relationships: [];
       };
+      medical_video_projects: {
+        Row: {
+          approved: boolean;
+          approved_at: string | null;
+          approved_by: string | null;
+          clip_jobs: Json;
+          created_at: string;
+          created_by: string | null;
+          error_message: string | null;
+          final_video_duration_seconds: number;
+          final_video_path: string | null;
+          format: string;
+          id: string;
+          narration_segments: Json;
+          scenes: Json;
+          script: string;
+          status: string;
+          subtitle_cues: Json;
+          topic: string;
+          updated_at: string;
+        };
+        Insert: {
+          approved?: boolean;
+          approved_at?: string | null;
+          approved_by?: string | null;
+          clip_jobs?: Json;
+          created_at?: string;
+          created_by?: string | null;
+          error_message?: string | null;
+          final_video_duration_seconds?: number;
+          final_video_path?: string | null;
+          format?: string;
+          id?: string;
+          narration_segments?: Json;
+          scenes?: Json;
+          script?: string;
+          status?: string;
+          subtitle_cues?: Json;
+          topic: string;
+          updated_at?: string;
+        };
+        Update: {
+          approved?: boolean;
+          approved_at?: string | null;
+          approved_by?: string | null;
+          clip_jobs?: Json;
+          created_at?: string;
+          created_by?: string | null;
+          error_message?: string | null;
+          final_video_duration_seconds?: number;
+          final_video_path?: string | null;
+          format?: string;
+          id?: string;
+          narration_segments?: Json;
+          scenes?: Json;
+          script?: string;
+          status?: string;
+          subtitle_cues?: Json;
+          topic?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       order_items: {
         Row: {
           id: string;
