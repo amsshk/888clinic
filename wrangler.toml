@@ -4,7 +4,7 @@ compatibility_flags = ["nodejs_compat"]
 # Nitro copies these settings into a single-environment deployment config.
 # Keep production settings at the top level; redirected configs reject [env.*].
 routes = [
-  { pattern = "888clinic.co", zone_name = "888clinic.co" }
+  { pattern = "888clinic.co/*", zone_name = "888clinic.co" }
 ]
 
 [assets]

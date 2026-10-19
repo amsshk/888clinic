@@ -22,6 +22,10 @@ command and `npx wrangler deploy` as the deploy command. The build generates
 `.output/server/wrangler.json` and `.wrangler/deploy/config.json`; Wrangler
 automatically uses this generated configuration.
 
+Keep the route pattern as `888clinic.co/*` so Cloudflare routes every page
+and `/assets/*` request to this deployment. A bare `888clinic.co` pattern
+does not cover the stylesheet, JavaScript, and image URLs used by the page.
+
 Keep production settings at the top level of `wrangler.toml`. Nitro copies
 the source configuration into its generated file, and Wrangler rejects named
 `[env.*]` environments in redirected configurations. Deploy without
