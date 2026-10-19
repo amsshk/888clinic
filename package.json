@@ -5,6 +5,7 @@
     "remotion"
   ],
   "sideEffects": false,
+  "tslib": "^2.8.1",
   "type": "module",
   "scripts": {
     "dev": "vite dev",
