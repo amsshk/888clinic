@@ -1,6 +1,9 @@
 name = "888clinic"
-main = "src/server.ts"
-compatibility_date = "2026-08-30"
+main = ".output/server/index.mjs"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = ".output/public"
 
 [env.production]
 name = "888clinic-prod"
