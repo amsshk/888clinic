@@ -1,27 +1,17 @@
 name = "888clinic"
 main = ".output/server/index.mjs"
 compatibility_flags = ["nodejs_compat"]
-
-[assets]
-directory = ".output/public"
-
-[env.production]
-name = "888clinic-prod"
+# Nitro copies these settings into a single-environment deployment config.
+# Keep production settings at the top level; redirected configs reject [env.*].
 routes = [
   { pattern = "888clinic.co", zone_name = "888clinic.co" }
 ]
 
+[assets]
+directory = ".output/public"
+
 [alias]
 tslib = "./node_modules/tslib/tslib.es6.mjs"
 
-[build]
-command = "bun install && bun run build"
-
-[env.production.vars]
+[vars]
 NODE_ENV = "production"
-
-[env.production.secrets]
-VITE_PAYMENTS_CLIENT_TOKEN = "your_stripe_token"
-
-# wrangler.toml
-name = 'clinic-888'

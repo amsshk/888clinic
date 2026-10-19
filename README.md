@@ -15,6 +15,27 @@ npm i
 npm run dev
 ```
 
+## Cloudflare Workers deployment
+
+Use `NITRO_PRESET=cloudflare-module bun run build` as the Cloudflare build
+command and `npx wrangler deploy` as the deploy command. The build generates
+`.output/server/wrangler.json` and `.wrangler/deploy/config.json`; Wrangler
+automatically uses this generated configuration.
+
+Keep production settings at the top level of `wrangler.toml`. Nitro copies
+the source configuration into its generated file, and Wrangler rejects named
+`[env.*]` environments in redirected configurations. Deploy without
+`--env production`. Build before deploying; a `[build]` hook would be copied
+into the generated configuration and run again during deployment.
+
+Configure actual secret bindings in Cloudflare's dashboard or with
+`wrangler secret put`; do not add placeholder values or a `[secrets]` table
+to `wrangler.toml`.
+
+Keep `onnxruntime-web` pinned to `1.21.0`, the peer version required by
+`@imgly/background-removal`. Version `1.27.0` also emits a 25.6 MiB WASM
+asset, exceeding Cloudflare Workers' 25 MiB per-asset limit.
+
 ## Railway environment variables
 
 Set the following variables in Railway before deploying or testing the payment webhook:
