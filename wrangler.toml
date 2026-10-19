@@ -1,5 +1,5 @@
 name = "888clinic"
-main = ".output/server/index.mjs"
+main = "src/server.ts"
 compatibility_date = "2026-08-30"
 
 [env.production]
