@@ -8,6 +8,9 @@ routes = [
   { pattern = "888clinic.co", zone_name = "888clinic.co" }
 ]
 
+[alias]
+tslib = "./node_modules/tslib/tslib.es6.mjs"
+
 [build]
 command = "bun install && bun run build"
 
