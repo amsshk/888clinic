@@ -16,3 +16,6 @@ NODE_ENV = "production"
 
 [env.production.secrets]
 VITE_PAYMENTS_CLIENT_TOKEN = "your_stripe_token"
+
+# wrangler.toml
+name = 'clinic-888'
