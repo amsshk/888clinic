@@ -93,6 +93,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: "888clinic: modern dermatology, aesthetic treatments and clinical skincare.",
       },
       { name: "author", content: "888clinic" },
+      {
+        name: "facebook-domain-verification",
+        content: "htq4hpdmikkvbukaqddjv4bl4aoonw",
+      },
       { property: "og:title", content: "888clinic — Dermatology Clinic" },
       {
         property: "og:description",
