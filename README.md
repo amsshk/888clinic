@@ -29,6 +29,16 @@ running Worker, does not configure the browser. Rebuild after changing them.
 Never use a Supabase service-role or secret key in a `VITE_` variable.
 Builds fail early if either required browser variable is absent.
 
+For authenticated server functions, also configure the Worker's **runtime**
+variables `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` (the `VITE_` names are
+accepted as runtime aliases). Build variables are not runtime bindings.
+For account management and other admin operations, add `SUPABASE_SECRET_KEY`
+as a runtime **Secret**, using the same project's `sb_secret_...` key. Existing
+`SUPABASE_SERVICE_ROLE_KEY` deployments remain supported as a fallback.
+If both are present, `SUPABASE_SECRET_KEY` takes precedence. Neither admin key
+belongs in a browser variable. Signed-in user and administrator checks still
+apply before privileged operations.
+
 Use `NITRO_PRESET=cloudflare-module bun run build` as the Cloudflare build
 command and `npx wrangler deploy` as the deploy command. The build generates
 `.output/server/wrangler.json` and `.wrangler/deploy/config.json`; Wrangler

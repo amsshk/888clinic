@@ -12,12 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  createTeamUser,
-  listTeam,
-  setTeamCredits,
-  setTeamRole,
-} from "@/lib/admin-users.functions";
+import { createTeamUser, listTeam, setTeamCredits, setTeamRole } from "@/lib/admin-users.functions";
 import type { TeamMember } from "@/lib/admin-users.shared";
 import { AccessAuditLog } from "@/components/admin/AccessAuditLog";
 
@@ -30,6 +25,7 @@ export function AccessTab() {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [auditKey, setAuditKey] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState({
@@ -42,15 +38,18 @@ export function AccessTab() {
 
   const refresh = useCallback(async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const res = await load({} as never);
       if (!res.ok) {
+        setLoadError(res.error);
         toast.error(res.error);
         setMembers([]);
       } else {
         setMembers(res.members);
       }
     } catch {
+      setLoadError("Could not load accounts. Please try Refresh.");
       toast.error("Could not load accounts");
     } finally {
       setLoading(false);
@@ -216,6 +215,10 @@ export function AccessTab() {
 
         {loading ? (
           <Loader2 className="mt-6 size-5 animate-spin text-gold" />
+        ) : loadError ? (
+          <p role="alert" className="mt-6 text-sm text-destructive">
+            {loadError}
+          </p>
         ) : filtered.length === 0 ? (
           <p className="mt-6 text-sm text-muted-foreground">No accounts match that search.</p>
         ) : (
@@ -237,9 +240,7 @@ export function AccessTab() {
                   setAuditKey((k) => k + 1);
                   setMembers((rows) =>
                     rows.map((r) =>
-                      r.id === member.id
-                        ? { ...r, credits, free_scans_remaining: freeScans }
-                        : r,
+                      r.id === member.id ? { ...r, credits, free_scans_remaining: freeScans } : r,
                     ),
                   );
                   return true;
@@ -357,11 +358,15 @@ function MemberRow({
               disabled={!dirty || busy}
               onClick={async () => {
                 setBusy(true);
-                await onSaveCredits(Math.max(0, Number(credits) || 0), Math.max(0, Number(freeScans) || 0));
+                await onSaveCredits(
+                  Math.max(0, Number(credits) || 0),
+                  Math.max(0, Number(freeScans) || 0),
+                );
                 setBusy(false);
               }}
             >
-              {busy ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />} Save
+              {busy ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}{" "}
+              Save
             </Button>
           </div>
         </div>
