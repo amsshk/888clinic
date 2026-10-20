@@ -155,18 +155,11 @@
     border-color: var(--color-border);
   }
 
-  html,
   body {
-    min-height: 100%;
-    background-color: #f7efe6 !important;
-    color: var(--foreground) !important;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
-  }
-
-  body,
-  #root {
-    min-height: 100vh;
   }
 
   h1,
@@ -176,27 +169,6 @@
     font-family: var(--font-display);
     font-weight: 300;
     letter-spacing: -0.01em;
-    color: var(--gold-deep);
-  }
-
-  h1,
-  h2,
-  h3,
-  h5,
-  h6 {
-    color: var(--gold-deep);
-  }
-
-  input,
-  textarea,
-  select,
-  button {
-    color: var(--foreground);
-  }
-
-  input::placeholder,
-  textarea::placeholder {
-    color: var(--muted-foreground);
   }
 }
 
@@ -318,11 +290,11 @@
   }
 }
 
-/* Results page: pearly luxury presentation */
+/* Results page: isolated dark luxury presentation */
 .results-site-header {
-  border-color: rgb(180 140 100 / 20%);
-  background: rgb(248 239 227 / 94%);
-  color: #2c2523;
+  border-color: rgb(203 166 126 / 20%);
+  background: rgb(22 22 22 / 94%);
+  color: #ead8c8;
 }
 
 .results-site-header__inner {
@@ -330,40 +302,40 @@
 }
 
 .results-site-header .text-muted-foreground {
-  color: rgb(85 72 65 / 78%);
+  color: rgb(234 216 200 / 78%);
 }
 
 .results-site-header .text-foreground,
 .results-site-header a:hover {
-  color: #8c6b3e;
+  color: #d6ae7e;
 }
 
 .results-site-header .border-border {
-  border-color: rgb(180 140 100 / 22%);
+  border-color: rgb(203 166 126 / 22%);
 }
 
 .results-site-header__mobile {
-  background: #f3e8dc;
+  background: #161616;
 }
 
 .results-site-header button:focus-visible,
 .results-page button:focus-visible {
-  outline: 2px solid #b8935a;
+  outline: 2px solid #d4aa78;
   outline-offset: 4px;
 }
 
 .results-page {
   min-height: 100vh;
   overflow: hidden;
-  color: #2c2523;
-  background-color: #f3e8dc;
+  color: #f1e7de;
+  background-color: #161616;
   background-image:
-    radial-gradient(circle at 50% 18%, rgb(255 255 255 / 50%), transparent 34rem),
-    radial-gradient(circle at 18% 64%, rgb(191 150 107 / 8%), transparent 30rem),
+    radial-gradient(circle at 50% 18%, rgb(255 255 255 / 7%), transparent 34rem),
+    radial-gradient(circle at 18% 64%, rgb(191 150 107 / 4%), transparent 30rem),
     repeating-linear-gradient(
       118deg,
-      rgb(191 150 107 / 2%) 0,
-      rgb(191 150 107 / 2%) 1px,
+      rgb(255 255 255 / 1.5%) 0,
+      rgb(255 255 255 / 1.5%) 1px,
       transparent 1px,
       transparent 4px
     );
@@ -725,124 +697,145 @@
   }
 }
 
-.site-shell,
+/* Public pages and their portaled menus share the restored charcoal palette.
+ * Admin pages retain the light root tokens. */
+:root:has(.public-luxury-shell),
 .public-luxury-shell {
-  min-height: 100vh;
-  background-color: #f3e8dc !important;
-  color-scheme: light;
+  --background: #161616;
+  --foreground: #f1e7de;
+  --card: #202020;
+  --card-foreground: #f1e7de;
+  --popover: #202020;
+  --popover-foreground: #f1e7de;
+  --primary: #d4aa78;
+  --primary-foreground: #161616;
+  --gold: #d4aa78;
+  --gold-soft: #ead3bd;
+  --gold-deep: #d4aa78;
+  --graphite: #252525;
+  --secondary: #242424;
+  --secondary-foreground: #f1e7de;
+  --muted: #242424;
+  --muted-foreground: #bdb4ac;
+  --accent: #332c25;
+  --accent-foreground: #f1e7de;
+  --border: #514438;
+  --input: #63503e;
+  --ring: #d4aa78;
+  --gradient-gold: linear-gradient(100deg, #b78b58 0%, #d4aa78 45%, #ead3bd 100%);
+  color-scheme: dark;
 }
 
-.site-shell > main,
-.public-luxury-shell > main {
-  background-color: transparent !important;
-  background-image: none !important;
-}
-
-/* Shared public-site pearly luxury design system */
+/* Shared public-site dark luxury design system */
 .public-luxury-shell {
   --gradient-shell:
-    radial-gradient(circle at 50% 0%, rgb(255 226 184 / 8%), transparent 34rem),
-    linear-gradient(180deg, rgb(255 247 235 / 78%) 0%, rgb(243 232 220 / 92%) 100%);
-  --shadow-soft:
-    0 1px 2px rgba(44, 37, 35, 0.04), 0 12px 32px -12px rgba(44, 37, 35, 0.12);
-  --shadow-gold: 0 14px 40px -16px rgb(184 147 90 / 38%);
+    radial-gradient(circle at 50% 5%, rgb(255 255 255 / 6%), transparent 32rem),
+    linear-gradient(180deg, #1c1c1c 0%, #161616 100%);
+  --shadow-soft: 0 1px 0 rgb(225 187 146 / 12%), 0 18px 48px -18px rgb(0 0 0 / 78%);
+  --shadow-gold: 0 18px 54px -22px rgb(213 173 128 / 48%);
 
-  color: #2c2523;
-  background-color: #f3e8dc !important;
-  color-scheme: light;
+  color: #f1e7de;
+  background-color: #161616;
+  color-scheme: dark;
 }
 
 .public-luxury-shell > main {
   position: relative;
   isolation: isolate;
-  background-color: transparent !important;
+  background-color: #161616;
   background-image:
-    radial-gradient(circle at 50% 8%, rgb(255 226 184 / 6%), transparent 36rem),
-    radial-gradient(circle at 10% 52%, rgb(191 150 107 / 5%), transparent 28rem);
+    radial-gradient(circle at 50% 8%, rgb(255 255 255 / 5%), transparent 36rem),
+    radial-gradient(circle at 10% 52%, rgb(191 150 107 / 3.5%), transparent 28rem),
+    repeating-linear-gradient(
+      118deg,
+      rgb(255 255 255 / 1.2%) 0,
+      rgb(255 255 255 / 1.2%) 1px,
+      transparent 1px,
+      transparent 5px
+    );
 }
 
 .public-luxury-shell > header {
-  border-color: rgb(180 140 100 / 22%);
-  color: #2c2523;
-  background-color: rgb(248 239 227 / 92%) !important;
-  backdrop-filter: none;
+  border-color: rgb(203 166 126 / 20%);
+  color: #ead8c8;
+  background: rgb(22 22 22 / 94%);
 }
 
-.public-luxury-shell > header > div:first-child {
+.public-luxury-shell .site-header-inner {
   max-width: 96rem;
 }
 
 .public-luxury-shell > header .text-muted-foreground {
-  color: rgb(85 72 65 / 78%);
+  color: rgb(234 216 200 / 76%);
 }
 
 .public-luxury-shell > header .text-foreground,
 .public-luxury-shell > header a:hover {
-  color: #8c6b3e;
+  color: #d9b58e;
 }
 
 .public-luxury-shell > header .border-border {
-  border-color: rgb(180 140 100 / 22%);
+  border-color: rgb(203 166 126 / 22%);
 }
 
 .public-luxury-shell > header button:focus-visible,
 .public-luxury-shell > main button:focus-visible,
 .public-luxury-shell > main a:focus-visible,
 .public-luxury-shell > footer a:focus-visible {
-  outline: 2px solid #b8935a;
+  outline: 2px solid #d4aa78;
   outline-offset: 4px;
 }
 
 .public-luxury-shell .bg-shell {
-  background: rgb(248 239 227 / 58%);
+  background: var(--gradient-shell);
 }
 
 .public-luxury-shell .bg-card {
-  border-color: rgb(220 190 150 / 18%);
-  background-color: rgb(248 239 227 / 94%);
+  border-color: rgb(218 183 145 / 20%);
+  background-color: rgb(21 20 19 / 92%);
 }
 
 .public-luxury-shell .bg-secondary\/60,
 .public-luxury-shell .bg-secondary\/40 {
-  background-color: rgb(243 232 220 / 78%);
+  background-color: rgb(18 17 16 / 82%);
 }
 
 .public-luxury-shell .bg-accent\/40,
 .public-luxury-shell .bg-accent\/50 {
-  background-color: rgb(220 190 150 / 10%);
+  background-color: rgb(207 170 130 / 10%);
 }
 
 .public-luxury-shell .bg-border {
-  background-color: rgb(180 140 100 / 22%);
+  background-color: rgb(218 183 145 / 20%);
 }
 
 .public-luxury-shell .border-border,
 .public-luxury-shell .border-border\/60,
 .public-luxury-shell .border-border\/70 {
-  border-color: rgb(180 140 100 / 22%);
+  border-color: rgb(218 183 145 / 20%);
 }
 
 .public-luxury-shell .text-muted-foreground {
-  color: rgb(85 72 65 / 75%);
+  color: rgb(241 231 222 / 62%);
 }
 
 .public-luxury-shell .text-foreground {
-  color: #2c2523;
+  color: #f1e7de;
 }
 
 .public-luxury-shell .text-gold-deep {
-  color: #8c6b3e;
+  color: #d4aa78;
 }
 
 .public-luxury-shell .eyebrow {
-  color: #8c6b3e;
+  color: #d4aa78;
 }
 
 .public-luxury-shell h1,
 .public-luxury-shell h2,
 .public-luxury-shell h3,
 .public-luxury-shell h4 {
-  color: #2c2523;
+  color: #ead3bd;
 }
 
 .public-luxury-shell h1 {
@@ -854,7 +847,7 @@
 }
 
 .public-luxury-shell .hairline {
-  background: linear-gradient(90deg, rgb(180 140 100 / 55%), rgb(180 140 100 / 12%), transparent);
+  background: linear-gradient(90deg, rgb(218 183 145 / 55%), rgb(218 183 145 / 12%), transparent);
 }
 
 .public-luxury-shell .shadow-soft {
@@ -864,43 +857,112 @@
 .public-luxury-shell section.bg-shell,
 .public-luxury-shell section.border-y,
 .public-luxury-shell section.border-b {
-  border-color: rgb(180 140 100 / 22%);
+  border-color: rgb(218 183 145 / 20%);
 }
 
 .public-luxury-shell main input,
 .public-luxury-shell main textarea,
 .public-luxury-shell main select,
 .public-luxury-shell main [role="combobox"] {
-  border-color: rgb(180 140 100 / 28%);
-  color: #2c2523;
-  background-color: rgb(250 244 237 / 85%);
+  border-color: rgb(218 183 145 / 28%);
+  color: #f1e7de;
+  background-color: rgb(22 22 22 / 78%);
 }
 
 .public-luxury-shell main input::placeholder,
 .public-luxury-shell main textarea::placeholder {
-  color: rgb(100 85 75 / 50%);
+  color: rgb(241 231 222 / 38%);
 }
 
 .public-luxury-shell main input:focus,
 .public-luxury-shell main textarea:focus,
 .public-luxury-shell main select:focus,
 .public-luxury-shell main [role="combobox"]:focus {
-  border-color: #b8935a;
-  box-shadow: 0 0 0 1px #b8935a;
+  border-color: #d4aa78;
+  box-shadow: 0 0 0 1px #d4aa78;
 }
 
 .public-luxury-shell main article,
 .public-luxury-shell main form,
 .public-luxury-shell main aside > div {
-  border-color: rgb(180 140 100 / 22%);
+  border-color: rgb(218 183 145 / 22%);
 }
 
 .public-luxury-shell main img {
-  border-color: rgb(180 140 100 / 22%);
+  border-color: rgb(218 183 145 / 22%);
 }
 
 .public-luxury-shell main iframe {
-  filter: saturate(0.9) contrast(1.02);
+  filter: saturate(0.7) contrast(1.05);
+}
+
+.public-luxury-shell > footer {
+  border-color: rgb(218 183 145 / 20%);
+  color: #ead8c8;
+  background: radial-gradient(circle at 15% 10%, rgb(207 170 130 / 6%), transparent 24rem), #161616;
+}
+
+.public-luxury-shell > footer h4 {
+  color: #dfbd9b;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.public-luxury-shell > footer .text-muted-foreground {
+  color: rgb(234 216 200 / 58%);
+}
+
+.public-luxury-shell > footer .border-border {
+  border-color: rgb(218 183 145 / 20%);
+}
+
+.public-luxury-shell > footer a {
+  transition:
+    color 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.public-luxury-shell > footer a:hover {
+  color: #e2bd91;
+}
+
+.public-luxury-shell main .hover\:bg-accent:hover,
+.public-luxury-shell main .hover\:bg-accent\/40:hover,
+.public-luxury-shell main .hover\:bg-accent\/50:hover {
+  background-color: rgb(207 170 130 / 12%);
+}
+
+.public-luxury-shell main .hover\:text-foreground:hover {
+  color: #e2bd91;
+}
+
+.public-luxury-shell main button,
+.public-luxury-shell main a {
+  transition-duration: 180ms;
+}
+
+.public-luxury-shell main video {
+  background: #101010;
+}
+
+@media (max-width: 639px) {
+  .public-luxury-shell .site-header-inner {
+    min-height: 4.5rem;
+  }
+
+  .public-luxury-shell h1 {
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .public-luxury-shell *,
+  .public-luxury-shell *::before,
+  .public-luxury-shell *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 :where(
@@ -919,71 +981,20 @@
   display: none !important;
 }
 
-.public-luxury-shell > footer {
-  border-color: rgb(180 140 100 / 22%);
-  color: #2c2523;
-  background: radial-gradient(circle at 15% 10%, rgb(207 170 130 / 12%), transparent 24rem), #f3e8dc;
+
+/* Keep the sticky navigation within its own row and contain scrolling grids. */
+.site-header {
+  flex: none;
+  align-self: stretch;
 }
-
-.public-luxury-shell > footer h4 {
-  color: #8c6b3e;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+.site-shell > main,
+.public-luxury-shell > main {
+  min-width: 0;
 }
-
-.public-luxury-shell > footer .text-muted-foreground {
-  color: rgb(85 72 65 / 75%);
+.site-header-inner {
+  width: 100%;
+  min-width: 0;
 }
-
-.public-luxury-shell > footer .border-border {
-  border-color: rgb(180 140 100 / 22%);
-}
-
-.public-luxury-shell > footer a {
-  transition:
-    color 180ms ease,
-    border-color 180ms ease,
-    background-color 180ms ease;
-}
-
-.public-luxury-shell > footer a:hover {
-  color: #8c6b3e;
-}
-
-.public-luxury-shell main .hover\:bg-accent:hover,
-.public-luxury-shell main .hover\:bg-accent\/40:hover,
-.public-luxury-shell main .hover\:bg-accent\/50:hover {
-  background-color: rgb(180 140 100 / 12%);
-}
-
-.public-luxury-shell main .hover\:text-foreground:hover {
-  color: #8c6b3e;
-}
-
-.public-luxury-shell main button,
-.public-luxury-shell main a {
-  transition-duration: 180ms;
-}
-
-.public-luxury-shell main video {
-  background: #f3e8dc;
-}
-
-@media (max-width: 639px) {
-  .public-luxury-shell > header > div:first-child {
-    min-height: 4.5rem;
-  }
-
-  .public-luxury-shell h1 {
-    overflow-wrap: anywhere;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .public-luxury-shell *,
-  .public-luxury-shell *::before,
-  .public-luxury-shell *::after {
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
-  }
+.results-media-frame {
+  border-radius: 1rem;
 }

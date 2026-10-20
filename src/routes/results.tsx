@@ -33,17 +33,6 @@ const tabs: Array<{ value: ResultsArea; label: string }> = [
   { value: "face", label: "Face" },
 ];
 
-function ComparisonOverlay() {
-  return (
-    <div className="results-comparison-overlay" aria-hidden="true">
-      <span className="results-comparison-divider" />
-      <span className="results-comparison-arrow">›</span>
-      <span className="results-comparison-label results-comparison-label--before">Before</span>
-      <span className="results-comparison-label results-comparison-label--after">After</span>
-    </div>
-  );
-}
-
 function ResultsPage() {
   const { t, lang } = useLang();
   const [filter, setFilter] = useState<ResultsArea>("all");
@@ -52,7 +41,7 @@ function ResultsPage() {
   const fallbackItems = useMemo(() => BEFORE_AFTER, []);
 
   return (
-    <main className="results-page">
+    <div className="results-page">
       <section className="results-hero">
         <div className="results-container">
           <h1>Results</h1>
@@ -85,7 +74,7 @@ function ResultsPage() {
         <div className="results-container results-container--wide">
           <FeaturedResultsMedia filter={filter} onAvailabilityChange={setHasFeatured} />
 
-          {hasFeatured === false && fallbackItems.length > 0 && (
+          {hasFeatured !== true && fallbackItems.length > 0 && (
             <div className="results-gallery">
               <div className="results-grid">
                 {fallbackItems.map((item) => {
@@ -100,7 +89,6 @@ function ResultsPage() {
                           loading="lazy"
                           className="results-media"
                         />
-                        <ComparisonOverlay />
                       </div>
 
                       <figcaption className="results-card-caption">
@@ -129,6 +117,6 @@ function ResultsPage() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }
