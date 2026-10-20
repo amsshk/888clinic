@@ -85,6 +85,9 @@ function Contact() {
           <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground">
             {t("con.lede")}
           </p>
+          <p className="mt-3 text-sm text-muted-foreground">
+            {t("legal.operator")} {CLINIC.legalName}
+          </p>
         </div>
       </section>
 

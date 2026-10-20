@@ -3,7 +3,7 @@ const SRINAKARIN_QUERY =
 
 export const CLINIC = {
   name: "888clinic",
-  legalName: "888clinic Dermatology",
+  legalName: "888 Plus Medical Limited Partnership",
   // Primary contact line (Srinakarin, Bangkok)
   phone: "+66 62 646 5322",
   phoneHref: "tel:+66626465322",

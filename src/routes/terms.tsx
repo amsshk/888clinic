@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useLang, type TKey } from "@/lib/i18n";
+import { CLINIC } from "@/lib/clinic";
 
 export const Route = createFileRoute("/terms")({
   head: () => ({
@@ -31,6 +32,9 @@ function TermsPage() {
         <p className="eyebrow">{t("legal.eyebrow")}</p>
         <h1 className="mt-4 text-4xl leading-tight">{t("terms.title")}</h1>
         <p className="mt-4 text-sm text-muted-foreground">{t("legal.updated")}</p>
+        <p className="mt-3 text-sm text-muted-foreground">
+          {t("legal.operator")} {CLINIC.legalName}
+        </p>
 
         <div className="mt-10 space-y-8 text-sm leading-relaxed text-muted-foreground">
           {sections.map(([heading, body]) => <section key={heading}><h2 className="text-lg font-semibold text-foreground">{t(heading)}</h2><p className="mt-3">{t(body)}</p></section>)}

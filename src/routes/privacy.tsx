@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { CLINIC } from "@/lib/clinic";
 
 export const Route = createFileRoute("/privacy")({
   head: () => ({
@@ -24,6 +25,7 @@ const sections = [
   {
     title: "1. About this Privacy Policy",
     paragraphs: [
+      `888clinic is operated by ${CLINIC.legalName}.`,
       "This Privacy Policy explains how 888clinic collects, uses, stores and protects personal information when you use our website, contact us, request an appointment, purchase or use our services, or use our AI skin analysis and related features.",
       "By using our website or services, you acknowledge that you have read this Privacy Policy. Where applicable, we will request your consent before collecting or using information for purposes that require consent.",
     ],
@@ -117,7 +119,7 @@ function PrivacyPage() {
         </h1>
 
         <p className="mt-4 text-sm text-muted-foreground">
-          Last updated: October 7, 2026
+          Last updated: October 20, 2026
         </p>
 
         <div className="mt-10 space-y-8 text-sm leading-relaxed text-muted-foreground">
