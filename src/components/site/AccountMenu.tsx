@@ -14,11 +14,19 @@ import { useAuth } from "@/hooks/useAuth";
 import { useLang } from "@/lib/i18n";
 
 export function AccountMenu({ onNavigate }: { onNavigate?: () => void }) {
-  const { user, isStaff, loading, signOut } = useAuth();
+  const { user, isStaff, loading, error, signOut } = useAuth();
   const { t } = useLang();
   const navigate = useNavigate();
 
   if (loading) return null;
+
+  if (error) {
+    return (
+      <Button disabled size="sm" variant="outline" className="rounded-none px-4">
+        {t("account.unavailable")}
+      </Button>
+    );
+  }
 
   if (!user) {
     return (
@@ -30,7 +38,8 @@ export function AccountMenu({ onNavigate }: { onNavigate?: () => void }) {
     );
   }
 
-  const name = (user.user_metadata?.["full_name"] as string | undefined) || user.email || t("account.default");
+  const name =
+    (user.user_metadata?.["full_name"] as string | undefined) || user.email || t("account.default");
 
   async function handleSignOut() {
     onNavigate?.();

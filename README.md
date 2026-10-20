@@ -17,6 +17,18 @@ npm run dev
 
 ## Cloudflare Workers deployment
 
+Before building, add these in Cloudflare **Workers & Pages → 888clinic →
+Settings → Build → Variables and secrets**:
+
+- `VITE_SUPABASE_URL` — the Supabase project URL.
+- `VITE_SUPABASE_PUBLISHABLE_KEY` — that project's public publishable/anon key.
+
+These values are embedded into the browser bundle by Vite. Setting only
+`SUPABASE_URL` / `SUPABASE_PUBLISHABLE_KEY`, or setting variables only on the
+running Worker, does not configure the browser. Rebuild after changing them.
+Never use a Supabase service-role or secret key in a `VITE_` variable.
+Builds fail early if either required browser variable is absent.
+
 Use `NITRO_PRESET=cloudflare-module bun run build` as the Cloudflare build
 command and `npx wrangler deploy` as the deploy command. The build generates
 `.output/server/wrangler.json` and `.wrangler/deploy/config.json`; Wrangler
