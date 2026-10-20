@@ -15,6 +15,9 @@ export function SiteFooter() {
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
             {t("footer.tagline")}
           </p>
+          <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">
+            {t("legal.operator")} {CLINIC.legalName}
+          </p>
           <div className="mt-5 flex items-center gap-3">
             <a
               href={CLINIC.socials.line}
