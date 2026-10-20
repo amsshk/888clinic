@@ -12,7 +12,7 @@ export function ClinicLogo({ className, compact = false }: Props) {
         width={compact ? 112 : 150}
         height={compact ? 87 : 117}
         decoding="async"
-        className={compact ? "h-11 w-auto object-contain mix-blend-multiply drop-shadow-none" : "h-14 w-auto object-contain mix-blend-multiply drop-shadow-none md:h-16"}
+        className={compact ? "h-11 w-auto object-contain drop-shadow-none" : "h-14 w-auto object-contain drop-shadow-none md:h-16"}
       />
     </span>
   );

@@ -219,11 +219,11 @@ function BookPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-5 py-16">
-        <form onSubmit={onSubmit} className="grid gap-12 lg:grid-cols-[1.1fr_1fr]">
-          <div className="space-y-10">
+        <form onSubmit={onSubmit} className="grid gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
+          <div className="min-w-0 space-y-10">
             <div>
               <h2 className="text-2xl">{t("bk.step1")}</h2>
-              <div className="mt-5 flex gap-3 overflow-x-auto pb-2">
+              <div className="mt-5 flex max-w-full gap-3 overflow-x-auto pb-2">
                 {days.map((d) => {
                   const iso = toISO(d);
                   const closed = slotsFor(iso).length === 0;
@@ -237,7 +237,7 @@ function BookPage() {
                         setDate(iso);
                         setTime("");
                       }}
-                      className={`min-w-[4.75rem] border px-3 py-3 text-center transition-colors ${
+                      className={`min-w-[4.75rem] shrink-0 border px-3 py-3 text-center transition-colors ${
                         active
                           ? "border-primary bg-primary text-primary-foreground"
                           : closed
@@ -286,7 +286,7 @@ function BookPage() {
             </div>
           </div>
 
-          <div className="space-y-5 border border-border p-6">
+          <div className="min-w-0 space-y-5 self-start border border-border bg-card p-6">
             <h2 className="text-2xl">{t("bk.step3")}</h2>
 
             {identity.signedIn ? (

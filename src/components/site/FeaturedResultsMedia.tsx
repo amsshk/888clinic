@@ -22,17 +22,6 @@ function isFaceResult(category: string | null): boolean {
   return !category?.toLowerCase().includes("body");
 }
 
-function ComparisonOverlay() {
-  return (
-    <div className="results-comparison-overlay" aria-hidden="true">
-      <span className="results-comparison-divider" />
-      <span className="results-comparison-arrow">›</span>
-      <span className="results-comparison-label results-comparison-label--before">Before</span>
-      <span className="results-comparison-label results-comparison-label--after">After</span>
-    </div>
-  );
-}
-
 export function FeaturedResultsMedia({ filter, onAvailabilityChange }: Props) {
   const [items, setItems] = useState<FeaturedItem[]>([]);
   const [urls, setUrls] = useState<Record<string, string>>({});
@@ -42,35 +31,47 @@ export function FeaturedResultsMedia({ filter, onAvailabilityChange }: Props) {
     let active = true;
 
     void (async () => {
-      const { data } = await supabase
-        .from("media_items")
-        .select("id, kind, storage_path, title, description, alt_text, results_category")
-        .eq("published", true)
-        .eq("show_in_results", true)
-        .order("sort_order", { ascending: true })
-        .order("created_at", { ascending: false });
+      try {
+        const { data, error } = await supabase
+          .from("media_items")
+          .select("id, kind, storage_path, title, description, alt_text, results_category")
+          .eq("published", true)
+          .eq("show_in_results", true)
+          .order("sort_order", { ascending: true })
+          .order("created_at", { ascending: false });
 
-      const rows = (data as FeaturedItem[]) ?? [];
-      if (!active) return;
+        if (error) throw error;
+        const rows = (data as FeaturedItem[]) ?? [];
+        if (!active) return;
 
-      setItems(rows);
-      onAvailabilityChange?.(rows.length > 0);
+        const signed: Record<string, string> = {};
 
-      const signed: Record<string, string> = {};
+        await Promise.allSettled(
+          rows.map(async (row) => {
+            const { data: signedUrl } = await supabase.storage
+              .from("media")
+              .createSignedUrl(row.storage_path, 60 * 60);
 
-      await Promise.all(
-        rows.map(async (row) => {
-          const { data: signedUrl } = await supabase.storage
-            .from("media")
-            .createSignedUrl(row.storage_path, 60 * 60);
+            if (signedUrl?.signedUrl) {
+              signed[row.id] = signedUrl.signedUrl;
+            }
+          }),
+        );
 
-          if (signedUrl?.signedUrl) {
-            signed[row.id] = signedUrl.signedUrl;
-          }
-        }),
-      );
-
-      if (active) setUrls(signed);
+        if (active) {
+          // A published row is usable only when its media URL can be resolved.
+          const available = rows.filter((row) => signed[row.id]);
+          setItems(available);
+          setUrls(signed);
+          onAvailabilityChange?.(available.length > 0);
+        }
+      } catch {
+        if (active) {
+          setItems([]);
+          setUrls({});
+          onAvailabilityChange?.(false);
+        }
+      }
     })();
 
     return () => {
@@ -126,8 +127,6 @@ export function FeaturedResultsMedia({ filter, onAvailabilityChange }: Props) {
               ) : (
                 <div className="results-media results-media-loading" />
               )}
-
-              <ComparisonOverlay />
             </div>
 
             <figcaption className="results-card-caption">

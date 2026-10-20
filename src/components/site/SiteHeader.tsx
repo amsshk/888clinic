@@ -55,21 +55,21 @@ export function SiteHeader() {
     <header
       className={
         isResultsPage
-          ? "results-site-header sticky top-0 z-50 border-b bg-transparent"
-          : "sticky top-0 z-50 border-b border-border/70 bg-transparent"
+          ? "site-header results-site-header sticky top-0 z-50 border-b bg-transparent"
+          : "site-header sticky top-0 z-50 border-b border-border/70 bg-transparent"
       }
     >
-      <div className="results-site-header__inner mx-auto flex h-20 max-w-6xl items-center justify-between gap-6 px-5">
+      <div className="site-header-inner results-site-header__inner mx-auto flex h-20 max-w-6xl items-center justify-between gap-6 px-5">
         <Link to="/" aria-label={CLINIC.name} className="shrink-0">
           <ClinicLogo />
         </Link>
 
-        <nav className="hidden items-center gap-7 lg:flex">
+        <nav className="hidden items-center gap-4 xl:flex">
           {nav.map((item) => (
             <Link
               key={item.to}
               to={item.to}
-              className="whitespace-nowrap text-[0.72rem] uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-foreground"
+              className="whitespace-nowrap text-[0.68rem] uppercase tracking-[0.12em] text-muted-foreground transition-colors hover:text-foreground"
               activeProps={{ className: "text-foreground" }}
               activeOptions={{ exact: item.to === "/" }}
             >
@@ -78,7 +78,7 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="hidden items-center gap-3 lg:flex">
+        <div className="hidden items-center gap-3 xl:flex">
           <LangSwitch />
           <a
             href={CLINIC.phoneHref}
@@ -98,7 +98,7 @@ export function SiteHeader() {
           </BookingDialog>
         </div>
 
-        <div className="flex items-center gap-3 lg:hidden">
+        <div className="flex items-center gap-3 xl:hidden">
           <LangSwitch />
           <button type="button" aria-label={t("menu.toggle")} onClick={() => setOpen((v) => !v)}>
             {open ? <X className="size-5" /> : <Menu className="size-5" />}
@@ -107,14 +107,14 @@ export function SiteHeader() {
       </div>
 
       {open && (
-        <div className="results-site-header__mobile border-t border-border bg-transparent px-5 pb-5 lg:hidden">
+        <div className="results-site-header__mobile border-t border-border bg-transparent px-5 pb-5 xl:hidden">
           <nav className="flex flex-col divide-y divide-border">
             {nav.map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
                 onClick={() => setOpen(false)}
-                className="py-3 text-xs uppercase tracking-[0.18em] text-muted-foreground"
+                className="py-3 text-xs uppercase tracking-[0.12em] text-muted-foreground"
                 activeProps={{ className: "text-foreground" }}
                 activeOptions={{ exact: item.to === "/" }}
               >
