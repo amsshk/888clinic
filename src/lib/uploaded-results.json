@@ -1,0 +1,522 @@
+[
+  {
+    "id": "thread-lift-01",
+    "url": "/images/results/thread-lift-01.jpg",
+    "category": "Facelift / Thread Lift",
+    "zone": "Face & jawline",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after thread lift comparison: face & jawline; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "lip-filler-01",
+    "url": "/images/results/lip-filler-01.jpg",
+    "category": "Dermal Filler",
+    "zone": "Lips",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: lips; original image and labels",
+    "width": 1080,
+    "height": 1080
+  },
+  {
+    "id": "chin-filler-01",
+    "url": "/images/results/chin-filler-01.jpg",
+    "category": "Dermal Filler",
+    "zone": "Chin",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: chin; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "nasolabial-filler-01",
+    "url": "/images/results/nasolabial-filler-01.jpg",
+    "category": "Dermal Filler",
+    "zone": "Nasolabial folds",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: nasolabial folds; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "under-eye-filler-01",
+    "url": "/images/results/under-eye-filler-01.jpg",
+    "category": "Dermal Filler",
+    "zone": "Under-eyes",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: under-eyes; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "thread-lift-02",
+    "url": "/images/results/thread-lift-02.jpg",
+    "category": "Facelift / Thread Lift",
+    "zone": "Face & jawline",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after thread lift comparison: face & jawline; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "thread-lift-03",
+    "url": "/images/results/thread-lift-03.jpg",
+    "category": "Facelift / Thread Lift",
+    "zone": "Face & jawline",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after thread lift comparison: face & jawline; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "lip-filler-02",
+    "url": "/images/results/lip-filler-02.jpg",
+    "category": "Dermal Filler",
+    "zone": "Lips",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: lips; original image and labels",
+    "width": 1080,
+    "height": 1080
+  },
+  {
+    "id": "lip-filler-03",
+    "url": "/images/results/lip-filler-03.jpg",
+    "category": "Dermal Filler",
+    "zone": "Lips",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: lips; original image and labels",
+    "width": 500,
+    "height": 500
+  },
+  {
+    "id": "lip-filler-04",
+    "url": "/images/results/lip-filler-04.jpg",
+    "category": "Dermal Filler",
+    "zone": "Lips",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: lips; original image and labels",
+    "width": 1080,
+    "height": 1080
+  },
+  {
+    "id": "thread-lift-04",
+    "url": "/images/results/thread-lift-04.jpg",
+    "category": "Facelift / Thread Lift",
+    "zone": "Face & jawline",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after thread lift comparison: face & jawline; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "thread-lift-05",
+    "url": "/images/results/thread-lift-05.jpg",
+    "category": "Facelift / Thread Lift",
+    "zone": "Face & jawline",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after thread lift comparison: face & jawline; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "thread-lift-06",
+    "url": "/images/results/thread-lift-06.jpg",
+    "category": "Facelift / Thread Lift",
+    "zone": "Face & jawline",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after thread lift comparison: face & jawline; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "thread-lift-07",
+    "url": "/images/results/thread-lift-07.jpg",
+    "category": "Facelift / Thread Lift",
+    "zone": "Face & jawline",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after thread lift comparison: face & jawline; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "thread-lift-08",
+    "url": "/images/results/thread-lift-08.jpg",
+    "category": "Facelift / Thread Lift",
+    "zone": "Face & jawline",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after thread lift comparison: face & jawline; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "chin-filler-02",
+    "url": "/images/results/chin-filler-02.jpg",
+    "category": "Dermal Filler",
+    "zone": "Chin",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: chin; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "thread-lift-09",
+    "url": "/images/results/thread-lift-09.jpg",
+    "category": "Facelift / Thread Lift",
+    "zone": "Face & jawline",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after thread lift comparison: face & jawline; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "lip-filler-05",
+    "url": "/images/results/lip-filler-05.jpg",
+    "category": "Dermal Filler",
+    "zone": "Lips",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: lips; original image and labels",
+    "width": 1080,
+    "height": 1080
+  },
+  {
+    "id": "lip-filler-06",
+    "url": "/images/results/lip-filler-06.jpg",
+    "category": "Dermal Filler",
+    "zone": "Lips",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: lips; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "thread-lift-10",
+    "url": "/images/results/thread-lift-10.jpg",
+    "category": "Facelift / Thread Lift",
+    "zone": "Face & jawline",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after thread lift comparison: face & jawline; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "thread-lift-11",
+    "url": "/images/results/thread-lift-11.jpg",
+    "category": "Facelift / Thread Lift",
+    "zone": "Face & jawline",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after thread lift comparison: face & jawline; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "thread-lift-12",
+    "url": "/images/results/thread-lift-12.jpg",
+    "category": "Facelift / Thread Lift",
+    "zone": "Face & jawline",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after thread lift comparison: face & jawline; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "thread-lift-13",
+    "url": "/images/results/thread-lift-13.jpg",
+    "category": "Facelift / Thread Lift",
+    "zone": "Face & jawline",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after thread lift comparison: face & jawline; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "thread-lift-14",
+    "url": "/images/results/thread-lift-14.jpg",
+    "category": "Facelift / Thread Lift",
+    "zone": "Face & jawline",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after thread lift comparison: face & jawline; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "lip-filler-07",
+    "url": "/images/results/lip-filler-07.jpg",
+    "category": "Dermal Filler",
+    "zone": "Lips",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: lips; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "lip-filler-08",
+    "url": "/images/results/lip-filler-08.jpg",
+    "category": "Dermal Filler",
+    "zone": "Lips",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: lips; original image and labels",
+    "width": 1080,
+    "height": 1080
+  },
+  {
+    "id": "lip-filler-09",
+    "url": "/images/results/lip-filler-09.jpg",
+    "category": "Dermal Filler",
+    "zone": "Lips",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: lips; original image and labels",
+    "width": 1080,
+    "height": 1080
+  },
+  {
+    "id": "lip-filler-10",
+    "url": "/images/results/lip-filler-10.jpg",
+    "category": "Dermal Filler",
+    "zone": "Lips",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: lips; original image and labels",
+    "width": 1080,
+    "height": 1080
+  },
+  {
+    "id": "chin-filler-03",
+    "url": "/images/results/chin-filler-03.jpg",
+    "category": "Dermal Filler",
+    "zone": "Chin",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: chin; original image and labels",
+    "width": 1080,
+    "height": 1080
+  },
+  {
+    "id": "lip-filler-11",
+    "url": "/images/results/lip-filler-11.jpg",
+    "category": "Dermal Filler",
+    "zone": "Lips",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: lips; original image and labels",
+    "width": 1080,
+    "height": 1080
+  },
+  {
+    "id": "thread-lift-15",
+    "url": "/images/results/thread-lift-15.jpg",
+    "category": "Facelift / Thread Lift",
+    "zone": "Face & jawline",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after thread lift comparison: face & jawline; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "thread-lift-16",
+    "url": "/images/results/thread-lift-16.jpg",
+    "category": "Facelift / Thread Lift",
+    "zone": "Face & jawline",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after thread lift comparison: face & jawline; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "lip-filler-12",
+    "url": "/images/results/lip-filler-12.jpg",
+    "category": "Dermal Filler",
+    "zone": "Lips",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: lips; original image and labels",
+    "width": 1080,
+    "height": 1080
+  },
+  {
+    "id": "lip-filler-13",
+    "url": "/images/results/lip-filler-13.jpg",
+    "category": "Dermal Filler",
+    "zone": "Lips",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: lips; original image and labels",
+    "width": 1080,
+    "height": 1080
+  },
+  {
+    "id": "thread-lift-17",
+    "url": "/images/results/thread-lift-17.jpg",
+    "category": "Facelift / Thread Lift",
+    "zone": "Face & jawline",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after thread lift comparison: face & jawline; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "chin-filler-04",
+    "url": "/images/results/chin-filler-04.jpg",
+    "category": "Dermal Filler",
+    "zone": "Chin",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: chin; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "thread-lift-18",
+    "url": "/images/results/thread-lift-18.jpg",
+    "category": "Facelift / Thread Lift",
+    "zone": "Face & jawline",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after thread lift comparison: face & jawline; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "thread-lift-19",
+    "url": "/images/results/thread-lift-19.jpg",
+    "category": "Facelift / Thread Lift",
+    "zone": "Face & jawline",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after thread lift comparison: face & jawline; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "lip-filler-14",
+    "url": "/images/results/lip-filler-14.jpg",
+    "category": "Dermal Filler",
+    "zone": "Lips",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: lips; original image and labels",
+    "width": 1080,
+    "height": 1080
+  },
+  {
+    "id": "lip-filler-15",
+    "url": "/images/results/lip-filler-15.jpg",
+    "category": "Dermal Filler",
+    "zone": "Lips",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: lips; original image and labels",
+    "width": 1080,
+    "height": 1080
+  },
+  {
+    "id": "thread-lift-20",
+    "url": "/images/results/thread-lift-20.jpg",
+    "category": "Facelift / Thread Lift",
+    "zone": "Face & jawline",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after thread lift comparison: face & jawline; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "lip-filler-16",
+    "url": "/images/results/lip-filler-16.jpg",
+    "category": "Dermal Filler",
+    "zone": "Lips",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: lips; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "lip-filler-17",
+    "url": "/images/results/lip-filler-17.jpg",
+    "category": "Dermal Filler",
+    "zone": "Lips",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: lips; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "lip-filler-18",
+    "url": "/images/results/lip-filler-18.jpg",
+    "category": "Dermal Filler",
+    "zone": "Lips",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: lips; original image and labels",
+    "width": 1080,
+    "height": 1080
+  },
+  {
+    "id": "thread-lift-21",
+    "url": "/images/results/thread-lift-21.jpg",
+    "category": "Facelift / Thread Lift",
+    "zone": "Face & jawline",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after thread lift comparison: face & jawline; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "lip-filler-19",
+    "url": "/images/results/lip-filler-19.jpg",
+    "category": "Dermal Filler",
+    "zone": "Lips",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: lips; original image and labels",
+    "width": 1080,
+    "height": 1080
+  },
+  {
+    "id": "chin-filler-05",
+    "url": "/images/results/chin-filler-05.jpg",
+    "category": "Dermal Filler",
+    "zone": "Chin",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: chin; original image and labels",
+    "width": 1080,
+    "height": 1080
+  },
+  {
+    "id": "chin-filler-06",
+    "url": "/images/results/chin-filler-06.jpg",
+    "category": "Dermal Filler",
+    "zone": "Chin",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: chin; original image and labels",
+    "width": 1080,
+    "height": 1080
+  },
+  {
+    "id": "thread-lift-22",
+    "url": "/images/results/thread-lift-22.jpg",
+    "category": "Facelift / Thread Lift",
+    "zone": "Face & jawline",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after thread lift comparison: face & jawline; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "chin-filler-07",
+    "url": "/images/results/chin-filler-07.jpg",
+    "category": "Dermal Filler",
+    "zone": "Chin",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: chin; original image and labels",
+    "width": 1280,
+    "height": 1280
+  },
+  {
+    "id": "lip-filler-20",
+    "url": "/images/results/lip-filler-20.jpg",
+    "category": "Dermal Filler",
+    "zone": "Lips",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after dermal filler comparison: lips; original image and labels",
+    "width": 500,
+    "height": 500
+  },
+  {
+    "id": "thread-lift-23",
+    "url": "/images/results/thread-lift-23.jpg",
+    "category": "Facelift / Thread Lift",
+    "zone": "Face & jawline",
+    "description": "Before and after comparison supplied by the clinic. Individual results vary.",
+    "alt": "Before and after thread lift comparison: face & jawline; original image and labels",
+    "width": 1280,
+    "height": 1280
+  }
+]
