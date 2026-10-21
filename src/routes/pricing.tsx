@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { useLang } from "@/lib/i18n";
 import { TREATMENT_MENU, type MenuGroup, type MenuItem } from "@/lib/treatment-menu";
 import { supabase } from "@/integrations/supabase/client";
@@ -39,34 +40,69 @@ function brandOf(item: MenuItem): string {
   return found ?? "Signature";
 }
 
-/** Product card showing the genuine pack shot on its square studio canvas. */
+/** Use the same uncropped photo frames and full-image viewer as the Results gallery. */
 function FillerCard({ item, image, th }: { item: MenuItem; image: string; th: boolean }) {
   const desc = th ? item.descTh : item.descEn;
+  const title = th ? item.nameTh : item.nameEn;
+  const viewLabel = th ? "ดูภาพเต็ม" : "View full image";
+  const [open, setOpen] = useState(false);
+  const opener = useRef<HTMLButtonElement | null>(null);
+  const showImage = (button: HTMLButtonElement) => {
+    opener.current = button;
+    setOpen(true);
+  };
   return (
-    <article className="flex flex-col">
-      <div className="flex items-center justify-center rounded-full bg-foreground px-6 py-3">
-        <span className="text-[0.6rem] uppercase tracking-[0.3em] text-background">
-          {brandOf(item)}
-        </span>
-      </div>
-
-      <div className="mt-7 overflow-hidden rounded-[20px] border border-border/60">
+    <Dialog open={open} onOpenChange={setOpen}>
+      <article className="results-card catalogue-product-card">
+        <div className="results-media-frame">
+          <button
+            type="button"
+            className="results-image-button"
+            aria-label={`${viewLabel}: ${title}`}
+            onClick={(event) => showImage(event.currentTarget)}
+          >
+            <img
+              src={image}
+              alt={`${item.nameEn} — authentic packaging`}
+              width={1200}
+              height={1200}
+              loading="lazy"
+              decoding="async"
+              className="results-media"
+            />
+          </button>
+        </div>
+        <div className="results-card-caption catalogue-product-caption">
+          <p className="catalogue-product-brand">{brandOf(item)}</p>
+          <h3>{title}</h3>
+          {desc && <p className="catalogue-product-description">{desc}</p>}
+          <button
+            type="button"
+            className="results-image-link"
+            aria-label={`${viewLabel}: ${title}`}
+            onClick={(event) => showImage(event.currentTarget)}
+          >
+            {viewLabel}
+            <ArrowUpRight className="size-3.5" aria-hidden="true" />
+          </button>
+        </div>
+      </article>
+      <DialogContent
+        className="results-image-dialog"
+        onCloseAutoFocus={(event) => {
+          event.preventDefault();
+          opener.current?.focus();
+        }}
+      >
+        <DialogTitle>{title}</DialogTitle>
+        <DialogDescription>{brandOf(item)}</DialogDescription>
         <img
           src={image}
           alt={`${item.nameEn} — authentic packaging`}
-          width={1200}
-          height={1200}
-          loading="lazy"
-          decoding="async"
-          className="aspect-square w-full bg-[#f4eee6] object-contain"
+          className="results-full-image"
         />
-      </div>
-
-      <div className="mt-5 border-t border-border/70 pt-4">
-        <h3 className="text-base leading-snug">{th ? item.nameTh : item.nameEn}</h3>
-        {desc && <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{desc}</p>}
-      </div>
-    </article>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -120,6 +156,7 @@ function FillerSection({
                 key={b}
                 type="button"
                 onClick={() => setBrand(b)}
+                aria-pressed={brand === b}
                 className={`rounded-full px-5 py-2 text-[0.6rem] uppercase tracking-[0.24em] transition-colors ${
                   brand === b
                     ? "bg-foreground text-background"
@@ -130,16 +167,17 @@ function FillerSection({
               </button>
             ))}
           </div>
-          <p className="mt-3 text-[0.6rem] uppercase tracking-[0.24em] text-muted-foreground">
-            {group.items.length} {th ? "รายการ" : "items"} • {th ? "ของแท้ 100%" : "100% authentic"}
+          <p
+            className="mt-3 text-[0.6rem] uppercase tracking-[0.24em] text-muted-foreground"
+            aria-live="polite"
+          >
+            {items.length} {th ? "รายการ" : "items"} • {th ? "ของแท้ 100%" : "100% authentic"}
           </p>
         </div>
       </div>
 
-      <div
-        className={`catalogue-preset catalogue-preset--${preset} mt-10 rounded-[28px] border border-border bg-card px-6 py-10 shadow-soft sm:px-10`}
-      >
-        <div className="grid gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+      <div className={`catalogue-preset catalogue-preset--${preset} mt-10`}>
+        <div className="catalogue-product-grid">
           {items.map((item) => {
             const slug = FILLER_PRODUCTS.find((p) => p.nameEn === item.nameEn)?.slug;
             const image = (slug && photos[slug]) || fillerImageByName(item.nameEn);

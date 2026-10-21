@@ -1055,3 +1055,52 @@
   object-fit: contain;
 }
 .results-filters { flex-wrap: wrap; }
+
+/* Catalogue products share the Results gallery's charcoal and gold photo frames. */
+.catalogue-product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.75rem 1.5rem;
+}
+.catalogue-product-card {
+  display: flex;
+  flex-direction: column;
+}
+.catalogue-product-card .results-media-frame {
+  flex-shrink: 0;
+}
+.catalogue-product-caption {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  padding-inline: 0.75rem;
+}
+.catalogue-product-caption .catalogue-product-brand {
+  margin: 0 0 0.65rem;
+  color: #d4aa78;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+}
+.catalogue-product-caption h3 {
+  color: #dfc2a5;
+  font-size: 1.25rem;
+  line-height: 1.3;
+}
+.catalogue-product-caption .catalogue-product-description {
+  margin: 0.65rem 0 1rem;
+  color: #bdb4ac;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  letter-spacing: normal;
+  text-transform: none;
+}
+.catalogue-product-caption .results-image-link {
+  margin-top: auto;
+}
+@media (max-width: 1023px) {
+  .catalogue-product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 639px) {
+  .catalogue-product-grid { grid-template-columns: minmax(0, 1fr); }
+}
