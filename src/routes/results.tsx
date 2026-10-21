@@ -1,11 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { BookingDialog } from "@/components/site/BookingDialog";
-import { BEFORE_AFTER } from "@/lib/before-after";
 import { FeaturedResultsMedia, type ResultsArea } from "@/components/site/FeaturedResultsMedia";
 import { useLang } from "@/lib/i18n";
-import { localizeResult } from "@/lib/public-content";
 
 export const Route = createFileRoute("/results")({
   head: () => ({
@@ -28,17 +26,15 @@ export const Route = createFileRoute("/results")({
   component: ResultsPage,
 });
 
-const tabs: Array<{ value: ResultsArea; label: string }> = [
-  { value: "all", label: "All" },
-  { value: "face", label: "Face" },
+const tabs: Array<{ value: ResultsArea; en: string; th: string }> = [
+  { value: "all", en: "All", th: "ทั้งหมด" },
+  { value: "thread-lift", en: "Thread lift", th: "ร้อยไหม" },
+  { value: "filler", en: "Dermal filler", th: "ฟิลเลอร์" },
 ];
 
 function ResultsPage() {
   const { t, lang } = useLang();
   const [filter, setFilter] = useState<ResultsArea>("all");
-  const [hasFeatured, setHasFeatured] = useState<boolean | null>(null);
-
-  const fallbackItems = useMemo(() => BEFORE_AFTER, []);
 
   return (
     <div className="results-page">
@@ -53,6 +49,9 @@ function ResultsPage() {
           </div>
 
           <p className="results-lede">Real results. Real confidence.</p>
+          <p className="results-disclaimer">
+            {lang === "th" ? "ผลลัพธ์ขึ้นอยู่กับแต่ละบุคคล" : "Individual results vary."}
+          </p>
 
           <div className="results-filters" aria-label="Filter patient results">
             {tabs.map((tab) => (
@@ -63,7 +62,7 @@ function ResultsPage() {
                 className={filter === tab.value ? "is-active" : undefined}
                 aria-pressed={filter === tab.value}
               >
-                {tab.label}
+                {tab[lang]}
               </button>
             ))}
           </div>
@@ -72,35 +71,7 @@ function ResultsPage() {
 
       <section className="results-content">
         <div className="results-container results-container--wide">
-          <FeaturedResultsMedia filter={filter} onAvailabilityChange={setHasFeatured} />
-
-          {hasFeatured !== true && fallbackItems.length > 0 && (
-            <div className="results-gallery">
-              <div className="results-grid">
-                {fallbackItems.map((item) => {
-                  const display = localizeResult(item, lang);
-
-                  return (
-                    <figure key={item.id} className="results-card">
-                      <div className="results-media-frame">
-                        <img
-                          src={item.url}
-                          alt={display.alt}
-                          loading="lazy"
-                          className="results-media"
-                        />
-                      </div>
-
-                      <figcaption className="results-card-caption">
-                        <h2>{display.zone}</h2>
-                        <p>{display.category}</p>
-                      </figcaption>
-                    </figure>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+          <FeaturedResultsMedia filter={filter} />
         </div>
       </section>
 
