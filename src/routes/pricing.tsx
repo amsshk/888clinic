@@ -8,6 +8,7 @@ import { TREATMENT_MENU, type MenuGroup, type MenuItem } from "@/lib/treatment-m
 import { supabase } from "@/integrations/supabase/client";
 import { DEFAULT_CATALOGUE_PRESET, type CataloguePreset } from "@/lib/catalogue-design.shared";
 import { FILLER_PRODUCTS, fillerImageByName } from "@/lib/filler-products.shared";
+import { CLINIC_PRODUCTS } from "@/lib/clinic-products.shared";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -35,13 +36,25 @@ export const Route = createFileRoute("/pricing")({
 
 const BRANDS = ["Neuramis", "Restylane", "Juvederm"] as const;
 
-function brandOf(item: MenuItem): string {
+function brandOf(item: Pick<MenuItem, "nameEn">): string {
   const found = BRANDS.find((b) => item.nameEn.toLowerCase().startsWith(b.toLowerCase()));
   return found ?? "Signature";
 }
 
 /** Use the same uncropped photo frames and full-image viewer as the Results gallery. */
-function FillerCard({ item, image, th }: { item: MenuItem; image: string; th: boolean }) {
+function ProductPhotoCard({
+  item,
+  image,
+  th,
+  category = brandOf(item),
+  imageAlt,
+}: {
+  item: Pick<MenuItem, "nameEn" | "nameTh" | "descEn" | "descTh">;
+  image: string;
+  th: boolean;
+  category?: string;
+  imageAlt?: string;
+}) {
   const desc = th ? item.descTh : item.descEn;
   const title = th ? item.nameTh : item.nameEn;
   const viewLabel = th ? "ดูภาพเต็ม" : "View full image";
@@ -63,7 +76,7 @@ function FillerCard({ item, image, th }: { item: MenuItem; image: string; th: bo
           >
             <img
               src={image}
-              alt={`${item.nameEn} — authentic packaging`}
+              alt={imageAlt ?? `${item.nameEn} — authentic packaging`}
               width={1200}
               height={1200}
               loading="lazy"
@@ -73,7 +86,7 @@ function FillerCard({ item, image, th }: { item: MenuItem; image: string; th: bo
           </button>
         </div>
         <div className="results-card-caption catalogue-product-caption">
-          <p className="catalogue-product-brand">{brandOf(item)}</p>
+          <p className="catalogue-product-brand">{category}</p>
           <h3>{title}</h3>
           {desc && <p className="catalogue-product-description">{desc}</p>}
           <button
@@ -95,10 +108,10 @@ function FillerCard({ item, image, th }: { item: MenuItem; image: string; th: bo
         }}
       >
         <DialogTitle>{title}</DialogTitle>
-        <DialogDescription>{brandOf(item)}</DialogDescription>
+        <DialogDescription>{category}</DialogDescription>
         <img
           src={image}
-          alt={`${item.nameEn} — authentic packaging`}
+          alt={imageAlt ?? `${item.nameEn} — authentic packaging`}
           className="results-full-image"
         />
       </DialogContent>
@@ -182,7 +195,7 @@ function FillerSection({
             const slug = FILLER_PRODUCTS.find((p) => p.nameEn === item.nameEn)?.slug;
             const image = (slug && photos[slug]) || fillerImageByName(item.nameEn);
             return image ? (
-              <FillerCard key={item.nameEn} item={item} image={image} th={th} />
+              <ProductPhotoCard key={item.nameEn} item={item} image={image} th={th} />
             ) : null;
           })}
         </div>
@@ -191,6 +204,41 @@ function FillerSection({
             ? "ฟิลเลอร์ของแท้ • แกะกล่องใหม่ต่อหน้า • ฉีดโดยแพทย์เท่านั้น"
             : "Authentic filler • box opened in front of you • doctor-injected only"}
         </p>
+      </div>
+    </section>
+  );
+}
+
+function ClinicProductsSection({ th }: { th: boolean }) {
+  return (
+    <section
+      id="clinic-products"
+      className="mt-14 scroll-mt-24 border-t border-border pt-12"
+      aria-labelledby="clinic-products-heading"
+    >
+      <p className="eyebrow">888 Clinic</p>
+      <h2 id="clinic-products-heading" className="mt-4 font-serif text-4xl sm:text-5xl">
+        {th ? "ผลิตภัณฑ์ของคลินิก" : "Clinic collection"}
+      </h2>
+      <div className="catalogue-product-grid mt-8">
+        {CLINIC_PRODUCTS.map((product) => (
+          <ProductPhotoCard
+            key={product.id}
+            item={{ nameEn: product.name, nameTh: product.name }}
+            image={product.image}
+            imageAlt={product.name}
+            th={th}
+            category={
+              product.category === "filler"
+                ? th
+                  ? "ฟิลเลอร์ · 1 ซีซี"
+                  : "Filler · 1 cc"
+                : th
+                  ? "ผลิตภัณฑ์ของคลินิก"
+                  : "Clinic collection"
+            }
+          />
+        ))}
       </div>
     </section>
   );
@@ -366,6 +414,8 @@ function Catalogue() {
 
         <div className="py-14">
           {filler && <FillerSection group={filler} th={th} preset={preset} photos={fillerPhotos} />}
+
+          <ClinicProductsSection th={th} />
 
           <div className="mt-14 grid gap-px border border-border bg-border md:grid-cols-2">
             {rest.map((group) => (
