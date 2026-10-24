@@ -34,7 +34,7 @@ export function VideoEnhancePanel() {
   const [ticket, setTicket] = useState<{ base: string; token: string; expiresAt: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [progress, setProgress] = useState<number | null>(null);
+  const [progress, setProgress] = useState<{ file: number; files: number; pct: number } | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const ensureTicket = useCallback(async () => {
@@ -82,35 +82,47 @@ export function VideoEnhancePanel() {
     return () => clearInterval(id);
   }, [busy, loadJobs]);
 
-  async function upload(file: File | undefined) {
-    if (!file) return;
+  /** One file: resolves true when the server accepted it. */
+  function sendOne(t: { base: string; token: string }, file: File, index: number, total: number) {
+    const form = new FormData();
+    form.append("file", file);
+    return new Promise<boolean>((resolve) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", `${t.base}/api/video/upload`);
+      xhr.setRequestHeader("Authorization", `Bearer ${t.token}`);
+      xhr.upload.onprogress = (e) =>
+        e.lengthComputable && setProgress({ file: index, files: total, pct: Math.round((e.loaded / e.total) * 100) });
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) return resolve(true);
+        toast.error(xhr.status === 413 ? `${file.name}: too large (max 1.5 GB)` : `${file.name}: upload failed (${xhr.status})`);
+        resolve(false);
+      };
+      xhr.onerror = () => {
+        toast.error(`${file.name}: could not connect to ${t.base}`);
+        resolve(false);
+      };
+      xhr.send(form);
+    });
+  }
+
+  /** Several files at once: uploaded one after another, enhanced in order on the server. */
+  async function upload(list: FileList | null) {
+    const files = Array.from(list ?? []);
+    if (!files.length) return;
     const t = await ensureTicket();
     if (!t) {
       toast.error("Upload not started — see the message in the panel.");
       return;
     }
-    const form = new FormData();
-    form.append("file", file);
-    setProgress(0);
-    await new Promise<void>((resolve) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open("POST", `${t.base}/api/video/upload`);
-      xhr.setRequestHeader("Authorization", `Bearer ${t.token}`);
-      xhr.upload.onprogress = (e) => e.lengthComputable && setProgress(Math.round((e.loaded / e.total) * 100));
-      xhr.onload = () => {
-        if (xhr.status >= 200 && xhr.status < 300) toast.success("Uploaded · กำลังปรับวิดีโอ");
-        else if (xhr.status === 413) toast.error("File too large (max 1.5 GB)");
-        else toast.error(`Upload failed (${xhr.status})`);
-        resolve();
-      };
-      xhr.onerror = () => {
-        toast.error(`Could not connect to ${t.base}. Check the connection and try again.`);
-        resolve();
-      };
-      xhr.send(form);
-    });
+    let ok = 0;
+    for (const [i, file] of files.entries()) {
+      setProgress({ file: i + 1, files: files.length, pct: 0 });
+      if (await sendOne(t, file, i + 1, files.length)) ok += 1;
+      loadJobs();
+    }
     setProgress(null);
     if (fileRef.current) fileRef.current.value = "";
+    if (ok) toast.success(`${ok} video${ok > 1 ? "s" : ""} uploaded · กำลังปรับวิดีโอ`);
     loadJobs();
   }
 
@@ -122,7 +134,7 @@ export function VideoEnhancePanel() {
       </div>
       <p className="mt-2 text-sm text-muted-foreground">
         อัปโหลดไฟล์ต้นฉบับ (ไม่ใช่ไฟล์ที่ส่งผ่าน LINE) ได้กลับมาเป็น 1080×1920 คุณภาพสูง พร้อมโพสต์ Facebook ·
-        Upload the original file; it comes back Facebook-ready in a few minutes. Files are kept 7 days.
+        Upload the original files (you can pick several); each comes back Facebook-ready. Files are kept 7 days.
       </p>
 
       {error ? (
@@ -147,12 +159,15 @@ export function VideoEnhancePanel() {
             ref={fileRef}
             type="file"
             accept="video/*"
+            multiple
             className="hidden"
-            onChange={(e) => upload(e.target.files?.[0])}
+            onChange={(e) => upload(e.target.files)}
           />
           <Button className="rounded-none" disabled={progress !== null} onClick={() => fileRef.current?.click()}>
             {progress !== null ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}
-            {progress !== null ? `กำลังอัปโหลด ${progress}% · keep this page open` : "อัปโหลดวิดีโอ · Upload video"}
+            {progress !== null
+              ? `กำลังอัปโหลด ${progress.file}/${progress.files} · ${progress.pct}% · keep this page open`
+              : "อัปโหลดวิดีโอ (เลือกได้หลายไฟล์) · Upload videos"}
           </Button>
         </div>
       )}
