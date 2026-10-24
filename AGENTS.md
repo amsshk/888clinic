@@ -1,10 +1,5 @@
-<!-- LOVABLE:BEGIN -->
-> [!IMPORTANT]
-> This project is connected to [Lovable](https://lovable.dev). Avoid rewriting
-> published git history — force pushing, or rebasing/amending/squashing commits
-> that are already pushed — as it rewrites history on Lovable's side and the
-> user will likely lose their project history.
->
-> Commits you push to the connected branch sync back to Lovable and show up in
-> the editor, so keep the branch in a working state.
-<!-- LOVABLE:END -->
+# Notes for coding agents
+
+- Production deploys from `main`; keep it buildable. Work on a branch and open a pull request.
+- Do not rewrite published history (no force pushes to `main`).
+- Server secrets never get a `VITE_` prefix.

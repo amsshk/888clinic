@@ -82,7 +82,7 @@ export const suggestCopy = createServerFn({ method: "POST" })
     await assertAdmin(context);
     if (!data.items.length) return { ok: false as const, error: "Nothing selected to rewrite" };
 
-    const apiKey = process.env["LOVABLE_API_KEY"] ?? "";
+    const apiKey = "";
 
     const instruction = [
       "You are the Thai copywriter for 888clinic, a modern dermatology and aesthetic clinic in Bangkok.",

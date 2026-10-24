@@ -8,7 +8,7 @@ imbalance, light augmentation. Emits:
   runs/<tag>/mali.onnx        exported model for the inference service
   runs/<tag>/predictions.csv  600-row submission scored by get_results.py
 
-Requires a GPU host. This does NOT run in the Lovable sandbox or the app runtime.
+Requires a GPU host. This does NOT run in the app runtime.
 
     python -m venv .venv && source .venv/bin/activate
     pip install torch torchvision pandas onnx

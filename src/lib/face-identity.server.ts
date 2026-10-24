@@ -7,7 +7,12 @@
  * always honoured, so genuine returning patients are never blocked.
  */
 
-const EMBEDDING_MODEL = "google/gemini-embedding-2";
+/**
+ * Google Gemini embedding model, called directly with GEMINI_API_KEY.
+ * Stored fingerprints are vector(3072), so the output size is fixed to match.
+ */
+const EMBEDDING_MODEL = process.env["FACE_EMBEDDING_MODEL"] ?? "gemini-embedding-2";
+const EMBEDDING_DIMENSIONS = 3072;
 
 /** Cosine similarity above which two photos are treated as the same person. */
 const MATCH_THRESHOLD = 0.9;
@@ -15,27 +20,37 @@ const MATCH_THRESHOLD = 0.9;
 export const DUPLICATE_FACE_MESSAGE =
   "This face is already registered with another 888clinic account. Free scans are one per person — please sign in to your original account, or subscribe on this one to continue.";
 
-export async function embedFace(apiKey: string, dataUrl: string): Promise<number[] | null> {
+/** Returns null when the key is missing or the service fails: the check then never blocks anyone. */
+export async function embedFace(_apiKey: string, dataUrl: string): Promise<number[] | null> {
+  const key = process.env["GEMINI_API_KEY"];
+  if (!key) {
+    console.warn("[face-identity] GEMINI_API_KEY is not configured; duplicate-face check skipped");
+    return null;
+  }
+  const match = /^data:([^;]+);base64,(.+)$/.exec(dataUrl);
+  if (!match) return null;
   try {
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/embeddings", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-        "Lovable-API-Key": apiKey,
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${EMBEDDING_MODEL}:embedContent`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+        body: JSON.stringify({
+          content: { parts: [{ inline_data: { mime_type: match[1], data: match[2] } }] },
+          outputDimensionality: EMBEDDING_DIMENSIONS,
+        }),
       },
-      body: JSON.stringify({
-        model: EMBEDDING_MODEL,
-        input: [{ content: [{ type: "image_url", image_url: { url: dataUrl } }] }],
-      }),
-    });
+    );
     if (!res.ok) {
       console.error("[face-identity] embedding failed", res.status, (await res.text()).slice(0, 300));
       return null;
     }
-    const json = (await res.json()) as { data?: Array<{ embedding?: number[] }> };
-    const vector = json.data?.[0]?.embedding;
-    return Array.isArray(vector) && vector.length ? vector : null;
+    const json = (await res.json()) as {
+      embedding?: { values?: number[] };
+      embeddings?: Array<{ values?: number[] }>;
+    };
+    const vector = json.embedding?.values ?? json.embeddings?.[0]?.values;
+    return Array.isArray(vector) && vector.length === EMBEDDING_DIMENSIONS ? vector : null;
   } catch (error) {
     console.error("[face-identity] embedding error", error);
     return null;

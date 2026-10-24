@@ -35,11 +35,10 @@ export const describeMedia = createServerFn({ method: "POST" })
       const { data: isStaff } = await supabase.rpc("is_staff", { _user_id: userId });
       if (!isStaff) return { ok: false, error: "You don't have access to the media library." };
 
-      const lovableApiKey = process.env["LOVABLE_API_KEY"];
       const { openaiKey } = await import("@/lib/openai.server");
       const hasOpenAI = Boolean(openaiKey());
 
-      if (!lovableApiKey && !hasOpenAI) {
+      if (!hasOpenAI) {
         return {
           ok: false,
           error: "Media uploaded. Add the title and description manually.",
@@ -47,8 +46,7 @@ export const describeMedia = createServerFn({ method: "POST" })
       }
 
       // OpenAI receives a representative JPEG frame extracted in the browser.
-      // Lovable can still receive the original video when configured.
-      if (data.kind === "video" && !lovableApiKey && !data.previewDataUrl) {
+      if (data.kind === "video" && !data.previewDataUrl) {
         return {
           ok: false,
           error: "Could not prepare a video preview. Add the details manually.",
@@ -113,7 +111,7 @@ export const describeMedia = createServerFn({ method: "POST" })
       const { callGateway, CHAT_MODEL } = await import("@/lib/ai-gateway.server");
 
       const call = await callGateway(
-        lovableApiKey ?? "",
+        "",
         {
           model: CHAT_MODEL,
           response_format: { type: "json_object" },

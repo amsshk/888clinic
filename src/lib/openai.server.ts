@@ -1,11 +1,9 @@
 /**
  * Direct OpenAI platform provider — server only.
  *
- * The clinic pays for its own OpenAI account, so every text/vision and image
- * pass goes here first. If `OPENAI_API_KEY` is absent (or the request needs a
- * capability OpenAI does not offer, e.g. video understanding or image
- * embeddings), `ai-gateway.server.ts` falls back to the Lovable AI Gateway so
- * patients are never turned away.
+ * The clinic pays for its own OpenAI account; every text/vision and image pass
+ * goes here. Video understanding is not offered by OpenAI chat/completions, so
+ * callers send a representative still frame instead.
  *
  * Models can be overridden per deployment with OPENAI_CHAT_MODEL /
  * OPENAI_IMAGE_MODEL secrets.
@@ -49,7 +47,7 @@ export function wantsImage(body: Record<string, unknown>): boolean {
   return Array.isArray(modalities) && modalities.includes("image");
 }
 
-/** OpenAI has no video understanding on chat/completions — those stay on Lovable. */
+/** OpenAI has no video understanding on chat/completions. */
 export function hasVideoPart(body: Record<string, unknown>): boolean {
   const messages = (body["messages"] as Message[] | undefined) ?? [];
 

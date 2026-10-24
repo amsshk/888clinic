@@ -70,7 +70,7 @@ export async function createAdCopy(
 
   const { callGateway, parseJsonContent, CHAT_MODEL } = await import("@/lib/ai-gateway.server");
   const call = await callGateway(
-    process.env["LOVABLE_API_KEY"] ?? "",
+    "",
     {
       model: CHAT_MODEL,
       response_format: { type: "json_object" },
