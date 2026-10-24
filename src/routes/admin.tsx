@@ -149,7 +149,7 @@ function AdminPage() {
             Captions
           </TabsTrigger>
           <TabsTrigger value="video-check" className="rounded-none">
-            Video check
+            Video
           </TabsTrigger>
           {isAdmin && (
             <TabsTrigger value="line" className="rounded-none">

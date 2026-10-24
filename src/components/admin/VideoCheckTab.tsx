@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FileVideo, Loader2 } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { VideoEnhancePanel } from "@/components/admin/VideoEnhancePanel";
 
 /**
  * Video check — runs entirely in the browser, nothing is uploaded.
@@ -83,6 +84,7 @@ export function VideoCheckTab() {
 
   return (
     <div className="space-y-8">
+      <VideoEnhancePanel />
       <section className="border border-border/70 bg-card p-6">
         <div className="flex items-center gap-2">
           <FileVideo className="size-5 text-gold" />
