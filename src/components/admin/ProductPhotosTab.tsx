@@ -4,7 +4,7 @@ import { ImageOff, Loader2, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { listCatalogAdmin } from "@/lib/catalog-admin.functions";
+import { listCatalogForPhotos } from "@/lib/catalog-admin.functions";
 import { FILLER_PRODUCTS } from "@/lib/filler-products.shared";
 import type {
   CatalogProductImageRow,
@@ -27,7 +27,7 @@ async function signedUrl(path: string | null): Promise<string | null> {
 }
 
 export function ProductPhotosTab() {
-  const loadSkincare = useServerFn(listCatalogAdmin);
+  const loadSkincare = useServerFn(listCatalogForPhotos);
   const [rows, setRows] = useState<Row[]>([]);
   const [images, setImages] = useState<Record<string, CatalogProductImageRow>>({});
   const [thumbnails, setThumbnails] = useState<Record<string, string>>({});

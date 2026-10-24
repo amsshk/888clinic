@@ -20,7 +20,6 @@ import { BillingTab } from "@/components/admin/BillingTab";
 import { PricingTab } from "@/components/admin/PricingTab";
 import { ProductPhotosTab } from "@/components/admin/ProductPhotosTab";
 import { StudioTab } from "@/components/admin/StudioTab";
-import { VideoUploader } from "@/components/VideoUploader";
 
 import { RESULT_CATEGORIES } from "@/lib/before-after";
 
@@ -191,22 +190,12 @@ function AdminPage() {
               <MediaLibrary />
             </div>
           </section>
-          {isAdmin && (
-            <section>
-              <h2 className="font-serif text-2xl">Video upload</h2>
-              <div className="mt-4">
-                <VideoUploader />
-              </div>
-            </section>
-          )}
-          {isAdmin && (
-            <section>
-              <h2 className="font-serif text-2xl">Product photos</h2>
-              <div className="mt-4">
-                <ProductPhotosTab />
-              </div>
-            </section>
-          )}
+          <section>
+            <h2 className="font-serif text-2xl">Product photos</h2>
+            <div className="mt-4">
+              <ProductPhotosTab />
+            </div>
+          </section>
         </TabsContent>
         <TabsContent value="studio" className="mt-8">
           <StudioTab isAdmin={isAdmin} />

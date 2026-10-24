@@ -37,6 +37,15 @@ export const listCatalogAdmin = createServerFn({ method: "POST" })
     return { ok: true, items: await loadAll() };
   });
 
+/** Read-only product list for the Product photos screen: any staff member. */
+export const listCatalogForPhotos = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<CatalogAdminResult> => {
+    const { data: isStaff } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
+    if (!isStaff) return { ok: false, error: "Staff only." };
+    return { ok: true, items: await loadAll() };
+  });
+
 export const saveCatalogItem = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => saveCatalogSchema.parse(data))
