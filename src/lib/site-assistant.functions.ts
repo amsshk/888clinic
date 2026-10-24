@@ -6,8 +6,7 @@
  * assistant carries it out through a small set of safe, reversible tools:
  * wording overrides (English + Thai) and skincare/scan-pack availability.
  *
- * It runs on the clinic's own OpenAI account (falling back to the Lovable
- * gateway only when OPENAI_API_KEY is missing), and it can never touch code,
+ * It runs on the clinic's own OpenAI account, and it can never touch code,
  * patients, orders or payments — only the data-driven parts of the site.
  */
 
@@ -360,7 +359,7 @@ export const askSiteAssistant = createServerFn({ method: "POST" })
       { role: "user", content: data.message },
     ];
 
-    const apiKey = process.env["LOVABLE_API_KEY"] ?? "";
+    const apiKey = "";
 
     for (let step = 0; step < MAX_STEPS; step += 1) {
       const call = await callGateway(

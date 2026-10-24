@@ -90,7 +90,7 @@ export const predictAestheticResult = createServerFn({ method: "POST" })
       return { ok: false as const, error: "That photo does not belong to your account." };
     }
 
-    const apiKey = process.env["LOVABLE_API_KEY"];
+    const apiKey = process.env["OPENAI_API_KEY"];
     if (!apiKey) return { ok: false as const, error: "AI is not configured yet." };
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

@@ -113,7 +113,7 @@ export const analyzeSkinScan = createServerFn({ method: "POST" })
       return { ok: false as const, error: data.lang === "th" ? "รูปนี้ไม่ได้อยู่ในบัญชีของคุณค่ะ" : "That image does not belong to your account." };
     }
 
-    const apiKey = process.env["LOVABLE_API_KEY"];
+    const apiKey = process.env["OPENAI_API_KEY"];
     if (!apiKey) return { ok: false as const, error: data.lang === "th" ? "ระบบ AI ยังไม่พร้อมใช้งานค่ะ" : "AI is not configured yet." };
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

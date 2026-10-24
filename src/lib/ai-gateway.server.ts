@@ -1,5 +1,5 @@
 /**
- * Single entry point for every Lovable AI Gateway call the clinic makes.
+ * Single entry point for every AI call the clinic makes (the clinic's own OpenAI account).
  *
  * Why this exists: the scan and the before/after preview are the two things a
  * patient pays for, so a transient hiccup must never look like a broken tool.
@@ -16,7 +16,6 @@ export const IMAGE_MODEL = "google/gemini-3.1-flash-image";
  */
 export const PREVIEW_IMAGE_MODEL = "google/gemini-3-pro-image";
 
-const ENDPOINT = "https://ai.gateway.lovable.dev/v1/chat/completions";
 const MAX_ATTEMPTS = 3;
 
 export type GatewayResult<T> = { ok: true; data: T } | { ok: false; error: string; status: number };
@@ -35,80 +34,37 @@ async function sleep(ms: number) {
 }
 
 /**
- * POST a chat/completions body to the gateway. No artificial timeout: image and
- * reasoning passes legitimately take a while and the waiting UI covers it.
+ * Send a chat/completions body to the clinic's OpenAI account. Image requests go to
+ * OpenAI's image edit endpoint. No artificial timeout: image and reasoning passes
+ * legitimately take a while and the waiting UI covers it.
+ *
+ * `_apiKey` is kept for call-site compatibility and is not used.
  */
 export async function callGateway(
-  apiKey: string,
+  _apiKey: string,
   body: Record<string, unknown>,
   label: string,
 ): Promise<GatewayResult<Record<string, unknown>>> {
-  let lastStatus = 500;
-
   const { openaiKey, openaiChat, openaiImageEdit, wantsImage, hasVideoPart } =
     await import("@/lib/openai.server");
-  // `mask` is an OpenAI-only edit field; the Lovable gateway body must not carry it.
-  const { mask: _mask, ...gatewayBody } = body;
-  // The clinic's own OpenAI account is the primary provider; video understanding
-  // is the one capability it cannot serve, so that stays on the Lovable gateway.
-  const useOpenai = Boolean(openaiKey()) && !hasVideoPart(body);
-  const openaiImage = useOpenai && wantsImage(body);
-
-  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
-    let response: Response;
-
-    if (useOpenai) {
-      const result = openaiImage
-        ? await openaiImageEdit(body, label)
-        : await openaiChat(body, label);
-      if (result.ok) return { ok: true, data: result.data };
-
-      lastStatus = result.status;
-      const retryable = result.status === 429 || result.status >= 500;
-      if (!retryable || attempt === MAX_ATTEMPTS) break;
-      await sleep(attempt * 1500);
-      continue;
-    }
-
-    try {
-      response = await fetch(ENDPOINT, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Lovable-API-Key": apiKey,
-        },
-        body: JSON.stringify(gatewayBody),
-      });
-    } catch (error) {
-      console.error(`[${label}] gateway unreachable`, error);
-      lastStatus = 503;
-      if (attempt < MAX_ATTEMPTS) {
-        await sleep(attempt * 1500);
-        continue;
-      }
-      return { ok: false, status: lastStatus, error: patientMessage(lastStatus) };
-    }
-
-    if (response.ok) {
-      const payload = (await response.json().catch(() => null)) as Record<string, unknown> | null;
-      if (!payload) {
-        return { ok: false, status: 502, error: patientMessage(502) };
-      }
-      return { ok: true, data: payload };
-    }
-
-    lastStatus = response.status;
-    const detail = await response.text().catch(() => "");
-    console.error(`[${label}] gateway ${response.status}`, detail.slice(0, 400));
-
-    // Only 429 and 5xx are worth another attempt; the rest repeat identically.
-    const retryable = response.status === 429 || response.status >= 500;
-    if (!retryable || attempt === MAX_ATTEMPTS) break;
-
-    const retryAfter = Number(response.headers.get("retry-after") ?? 0);
-    await sleep(retryAfter > 0 ? Math.min(retryAfter, 10) * 1000 : attempt * 1500);
+  if (!openaiKey()) {
+    console.error(`[${label}] OPENAI_API_KEY is not configured`);
+    return { ok: false, status: 503, error: patientMessage(503) };
   }
-
+  if (hasVideoPart(body)) {
+    // OpenAI chat cannot read video; callers send a still frame instead.
+    return { ok: false, status: 400, error: "Video analysis is not available. Use a photo or a still frame." };
+  }
+  const image = wantsImage(body);
+  let lastStatus = 500;
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
+    const result = image ? await openaiImageEdit(body, label) : await openaiChat(body, label);
+    if (result.ok) return { ok: true, data: result.data };
+    lastStatus = result.status;
+    const retryable = result.status === 429 || result.status >= 500;
+    if (!retryable || attempt === MAX_ATTEMPTS) break;
+    await sleep(attempt * 1500);
+  }
   return { ok: false, status: lastStatus, error: patientMessage(lastStatus) };
 }
 

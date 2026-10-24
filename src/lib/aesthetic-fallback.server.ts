@@ -4,7 +4,7 @@
  * The clinic's own MALI service produces the preferred render. When that service
  * is not connected (or is down), we still owe the patient a result — otherwise
  * the tool looks broken to anyone arriving from an advert. This path asks the
- * Lovable AI image model to edit the patient's photo using the SAME dosimetry
+ * clinic's OpenAI image model to edit the patient's photo using the SAME dosimetry
  * strengths our engine would apply, and labels the result as an AI simulation so
  * the UI never passes it off as a MALI render.
  */
@@ -75,7 +75,7 @@ export async function renderAiFallbackPreview(input: {
     {
       model: PREVIEW_IMAGE_MODEL,
       modalities: ["image", "text"],
-      // OpenAI-only field: the zone mask. Stripped before the Lovable gateway call.
+      // The zone mask limits the edit to the treated areas.
       ...(input.maskDataUrl ? { mask: input.maskDataUrl } : {}),
       messages: [
         {

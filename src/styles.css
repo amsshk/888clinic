@@ -965,23 +965,6 @@
   }
 }
 
-:where(
-    #lovable-badge,
-    .lovable-badge,
-    [data-lovable-badge],
-    [data-lovable-widget],
-    [data-gptengineer-badge],
-    [data-lovable-floating-widget],
-    [data-lovable-assistant],
-    iframe[src*="gptengineer.app"],
-    iframe[src*="gpt-eng.com"],
-    iframe[src*="lovable"],
-    iframe[title*="Lovable"]
-  ) {
-  display: none !important;
-}
-
-
 /* Keep the sticky navigation within its own row and contain scrolling grids. */
 .site-header {
   flex: none;

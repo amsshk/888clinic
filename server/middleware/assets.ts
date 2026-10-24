@@ -1,5 +1,5 @@
-// Middleware to serve before-after assets that were previously on Lovable's CDN
-// Maps old Lovable paths to local assets
+// Serves before/after images whose old CDN links (/__l5e/assets-v1/…) may still
+// be saved in content, by mapping them to the local copies.
 
 const ASSET_MAP: Record<string, string> = {
   "10078c34-03fe-47bd-b402-f5455cd4d52d/ba-07398f9c-DxADmaDZ.jpg": "ba-07398f9c-DxADmaDZ.jpg",
@@ -38,10 +38,10 @@ const ASSET_MAP: Record<string, string> = {
 export default defineEventHandler(async (event) => {
   const url = getHeader(event, "url") || event.node.req.url || "";
 
-  // Match Lovable CDN pattern: /__l5e/assets-v1/UUID/FILENAME
+  // Old CDN pattern: /__l5e/assets-v1/UUID/FILENAME
   const match = url.match(/^\/__l5e\/assets-v1\/([^/]+\/[^/]+)$/);
   if (!match) {
-    return; // Not a lovable asset, continue to next handler
+    return; // Not an old asset link, continue to next handler
   }
 
   const assetKey = match[1];

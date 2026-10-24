@@ -462,7 +462,7 @@ export async function createMedicalVideoDraft(
     "Each scene should have 1 short narration segment and 1 CGI prompt with Thai or Asian facial anatomy where relevant, clean clinical lighting, premium white/grey/gold 888clinic brand direction, and safe caption space.",
   ].join(" ");
   const call = await callGateway(
-    process.env["LOVABLE_API_KEY"] ?? "",
+    "",
     {
       model: CHAT_MODEL,
       response_format: { type: "json_object" },

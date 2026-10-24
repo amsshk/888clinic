@@ -13,7 +13,7 @@ export function getStripeEnvironment(): StripeEnv {
   if (clientToken?.startsWith("pk_test_")) return "sandbox";
   if (clientToken?.startsWith("pk_live_")) return "live";
   throw new Error(
-    "Payments are not configured for this build. Complete payments go-live in your Lovable project to accept real payments.",
+    "Payments are not configured for this build. Set VITE_PAYMENTS_CLIENT_TOKEN to the clinic's Stripe publishable key (pk_live_… or pk_test_…).",
   );
 }
 

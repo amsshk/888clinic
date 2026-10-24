@@ -31,7 +31,7 @@ async function assertStaff(context: { supabase: any; userId: string }) {
 async function askJson(instruction: string, label: string) {
   const { callGateway, parseJsonContent, CHAT_MODEL } = await import("@/lib/ai-gateway.server");
   const call = await callGateway(
-    process.env["LOVABLE_API_KEY"] ?? "",
+    "",
     {
       model: CHAT_MODEL,
       response_format: { type: "json_object" },

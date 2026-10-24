@@ -4,22 +4,14 @@ export function PaymentTestModeBanner() {
   if (!clientToken) {
     return (
       <div className="w-full bg-red-100 border-b border-red-300 px-4 py-2 text-center text-sm text-red-800">
-        Production checkout is not configured. Complete payments go-live in your Lovable project to accept real payments.
+        Checkout is not configured yet. Online payments are unavailable — please book or pay at the clinic.
       </div>
     );
   }
   if (clientToken.startsWith("pk_test_")) {
     return (
       <div className="w-full bg-amber-50 border-b border-gold/30 px-4 py-2 text-center text-sm text-gold-deep">
-        All payments made in the preview are in test mode.{" "}
-        <a
-          href="https://docs.lovable.dev/features/payments#test-and-live-environments"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline font-medium"
-        >
-          Read more
-        </a>
+        Payments are in test mode — no real money is charged.
       </div>
     );
   }

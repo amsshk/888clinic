@@ -6,7 +6,6 @@ dist/
 .git/
 .github/
 .vscode/
-.lovable/
 *.log
 .DS_Store
 *.swp

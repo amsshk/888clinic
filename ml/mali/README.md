@@ -79,8 +79,8 @@ Fill in `serve/MODEL_CARD_TEMPLATE.md` for every exported model.
 
 ## How this relates to the live app
 
-The patient-facing scanner at `/skin-ai` runs vision AI through the Lovable AI
-Gateway. The app is already wired to consume this model as a **second opinion**:
+The patient-facing scanner at `/skin-ai` runs vision AI on the clinic's OpenAI
+account. The app is already wired to consume this model as a **second opinion**:
 
 - `src/lib/mali-inference.server.ts` calls the endpoint when the project secrets
   `MALI_API_URL` and `MALI_API_KEY` are set, and silently skips it otherwise.
