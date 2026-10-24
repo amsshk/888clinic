@@ -18,12 +18,10 @@ import { MaliModelTab } from "@/components/admin/MaliModelTab";
 import { ScanTestTab } from "@/components/admin/ScanTestTab";
 import { BillingTab } from "@/components/admin/BillingTab";
 import { PricingTab } from "@/components/admin/PricingTab";
-import { CatalogueDesignPanel } from "@/components/admin/CatalogueDesignPanel";
 import { ProductPhotosTab } from "@/components/admin/ProductPhotosTab";
-import { MarketingTab } from "@/components/admin/MarketingTab";
-import { TeamPromotionsTab } from "@/components/admin/TeamPromotionsTab";
-import { CopyTab } from "@/components/admin/CopyTab";
-import { AssistantTab } from "@/components/admin/AssistantTab";
+import { CaptionsTab } from "@/components/admin/CaptionsTab";
+import { LineBroadcastTab } from "@/components/admin/LineBroadcastTab";
+import { VideoCheckTab } from "@/components/admin/VideoCheckTab";
 import { VideoUploader } from "@/components/VideoUploader";
 
 import { RESULT_CATEGORIES } from "@/lib/before-after";
@@ -78,7 +76,6 @@ type MediaItem = {
 function AdminPage() {
   const { user, isStaff, isAdmin, loading, signOut } = useAuth();
   const navigate = useNavigate();
-  const [canUseEzWar, setCanUseEzWar] = useState(false);
   const [activeTab, setActiveTab] = useState("inbox");
 
   useEffect(() => {
@@ -86,11 +83,7 @@ function AdminPage() {
   }, [loading, user, navigate]);
 
   useEffect(() => {
-    setCanUseEzWar(isAdmin);
-  }, [isAdmin]);
-
-  useEffect(() => {
-    if (!isAdmin && activeTab === "patients") setActiveTab("inbox");
+    if (!isAdmin && (activeTab === "patients" || activeTab === "line")) setActiveTab("inbox");
   }, [isAdmin, activeTab]);
 
   if (loading) {
@@ -149,12 +142,20 @@ function AdminPage() {
             Media library
           </TabsTrigger>
           <TabsTrigger
-            value="team-promotions"
+            value="captions"
             className="rounded-none border-gold/60 text-gold data-[state=active]:bg-gold data-[state=active]:text-foreground"
           >
             <Megaphone className="size-4" />
-            Marketing team
+            Captions
           </TabsTrigger>
+          <TabsTrigger value="video-check" className="rounded-none">
+            Video check
+          </TabsTrigger>
+          {isAdmin && (
+            <TabsTrigger value="line" className="rounded-none">
+              LINE broadcast
+            </TabsTrigger>
+          )}
           {isAdmin && (
             <TabsTrigger value="video-upload" className="rounded-none">
               Video Upload
@@ -183,34 +184,14 @@ function AdminPage() {
               Billing
             </TabsTrigger>
           )}
-          {canUseEzWar && (
-            <TabsTrigger value="marketing" className="rounded-none">
-              AI promotions
-            </TabsTrigger>
-          )}
           {isAdmin && (
             <TabsTrigger value="pricing" className="rounded-none">
               Plans &amp; pricing
             </TabsTrigger>
           )}
           {isAdmin && (
-            <TabsTrigger value="backgrounds" className="rounded-none">
-              Product card style
-            </TabsTrigger>
-          )}
-          {isAdmin && (
             <TabsTrigger value="photos" className="rounded-none">
               Product photos
-            </TabsTrigger>
-          )}
-          {isAdmin && (
-            <TabsTrigger value="copy" className="rounded-none">
-              Wording &amp; Thai
-            </TabsTrigger>
-          )}
-          {isAdmin && (
-            <TabsTrigger value="assistant" className="rounded-none">
-              AI admin
             </TabsTrigger>
           )}
         </TabsList>
@@ -226,9 +207,17 @@ function AdminPage() {
         <TabsContent value="media" className="mt-8">
           <MediaLibrary />
         </TabsContent>
-        <TabsContent value="team-promotions" className="mt-8">
-          <TeamPromotionsTab onOpenMediaLibrary={() => setActiveTab("media")} />
+        <TabsContent value="captions" className="mt-8">
+          <CaptionsTab />
         </TabsContent>
+        <TabsContent value="video-check" className="mt-8">
+          <VideoCheckTab />
+        </TabsContent>
+        {isAdmin && (
+          <TabsContent value="line" className="mt-8">
+            <LineBroadcastTab />
+          </TabsContent>
+        )}
         {isAdmin && (
           <TabsContent value="video-upload" className="mt-8">
             <VideoUploader />
@@ -257,34 +246,14 @@ function AdminPage() {
             <BillingTab />
           </TabsContent>
         )}
-        {canUseEzWar && (
-          <TabsContent value="marketing" className="mt-8">
-            <MarketingTab />
-          </TabsContent>
-        )}
         {isAdmin && (
           <TabsContent value="pricing" className="mt-8">
             <PricingTab />
           </TabsContent>
         )}
         {isAdmin && (
-          <TabsContent value="backgrounds" className="mt-8">
-            <CatalogueDesignPanel />
-          </TabsContent>
-        )}
-        {isAdmin && (
           <TabsContent value="photos" className="mt-8">
             <ProductPhotosTab />
-          </TabsContent>
-        )}
-        {isAdmin && (
-          <TabsContent value="copy" className="mt-8">
-            <CopyTab />
-          </TabsContent>
-        )}
-        {isAdmin && (
-          <TabsContent value="assistant" className="mt-8">
-            <AssistantTab />
           </TabsContent>
         )}
       </Tabs>
