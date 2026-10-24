@@ -139,15 +139,6 @@ export function LineBroadcastTab() {
         )}
       </section>
 
-      <section className="border border-border/70 bg-card p-6 text-sm text-muted-foreground">
-        <h3 className="font-serif text-lg text-foreground">Facebook Messenger</h3>
-        <p className="mt-2">
-          Meta only allows mass messages to people who agreed to receive marketing messages, and blasting everyone
-          can get the Page restricted. The safe Facebook version is the <b>888 RETARGET</b> campaign: a paid
-          message to everyone who chatted in the last 30 days (see the ProEngines dashboard, Budget plan →
-          Audiences).
-        </p>
-      </section>
     </div>
   );
 }
