@@ -136,8 +136,8 @@ function AdminPage() {
           <TabsTrigger value="inbox" className="rounded-none">
             Enquiry inbox
           </TabsTrigger>
-          <TabsTrigger value="media" className="rounded-none">
-            Media library
+          <TabsTrigger value="website" className="rounded-none">
+            Website
           </TabsTrigger>
           <TabsTrigger
             value="studio"
@@ -146,11 +146,6 @@ function AdminPage() {
             <Megaphone className="size-4" />
             Studio
           </TabsTrigger>
-          {isAdmin && (
-            <TabsTrigger value="video-upload" className="rounded-none">
-              Video Upload
-            </TabsTrigger>
-          )}
           <TabsTrigger value="orders" className="rounded-none">
             Skincare orders
           </TabsTrigger>
@@ -179,11 +174,6 @@ function AdminPage() {
               Plans &amp; pricing
             </TabsTrigger>
           )}
-          {isAdmin && (
-            <TabsTrigger value="photos" className="rounded-none">
-              Product photos
-            </TabsTrigger>
-          )}
         </TabsList>
 
         {isAdmin && (
@@ -194,17 +184,33 @@ function AdminPage() {
         <TabsContent value="inbox" className="mt-8">
           <Inbox />
         </TabsContent>
-        <TabsContent value="media" className="mt-8">
-          <MediaLibrary />
+        <TabsContent value="website" className="mt-8 space-y-12">
+          <section>
+            <h2 className="font-serif text-2xl">Media library</h2>
+            <div className="mt-4">
+              <MediaLibrary />
+            </div>
+          </section>
+          {isAdmin && (
+            <section>
+              <h2 className="font-serif text-2xl">Video upload</h2>
+              <div className="mt-4">
+                <VideoUploader />
+              </div>
+            </section>
+          )}
+          {isAdmin && (
+            <section>
+              <h2 className="font-serif text-2xl">Product photos</h2>
+              <div className="mt-4">
+                <ProductPhotosTab />
+              </div>
+            </section>
+          )}
         </TabsContent>
         <TabsContent value="studio" className="mt-8">
           <StudioTab isAdmin={isAdmin} />
         </TabsContent>
-        {isAdmin && (
-          <TabsContent value="video-upload" className="mt-8">
-            <VideoUploader />
-          </TabsContent>
-        )}
         <TabsContent value="orders" className="mt-8">
           <OrdersTab />
         </TabsContent>
@@ -231,11 +237,6 @@ function AdminPage() {
         {isAdmin && (
           <TabsContent value="pricing" className="mt-8">
             <PricingTab />
-          </TabsContent>
-        )}
-        {isAdmin && (
-          <TabsContent value="photos" className="mt-8">
-            <ProductPhotosTab />
           </TabsContent>
         )}
       </Tabs>
