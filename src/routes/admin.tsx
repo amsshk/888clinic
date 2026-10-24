@@ -19,9 +19,7 @@ import { ScanTestTab } from "@/components/admin/ScanTestTab";
 import { BillingTab } from "@/components/admin/BillingTab";
 import { PricingTab } from "@/components/admin/PricingTab";
 import { ProductPhotosTab } from "@/components/admin/ProductPhotosTab";
-import { CaptionsTab } from "@/components/admin/CaptionsTab";
-import { LineBroadcastTab } from "@/components/admin/LineBroadcastTab";
-import { VideoCheckTab } from "@/components/admin/VideoCheckTab";
+import { StudioTab } from "@/components/admin/StudioTab";
 import { VideoUploader } from "@/components/VideoUploader";
 
 import { RESULT_CATEGORIES } from "@/lib/before-after";
@@ -83,7 +81,7 @@ function AdminPage() {
   }, [loading, user, navigate]);
 
   useEffect(() => {
-    if (!isAdmin && (activeTab === "patients" || activeTab === "line")) setActiveTab("inbox");
+    if (!isAdmin && activeTab === "patients") setActiveTab("inbox");
   }, [isAdmin, activeTab]);
 
   if (loading) {
@@ -142,20 +140,12 @@ function AdminPage() {
             Media library
           </TabsTrigger>
           <TabsTrigger
-            value="captions"
+            value="studio"
             className="rounded-none border-gold/60 text-gold data-[state=active]:bg-gold data-[state=active]:text-foreground"
           >
             <Megaphone className="size-4" />
-            Captions
+            Studio
           </TabsTrigger>
-          <TabsTrigger value="video-check" className="rounded-none">
-            Video
-          </TabsTrigger>
-          {isAdmin && (
-            <TabsTrigger value="line" className="rounded-none">
-              LINE broadcast
-            </TabsTrigger>
-          )}
           {isAdmin && (
             <TabsTrigger value="video-upload" className="rounded-none">
               Video Upload
@@ -207,17 +197,9 @@ function AdminPage() {
         <TabsContent value="media" className="mt-8">
           <MediaLibrary />
         </TabsContent>
-        <TabsContent value="captions" className="mt-8">
-          <CaptionsTab />
+        <TabsContent value="studio" className="mt-8">
+          <StudioTab isAdmin={isAdmin} />
         </TabsContent>
-        <TabsContent value="video-check" className="mt-8">
-          <VideoCheckTab />
-        </TabsContent>
-        {isAdmin && (
-          <TabsContent value="line" className="mt-8">
-            <LineBroadcastTab />
-          </TabsContent>
-        )}
         {isAdmin && (
           <TabsContent value="video-upload" className="mt-8">
             <VideoUploader />
