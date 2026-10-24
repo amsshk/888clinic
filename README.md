@@ -77,6 +77,7 @@ Set the following variables in Railway before deploying or testing the payment w
 - `RESEND_API_KEY` — Resend key for transactional email; `EMAIL_FROM` optional (defaults to `888 Clinic <admin@888clinic.co>`)
 - `GEMINI_API_KEY` — Google AI Studio key for the one-free-scan-per-face check (`FACE_EMBEDDING_MODEL` optional)
 - `LINE_CHANNEL_ACCESS_TOKEN` — long-lived token of the @8888clinic Messaging API channel (admin LINE broadcast)
+- `VIDEO_SHARED_SECRET` — shared with the video server; signs the staff upload tickets for Admin → Video (`VIDEO_ENGINE_URL` optional)
 - `META_PIXEL_ID` — the Meta Pixel ID for the clinic (`1437834427873532`)
 - `VITE_META_PIXEL_ENABLED` — set to `true` only after privacy review; defaults to `false`
 - `META_CONVERSIONS_API_ENABLED` — set to `true` only after privacy review; defaults to `false`
