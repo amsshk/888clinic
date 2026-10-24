@@ -39,7 +39,13 @@ export function VideoEnhancePanel() {
 
   const ensureTicket = useCallback(async () => {
     if (ticket && ticket.expiresAt - Date.now() / 1000 > 300) return ticket;
-    const res = await ticketFn();
+    let res: Awaited<ReturnType<typeof ticketFn>>;
+    try {
+      res = await ticketFn();
+    } catch (e) {
+      setError(`Could not get an upload pass from the site: ${e instanceof Error ? e.message : String(e)}`);
+      return null;
+    }
     if (!res.ok) {
       setError(res.error);
       return null;
@@ -54,17 +60,20 @@ export function VideoEnhancePanel() {
     if (!t) return;
     try {
       const res = await fetch(`${t.base}/api/video/jobs`, { headers: { Authorization: `Bearer ${t.token}` } });
-      if (!res.ok) throw new Error(String(res.status));
+      if (res.status === 401) throw new Error("the video server rejected the pass (VIDEO_SHARED_SECRET differs between the site and the server)");
+      if (!res.ok) throw new Error(`video server answered ${res.status}`);
       setJobs(((await res.json()) as { jobs: Job[] }).jobs);
       setError(null);
-    } catch {
-      setError("Could not reach the video server.");
+    } catch (e) {
+      setError(`Could not reach the video server at ${t.base}: ${e instanceof Error ? e.message : String(e)}`);
     }
   }, [ensureTicket]);
 
   useEffect(() => {
     loadJobs();
-  }, [loadJobs]);
+    // load once on open; later refreshes come from the polling below
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const busy = jobs.some((j) => j.status === "queued" || j.status === "working");
   useEffect(() => {
@@ -76,7 +85,10 @@ export function VideoEnhancePanel() {
   async function upload(file: File | undefined) {
     if (!file) return;
     const t = await ensureTicket();
-    if (!t) return;
+    if (!t) {
+      toast.error("Upload not started — see the message in the panel.");
+      return;
+    }
     const form = new FormData();
     form.append("file", file);
     setProgress(0);
@@ -92,7 +104,7 @@ export function VideoEnhancePanel() {
         resolve();
       };
       xhr.onerror = () => {
-        toast.error("Upload failed. Check the connection and try again.");
+        toast.error(`Could not connect to ${t.base}. Check the connection and try again.`);
         resolve();
       };
       xhr.send(form);
@@ -114,7 +126,21 @@ export function VideoEnhancePanel() {
       </p>
 
       {error ? (
-        <p className="mt-4 text-sm text-red-600">{error}</p>
+        <div className="mt-4 space-y-3">
+          <p className="text-sm text-red-600">{error}</p>
+          <Button
+            variant="outline"
+            size="sm"
+            className="rounded-none"
+            onClick={() => {
+              setError(null);
+              setTicket(null);
+              loadJobs();
+            }}
+          >
+            Try again
+          </Button>
+        </div>
       ) : (
         <div className="mt-5 flex flex-wrap items-center gap-3">
           <input
