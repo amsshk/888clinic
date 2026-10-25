@@ -23,6 +23,23 @@ const STATUS: Record<Job["status"], string> = {
   failed: "ไม่สำเร็จ · Failed",
 };
 
+type Look = "" | "spotlight" | "doctor" | "offer" | "minimal" | "review";
+
+/** The design styles staff can stamp on a video. Sample pictures live in /public/studio-looks. */
+const LOOKS: { id: Look; name: string; hint: string; fields: [string, string, string] }[] = [
+  { id: "", name: "ไม่ใส่ดีไซน์ · Enhance only", hint: "Just make it sharp, no text added", fields: ["", "", ""] },
+  { id: "spotlight", name: "1 · Program spotlight", hint: "Big program name + gold button",
+    fields: ["ป้ายเล็ก · small label (เช่น โปรแกรม)", "ชื่อโปรแกรม · big title", "ประโยชน์ · benefit line"] },
+  { id: "doctor", name: "2 · Doctor talks", hint: "Doctor name tag + one subtitle",
+    fields: ["คำพูด · subtitle line", "ชื่อแพทย์ · doctor name", "ตำแหน่ง · role line"] },
+  { id: "offer", name: "3 · Offer", hint: "Gold price badge · real promotions only",
+    fields: ["ป้ายราคา · badge (เช่น มัดจำ ฿1,000)", "หัวข้อ · title", "รายละเอียด · detail line"] },
+  { id: "minimal", name: "4 · Minimal luxury", hint: "Thin gold frame, elegant title",
+    fields: ["", "หัวข้อ · title", "บรรทัดเล็ก · small line"] },
+  { id: "review", name: "5 · Real review", hint: "Only a real review, with the customer's OK",
+    fields: ["รีวิว · the customer's words", "ชื่อลูกค้า · customer name", ""] },
+];
+
 const fmt = (i: Info) => (i ? `${i.w}×${i.h} · ${i.kbps.toLocaleString()} kbps · ${i.mb} MB` : "–");
 
 /**
@@ -36,6 +53,11 @@ export function VideoEnhancePanel() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [progress, setProgress] = useState<{ file: number; files: number; pct: number } | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const [look, setLook] = useState<Look>("spotlight");
+  const [lines, setLines] = useState<[string, string, string]>(["โปรแกรม", "", ""]);
+  const [phone, setPhone] = useState("081-494-6539");
+  const [reviewOk, setReviewOk] = useState(false);
+  const current = LOOKS.find((l) => l.id === look) ?? LOOKS[0];
 
   const ensureTicket = useCallback(async () => {
     if (ticket && ticket.expiresAt - Date.now() / 1000 > 300) return ticket;
@@ -85,6 +107,14 @@ export function VideoEnhancePanel() {
   /** One file: resolves true when the server accepted it. */
   function sendOne(t: { base: string; token: string }, file: File, index: number, total: number) {
     const form = new FormData();
+    if (look) {
+      form.append("look", look);
+      form.append("l1", lines[0]);
+      form.append("l2", lines[1]);
+      form.append("l3", lines[2]);
+      form.append("line", "@theoneplus");
+      form.append("phone", phone);
+    }
     form.append("file", file);
     return new Promise<boolean>((resolve) => {
       const xhr = new XMLHttpRequest();
@@ -109,6 +139,11 @@ export function VideoEnhancePanel() {
   async function upload(list: FileList | null) {
     const files = Array.from(list ?? []);
     if (!files.length) return;
+    if (look === "review" && !reviewOk) {
+      toast.error("Tick the box: this is a real review and the customer agreed.");
+      if (fileRef.current) fileRef.current.value = "";
+      return;
+    }
     const t = await ensureTicket();
     if (!t) {
       toast.error("Upload not started — see the message in the panel.");
@@ -154,7 +189,72 @@ export function VideoEnhancePanel() {
           </Button>
         </div>
       ) : (
-        <div className="mt-5 flex flex-wrap items-center gap-3">
+        <div className="mt-5 space-y-5">
+          <div>
+            <p className="text-sm font-medium">เลือกสไตล์ · Choose a look</p>
+            <div className="mt-3 grid grid-cols-3 gap-3 sm:grid-cols-6">
+              {LOOKS.map((l) => (
+                <button
+                  key={l.id || "none"}
+                  type="button"
+                  onClick={() => {
+                    setLook(l.id);
+                    setLines(l.id === "spotlight" ? ["โปรแกรม", "", ""] : ["", "", ""]);
+                    setReviewOk(false);
+                  }}
+                  className={`overflow-hidden border text-left ${look === l.id ? "border-gold ring-2 ring-gold/40" : "border-border/70"}`}
+                >
+                  {l.id ? (
+                    <img src={`/studio-looks/${l.id}.jpg`} alt={l.name} className="aspect-[9/16] w-full object-cover" />
+                  ) : (
+                    <div className="flex aspect-[9/16] w-full items-center justify-center bg-muted/40 p-2 text-center text-xs text-muted-foreground">
+                      HD only
+                    </div>
+                  )}
+                  <p className="px-2 pt-2 text-xs font-medium">{l.name}</p>
+                  <p className="px-2 pb-2 text-[11px] text-muted-foreground">{l.hint}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+          {look && (
+            <div className="grid gap-3 sm:grid-cols-2">
+              {current.fields.map((label, i) =>
+                label ? (
+                  <label key={i} className="text-xs text-muted-foreground">
+                    {label}
+                    <input
+                      className="mt-1 block w-full border border-border/70 bg-background px-3 py-2 text-sm text-foreground"
+                      value={lines[i]}
+                      maxLength={i === 1 ? 40 : 60}
+                      onChange={(e) => {
+                        const next = [...lines] as [string, string, string];
+                        next[i] = e.target.value;
+                        setLines(next);
+                      }}
+                    />
+                  </label>
+                ) : null,
+              )}
+              <label className="text-xs text-muted-foreground">
+                เบอร์โทรบนวิดีโอ · phone on the video
+                <input
+                  className="mt-1 block w-full border border-border/70 bg-background px-3 py-2 text-sm text-foreground"
+                  value={phone}
+                  maxLength={20}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+              </label>
+              <p className="self-end text-xs text-muted-foreground">LINE on the video: @theoneplus</p>
+              {look === "review" && (
+                <label className="flex items-start gap-2 text-xs sm:col-span-2">
+                  <input type="checkbox" checked={reviewOk} onChange={(e) => setReviewOk(e.target.checked)} />
+                  รีวิวนี้เป็นของลูกค้าจริง และลูกค้ายินยอมให้ใช้ · This is a real review and the customer agreed to it being used.
+                </label>
+              )}
+            </div>
+          )}
+          <div className="flex flex-wrap items-center gap-3">
           <input
             ref={fileRef}
             type="file"
@@ -169,6 +269,7 @@ export function VideoEnhancePanel() {
               ? `กำลังอัปโหลด ${progress.file}/${progress.files} · ${progress.pct}% · keep this page open`
               : "อัปโหลดวิดีโอ (เลือกได้หลายไฟล์) · Upload videos"}
           </Button>
+          </div>
         </div>
       )}
 
