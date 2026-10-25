@@ -1,6 +1,8 @@
 name = "888clinic"
 main = ".output/server/index.mjs"
-compatibility_flags = ["nodejs_compat"]
+# nodejs_compat_populate_process_env: Worker variables and secrets appear in process.env,
+# which the server code reads (Supabase, OpenAI, Stripe, Resend, Gemini, LINE, video secret).
+compatibility_flags = ["nodejs_compat", "nodejs_compat_populate_process_env"]
 # Nitro copies these settings into a single-environment deployment config.
 # Keep production settings at the top level; redirected configs reject [env.*].
 routes = [
