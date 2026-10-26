@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { LineAutoPanel } from "@/components/admin/LineAutoPanel";
 import { getLineStatus, sendLineBroadcast, type LineStatus } from "@/lib/line-broadcast.functions";
 
 export function LineBroadcastTab() {
@@ -51,10 +52,11 @@ export function LineBroadcastTab() {
 
   return (
     <div className="space-y-8">
+      <LineAutoPanel />
       <section className="border border-border/70 bg-card p-6">
         <div className="flex items-center gap-2">
           <Send className="size-5 text-gold" />
-          <h2 className="font-serif text-2xl">บรอดแคสต์ LINE · LINE broadcast</h2>
+          <h2 className="font-serif text-2xl">ส่งเอง · Send your own message</h2>
         </div>
         <p className="mt-2 text-sm text-muted-foreground">
           One message to every friend of @8888clinic. Write it in the Captions tab first (choose "LINE"), then
