@@ -338,6 +338,133 @@ function ProgramCard({ group, th }: { group: MenuGroup; th: boolean }) {
   );
 }
 
+type Promotion = {
+  id: string;
+  image: string;
+  titleTh: string;
+  titleEn: string;
+  price: string;
+  normal?: string;
+  noteTh: string;
+  noteEn: string;
+  installments?: boolean;
+};
+
+/** Current promotions, the same items as the "888 Clinic Treatments" Meta catalog (ids = Content IDs). */
+const PROMOTIONS: Promotion[] = [
+  {
+    id: "gi5fufoe79",
+    image: "/images/promotions/threadlift-9999.webp",
+    titleTh: "ร้อยไหมยกกระชับ ใบหน้า & หางตา 14 เส้น",
+    titleEn: "Thread lift, face & eye corners, 14 threads",
+    price: "9,999",
+    noteTh: "เคสรีวิว รับฟรี ยาชา ยาฆ่าเชื้อ ยาลดบวม ยาแก้ปวด",
+    noteEn: "Review cases get numbing cream, antibiotics, anti-swelling and pain relief free",
+  },
+  {
+    id: "m7fcas7huw",
+    image: "/images/promotions/package-15999.webp",
+    titleTh: "สวยครบ จบในโปรเดียว 7 รายการ",
+    titleEn: "All-in-one package, 7 treatments",
+    price: "15,999",
+    noteTh: "ร้อยไหม 6 เส้น · Ultraformer III 200 shot · Filler 1 CC · เมโส 2 ครั้ง · มาส์ก",
+    noteEn: "Threads ×6 · Ultraformer III 200 shots · Filler 1 CC · Meso ×2 · Mask",
+    installments: true,
+  },
+  {
+    id: "3upypanse2",
+    image: "/images/promotions/package-6999.webp",
+    titleTh: "จ่าย 1 ได้ถึง 6 รายการ",
+    titleEn: "Pay once, get 6 treatments",
+    price: "6,999",
+    normal: "16,794",
+    noteTh: "ฟิลเลอร์ 1CC · ลดแก้ม เหนียง · หน้าใส · ลดฝ้า · VP ACNE · ฉายแสง",
+    noteEn: "Filler 1CC · Cheek & jowl · Glow · Melasma · VP Acne · LED",
+  },
+  {
+    id: "9inzxop2zn",
+    image: "/images/promotions/proset-gold.webp",
+    titleTh: "PRO SET GOLD",
+    titleEn: "PRO SET GOLD",
+    price: "18,999",
+    noteTh: "ร้อยไหม 8 เส้น · โบท็อกซ์ 100 U · ฟิลเลอร์ 2 CC · แฟต 30 CC · ดริป 1 ครั้ง",
+    noteEn: "Threads ×8 · Botox 100 U · Filler 2 CC · Fat dissolve 30 CC · Drip ×1",
+    installments: true,
+  },
+  {
+    id: "j0oxglm2u7",
+    image: "/images/promotions/proset-premium.webp",
+    titleTh: "PRO SET PREMIUM",
+    titleEn: "PRO SET PREMIUM",
+    price: "21,999",
+    noteTh: "ร้อยไหม 8 เส้น · โบท็อกซ์ 100 U · ฟิลเลอร์ 2 CC · แฟต 40 CC · ดริป 2 ครั้ง · ฉายแสง",
+    noteEn: "Threads ×8 · Botox 100 U · Filler 2 CC · Fat dissolve 40 CC · Drip ×2 · LED",
+    installments: true,
+  },
+];
+
+const MESSENGER = "https://m.me/106810671987560";
+
+function PromotionsSection({ th }: { th: boolean }) {
+  return (
+    <section id="promotions" className="scroll-mt-24 pb-16">
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <p className="text-[0.6rem] uppercase tracking-[0.3em] text-gold-deep">
+            {th ? "โปรโมชั่นเดือนนี้" : "This month"}
+          </p>
+          <h2 className="mt-2 font-serif text-4xl">{th ? "โปรโมชั่น" : "Promotions"}</h2>
+        </div>
+        <p className="hidden max-w-xs text-right text-xs text-muted-foreground sm:block">
+          {th
+            ? "ทำโดยแพทย์ · ผลลัพธ์ขึ้นอยู่กับแต่ละบุคคล"
+            : "Performed by doctors · Results vary by person"}
+        </p>
+      </div>
+      <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {PROMOTIONS.map((p) => (
+          <article
+            key={p.id}
+            id={`promo-${p.id}`}
+            className="flex flex-col border border-border bg-card"
+          >
+            <div className="flex aspect-square items-center justify-center overflow-hidden bg-shell">
+              <img
+                src={p.image}
+                alt={th ? p.titleTh : p.titleEn}
+                loading="lazy"
+                className="h-full w-full object-contain"
+              />
+            </div>
+            <div className="flex flex-1 flex-col p-5">
+              <h3 className="font-serif text-xl leading-snug">{th ? p.titleTh : p.titleEn}</h3>
+              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                {th ? p.noteTh : p.noteEn}
+              </p>
+              <p className="mt-4 text-2xl text-gold-deep">
+                ฿{p.price}
+                {p.normal && <s className="ml-3 text-sm text-muted-foreground">฿{p.normal}</s>}
+              </p>
+              {p.installments && (
+                <p className="mt-1 text-[0.7rem] text-muted-foreground">
+                  {th
+                    ? "ผ่อนได้ บัตรเครดิตทุกธนาคาร · SPayLater · SEasyCash · Pay Next Extra"
+                    : "Installments: all credit cards · SPayLater · SEasyCash · Pay Next Extra"}
+                </p>
+              )}
+              <Button asChild className="mt-5 rounded-none">
+                <a href={MESSENGER} target="_blank" rel="noopener noreferrer">
+                  {th ? "ทักแชทจองคิว" : "Chat to book"} <ArrowUpRight className="ml-2 size-4" />
+                </a>
+              </Button>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function Catalogue() {
   useCatalogViewContent();
   const { t, lang } = useLang();
@@ -415,6 +542,8 @@ function Catalogue() {
         </div>
 
         <div className="py-14">
+          <PromotionsSection th={th} />
+
           {filler && <FillerSection group={filler} th={th} preset={preset} photos={fillerPhotos} />}
 
           <ClinicProductsSection th={th} />
