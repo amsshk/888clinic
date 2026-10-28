@@ -61,7 +61,13 @@ export function MetaPixelRouteTracker() {
  * Sent as ViewContent on /pricing so Meta can match catalog items to visits and show them
  * as product cards under ads. Must match the catalog's Content IDs exactly.
  */
-export const CATALOG_CONTENT_IDS: string[] = [];
+export const CATALOG_CONTENT_IDS: string[] = [
+  "m7fcas7huw", // สวยครบ จบในโปรเดียว 7 รายการ · 15,999
+  "gi5fufoe79", // ร้อยไหมยกกระชับ ใบหน้า & หางตา 14 เส้น · 9,999
+  "3upypanse2", // จ่าย 1 ได้ถึง 6 รายการ · 6,999
+  "9inzxop2zn", // PRO SET GOLD · 18,999
+  "j0oxglm2u7", // PRO SET PREMIUM · 21,999
+];
 
 /** Fires one ViewContent with all catalog items when the pricing page opens. */
 export function useCatalogViewContent() {
