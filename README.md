@@ -78,7 +78,7 @@ Set the following variables in Railway before deploying or testing the payment w
 - `GEMINI_API_KEY` — Google AI Studio key for the one-free-scan-per-face check (`FACE_EMBEDDING_MODEL` optional)
 - `LINE_CHANNEL_ACCESS_TOKEN` — long-lived token of the @8888clinic Messaging API channel (admin LINE broadcast)
 - `VIDEO_SHARED_SECRET` — shared with the video server; signs the staff upload tickets for Admin → Video (`VIDEO_ENGINE_URL` optional)
-- `META_PIXEL_ID` — the Meta Pixel ID for the clinic (`4301502583400400`)
+- `META_PIXEL_ID` — the Meta Pixel ID for the clinic (`4301502583400400`, HIFU 888 PLUS; catalog "888 Clinic Treatments")
 - `VITE_META_PIXEL_ENABLED` — set to `true` only after privacy review; defaults to `false`
 - `META_CONVERSIONS_API_ENABLED` — set to `true` only after privacy review; defaults to `false`
 - `META_CONVERSIONS_API_TOKEN` — the server-only Meta Conversions API token
