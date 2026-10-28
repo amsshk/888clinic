@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react";
 import { useRouterState } from "@tanstack/react-router";
 
-const META_PIXEL_ID = "1437834427873532";
+// HIFU 888 PLUS dataset (ad account 2368330666798802, catalog "888 Clinic Treatments").
+const META_PIXEL_ID = "4301502583400400";
 const META_PIXEL_ENABLED = import.meta.env.VITE_META_PIXEL_ENABLED === "true";
 
 declare global {
@@ -53,4 +54,29 @@ export function MetaPixelRouteTracker() {
   }, [pathname]);
 
   return null;
+}
+
+/**
+ * Content IDs of the "888 Clinic Treatments" catalog items (Commerce Manager -> Products).
+ * Sent as ViewContent on /pricing so Meta can match catalog items to visits and show them
+ * as product cards under ads. Must match the catalog's Content IDs exactly.
+ */
+export const CATALOG_CONTENT_IDS: string[] = [
+  "m7fcas7huw", // สวยครบ จบในโปรเดียว 7 รายการ · 15,999
+  "gi5fufoe79", // ร้อยไหมยกกระชับ ใบหน้า & หางตา 14 เส้น · 9,999
+  "3upypanse2", // จ่าย 1 ได้ถึง 6 รายการ · 6,999
+  "9inzxop2zn", // PRO SET GOLD · 18,999
+  "j0oxglm2u7", // PRO SET PREMIUM · 21,999
+];
+
+/** Fires one ViewContent with all catalog items when the pricing page opens. */
+export function useCatalogViewContent() {
+  useEffect(() => {
+    if (!META_PIXEL_ENABLED || CATALOG_CONTENT_IDS.length === 0) return;
+    window.fbq?.("track", "ViewContent", {
+      content_ids: CATALOG_CONTENT_IDS,
+      content_type: "product",
+      currency: "THB",
+    });
+  }, []);
 }
