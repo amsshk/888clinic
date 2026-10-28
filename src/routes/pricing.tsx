@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { DEFAULT_CATALOGUE_PRESET, type CataloguePreset } from "@/lib/catalogue-design.shared";
 import { FILLER_PRODUCTS, fillerImageByName } from "@/lib/filler-products.shared";
 import { CLINIC_PRODUCTS } from "@/lib/clinic-products.shared";
+import { useCatalogViewContent } from "@/components/site/MetaPixel";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -338,6 +339,7 @@ function ProgramCard({ group, th }: { group: MenuGroup; th: boolean }) {
 }
 
 function Catalogue() {
+  useCatalogViewContent();
   const { t, lang } = useLang();
   const th = lang === "th";
   const [preset, setPreset] = useState<CataloguePreset>(DEFAULT_CATALOGUE_PRESET);

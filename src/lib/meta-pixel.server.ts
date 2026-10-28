@@ -77,7 +77,7 @@ export async function sendMetaPurchaseEvent(
   if (process.env["META_CONVERSIONS_API_ENABLED"] !== "true") {
     return { ok: false, skipped: true, reason: "Meta Conversions API is disabled." };
   }
-  const pixelId = process.env["META_PIXEL_ID"] || "1437834427873532";
+  const pixelId = process.env["META_PIXEL_ID"] || "4301502583400400";
   const accessToken = process.env["META_CONVERSIONS_API_TOKEN"];
 
   if (!accessToken) {
