@@ -3,6 +3,7 @@ import { MapPin, Phone, Mail, Clock, MessageCircle, Facebook, Music2 } from "luc
 import { ClinicLogo } from "@/components/site/ClinicLogo";
 import { CLINIC } from "@/lib/clinic";
 import { useLang } from "@/lib/i18n";
+import { SHOW_RESULTS } from "@/lib/features";
 
 export function SiteFooter() {
   const { t } = useLang();
@@ -76,11 +77,13 @@ export function SiteFooter() {
                 {t("nav.predict")}
               </Link>
             </li>
+            {SHOW_RESULTS && (
             <li>
               <Link to="/results" className="hover:text-foreground">
                 {t("nav.results")}
               </Link>
             </li>
+            )}
             <li>
               <Link to="/book" className="hover:text-foreground">
                 {t("nav.book")}

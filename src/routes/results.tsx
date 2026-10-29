@@ -1,4 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { SHOW_RESULTS } from "@/lib/features";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { BookingDialog } from "@/components/site/BookingDialog";
@@ -6,6 +7,9 @@ import { FeaturedResultsMedia, type ResultsArea } from "@/components/site/Featur
 import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/results")({
+  beforeLoad: () => {
+    if (!SHOW_RESULTS) throw redirect({ to: "/pricing", replace: true });
+  },
   head: () => ({
     meta: [
       { title: "Before & After Results — 888clinic Dermatology" },
