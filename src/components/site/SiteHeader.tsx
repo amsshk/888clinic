@@ -7,6 +7,7 @@ import { BookingDialog } from "@/components/site/BookingDialog";
 import { CLINIC } from "@/lib/clinic";
 import { AccountMenu } from "@/components/site/AccountMenu";
 import { useLang, type TKey } from "@/lib/i18n";
+import { SHOW_RESULTS } from "@/lib/features";
 
 const nav: { to: string; key: TKey }[] = [
   { to: "/", key: "nav.home" },
@@ -16,7 +17,7 @@ const nav: { to: string; key: TKey }[] = [
   { to: "/results", key: "nav.results" },
   { to: "/book", key: "nav.book" },
   { to: "/contact", key: "nav.contact" },
-];
+].filter((n) => SHOW_RESULTS || n.to !== "/results");
 
 function LangSwitch({ className }: { className?: string }) {
   const { lang, setLang } = useLang();

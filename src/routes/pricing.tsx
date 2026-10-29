@@ -10,6 +10,7 @@ import { DEFAULT_CATALOGUE_PRESET, type CataloguePreset } from "@/lib/catalogue-
 import { FILLER_PRODUCTS, fillerImageByName } from "@/lib/filler-products.shared";
 import { CLINIC_PRODUCTS } from "@/lib/clinic-products.shared";
 import { useCatalogViewContent } from "@/components/site/MetaPixel";
+import { SHOW_PROMOTIONS } from "@/lib/features";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -542,7 +543,7 @@ function Catalogue() {
         </div>
 
         <div className="py-14">
-          <PromotionsSection th={th} />
+          {SHOW_PROMOTIONS && <PromotionsSection th={th} />}
 
           {filler && <FillerSection group={filler} th={th} preset={preset} photos={fillerPhotos} />}
 

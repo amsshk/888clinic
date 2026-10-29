@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ResultsMarquee } from "@/components/site/ResultsMarquee";
+import { SHOW_RESULTS } from "@/lib/features";
 import { useLang, type TKey } from "@/lib/i18n";
 import heroImg from "@/assets/hero-clinic.jpg";
 import drMaliImg from "@/assets/dr-mali-robot.jpg";
@@ -123,7 +124,8 @@ function Home() {
         </div>
       </section>
 
-      {/* Patient results */}
+      {/* Patient results (before/after photos) — switched by SHOW_RESULTS */}
+      {SHOW_RESULTS && (
       <section className="py-20">
         <div className="mx-auto flex max-w-6xl flex-wrap items-end justify-between gap-6 px-5">
           <div className="max-w-xl">
@@ -147,6 +149,7 @@ function Home() {
           <ResultsMarquee />
         </div>
       </section>
+      )}
 
       {/* Meet Dr Mali */}
       <section className="border-y border-border bg-shell">
@@ -194,6 +197,7 @@ function Home() {
                   {t("home.mali.cta1")} <ArrowRight className="ml-2 size-4" />
                 </Link>
               </Button>
+              {SHOW_RESULTS && (
               <Button
                 asChild
                 size="lg"
@@ -202,6 +206,7 @@ function Home() {
               >
                 <Link to="/results">{t("home.mali.cta2")}</Link>
               </Button>
+              )}
             </div>
             <p className="mt-4 text-xs text-muted-foreground">{t("home.mali.note")}</p>
           </div>
