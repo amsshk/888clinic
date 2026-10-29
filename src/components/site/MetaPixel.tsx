@@ -67,6 +67,12 @@ export const CATALOG_CONTENT_IDS: string[] = [
   "3upypanse2", // จ่าย 1 ได้ถึง 6 รายการ · 6,999
   "9inzxop2zn", // PRO SET GOLD · 18,999
   "j0oxglm2u7", // PRO SET PREMIUM · 21,999
+  "lip-filler-elas", // โปรแกรมฟิลเลอร์ปาก Elas · 4,999
+  "lip-filler-biohya", // โปรแกรมฟิลเลอร์ปาก Biohya · 2,999
+  "lip-filler-ep", // โปรแกรมฟิลเลอร์ปาก EP · 6,999
+  "lip-filler-neura", // โปรแกรมฟิลเลอร์ปาก Neura · 3,599
+  "proset-basic", // PRO SET BASIC · 9,999
+  "proset-silver", // PRO SET SILVER · 14,999
 ];
 
 /** Fires one ViewContent with all catalog items when the pricing page opens. */
