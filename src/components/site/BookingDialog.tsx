@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { submitEnquiry } from "@/lib/enquiries.functions";
+import { trackBookingPurchase } from "@/lib/booking-purchase";
 import { toast } from "sonner";
 import { useLang, type TKey } from "@/lib/i18n";
 import { useContactIdentity } from "@/hooks/useContactIdentity";
@@ -62,6 +63,7 @@ export function BookingDialog({ children, defaultService }: Props) {
     event.preventDefault();
     const form = event.currentTarget;
     const fd = new FormData(form);
+    const email = identity.signedIn ? identity.email : String(fd.get("email") ?? "");
     setBusy(true);
     try {
       const result = await send({
@@ -70,7 +72,7 @@ export function BookingDialog({ children, defaultService }: Props) {
             ? identity.fullName || identity.email
             : String(fd.get("name") ?? ""),
           phone,
-          email: identity.signedIn ? identity.email : String(fd.get("email") ?? ""),
+          email,
           concern: String(fd.get("concern") ?? ""),
           preferredDate: String(fd.get("preferredDate") ?? ""),
           service,
@@ -85,6 +87,7 @@ export function BookingDialog({ children, defaultService }: Props) {
       form.reset();
       setTime("");
       setOpen(false);
+      void trackBookingPurchase(email, phone);
       toast.success(t("bk.ok"), {
         description: t("bk.dialog.ok.body"),
       });

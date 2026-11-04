@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { submitEnquiry } from "@/lib/enquiries.functions";
+import { trackBookingPurchase } from "@/lib/booking-purchase";
 import { CLINIC } from "@/lib/clinic";
 import { toast } from "sonner";
 import { useLang, type TKey } from "@/lib/i18n";
@@ -148,6 +149,7 @@ function BookPage() {
       }
       void identity.rememberPhone(phone);
       setDone({ date, time });
+      void trackBookingPurchase(email, phone);
       form.reset();
       toast.success(t("bk.ok"), {
         description: t("bk.okBody"),
